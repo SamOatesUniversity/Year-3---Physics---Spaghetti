@@ -9,6 +9,8 @@ OgreApplication::OgreApplication(void):lRoot(NULL), lWindow(NULL), lScene(NULL),
 
 OgreApplication::~OgreApplication(void)
 {
+	cleanUp();
+
 	lRoot = NULL;
 	lWindow = NULL;
 	lScene = NULL;
@@ -19,9 +21,6 @@ OgreApplication::~OgreApplication(void)
 	lMouse = NULL;
 	lKeyboard = NULL;
 	lOgreTimer = NULL;
-
-	cleanUp();
-
 }
 
 void OgreApplication::cleanUp()
@@ -84,8 +83,8 @@ void OgreApplication::createCamera(Ogre::String  name)
 
 	// Create a child scene node of the RootSceneNode,
 	// Attach the camera to a new SceneNode. It will be easier then to move it in the scene.
-	Ogre::SceneNode* lCameraNode = lRootSceneNode->createChildSceneNode(name.append("Node"));
-	lCameraNode->attachObject(lCamera);
+	Ogre::SceneNode* m_camera = lRootSceneNode->createChildSceneNode(name.append("Node"));
+	m_camera->attachObject(lCamera);
 
 	// Setup viewport parameters 
 	// Add viewport to the window with the camera 
@@ -110,10 +109,10 @@ void OgreApplication::createCamera(Ogre::String  name)
 	lCamera->setAspectRatio(ratio);
 	lCamera->setNearClipDistance(1.5f);
 	lCamera->setFarClipDistance(3000.0f); 
-	lCameraNode->setPosition(Ogre::Vector3(0.00f, 20.0f, 30.0f));
+	m_camera->setPosition(Ogre::Vector3(0.00f, 20.0f, 30.0f));
 	lCamera->lookAt(0.0f, 0.0f, 0.0f);
 
-	this->addChildNodeToList(lCameraNode->getName(), lCameraNode);
+	this->addChildNodeToList(m_camera->getName(), m_camera);
 	
 
 	// Set the window to be active
@@ -301,11 +300,11 @@ void OgreApplication::createScene()
 	Ogre::SceneNode* lEntityNode = lRootSceneNode->createChildSceneNode("EntityNode");
 	
 	// create a scene node to the entity scene node for our character
-	Ogre::SceneNode* lNinjaNode = lEntityNode->createChildSceneNode(tempName.append("Node"));
+	m_ninjaNode = lEntityNode->createChildSceneNode(tempName.append("Node"));
 	//attach the mesh
-	lNinjaNode->attachObject(lNinja);
-	lNinjaNode->setPosition(-12.0f, 0.0f, -10.0f);
-	lNinjaNode->scale(0.05f, 0.05f, 0.05f);
+	m_ninjaNode->attachObject(lNinja);
+	m_ninjaNode->setPosition(-12.0f, 0.0f, -10.0f);
+	m_ninjaNode->scale(0.05f, 0.05f, 0.05f);
 	const Ogre::String& lNajaMaterialName = "M_SurfaceColor";
 	lNinja->setMaterialName(lNajaMaterialName);
 
@@ -313,7 +312,7 @@ void OgreApplication::createScene()
 	// add the second object
     tempName = "Cube"; 
 	Ogre::Entity* lCube = lScene->createEntity(tempName, "cube.mesh");
-    lNinja->setCastShadows(true);
+    lCube->setCastShadows(true);
 
 	// create a scene node to the entity scene node for our character
 	Ogre::SceneNode* lCubeNode = lEntityNode->createChildSceneNode(tempName.append("Node"));
@@ -373,6 +372,12 @@ void OgreApplication::createOIS()
 
 	OIS::ParamList lSpecialParameters;
 	lSpecialParameters.insert(std::make_pair(std::string("WINDOW"), windowsHandleAsString));
+
+	// dont steel all the focus
+	lSpecialParameters.insert(std::make_pair(std::string("w32_mouse"), std::string("DISCL_FOREGROUND" )));
+    lSpecialParameters.insert(std::make_pair(std::string("w32_mouse"), std::string("DISCL_NONEXCLUSIVE")));
+    lSpecialParameters.insert(std::make_pair(std::string("w32_keyboard"), std::string("DISCL_FOREGROUND")));
+    lSpecialParameters.insert(std::make_pair(std::string("w32_keyboard"), std::string("DISCL_NONEXCLUSIVE")));
 
 	//4/ we create the input/output system itself.
 	lInputManager = OIS::InputManager::createInputSystem( lSpecialParameters );

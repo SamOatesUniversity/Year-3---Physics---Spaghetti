@@ -83,5 +83,8 @@ private:
 	Ogre::String lDirectoryToLoadMeshes; 
 	Ogre::String lDirectoryToLoadTextures; 
 
+	Ogre::SceneNode						*m_camera;					//!< A pointer to the camrera node
+	Ogre::SceneNode						*m_ninjaNode;				//!< A pointer to the player enity node
+
 };
 
