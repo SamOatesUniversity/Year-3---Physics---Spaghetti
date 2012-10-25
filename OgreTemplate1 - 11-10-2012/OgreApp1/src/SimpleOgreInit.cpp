@@ -139,9 +139,8 @@ namespace OgreEasy
 					return result;
 				}
 
-				//Ogre::RenderSystem *lRenderSystem = lRenderSystemList.at(0);
-			    //mRoot->setRenderSystem(lRenderSystem);
-				mRoot->showConfigDialog();
+			    mRoot->setRenderSystem(lRenderSystemList.at(0));
+				//mRoot->showConfigDialog();
 			}
 
 			// STEP 4/ When the RenderSystem is selected, we can initialise the Root. The root can be initialised only when a rendersystem has been selected.
