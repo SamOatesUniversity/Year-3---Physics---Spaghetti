@@ -140,7 +140,7 @@ namespace OgreEasy
 				}
 
 				//Ogre::RenderSystem *lRenderSystem = lRenderSystemList.at(0);
-			   // mRoot->setRenderSystem(lRenderSystem);
+			    //mRoot->setRenderSystem(lRenderSystem);
 				mRoot->showConfigDialog();
 			}
 
