@@ -162,6 +162,8 @@ void AnOgreApplication()
 	// clean up
 	application->cleanUp();
 
+	char *leek = new char[1024];
+
 	return;
 }
 

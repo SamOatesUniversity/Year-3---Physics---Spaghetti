@@ -13,6 +13,21 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\Physics">
+      <UniqueIdentifier>{bb07a039-2020-448e-a97a-91b2f9555c92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\OgreApplication">
+      <UniqueIdentifier>{3e51f90b-4b69-4592-bc3e-f07064c8cdbe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\OgreSetup">
+      <UniqueIdentifier>{6eb25974-cec2-4130-ad02-40d0e0651020}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\OgreApplication">
+      <UniqueIdentifier>{52dfcab3-cefc-4cd7-98b8-b6d569c4514b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\OgreSetup">
+      <UniqueIdentifier>{5c806b8f-e020-4280-b0c5-9ee07f072754}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\OgreApp1.ico">
@@ -25,31 +40,31 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\EasyDefines.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\main.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\SimpleOgreInit.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\OgreApplication.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files\OgreApplication</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SimpleOgreInit.h">
+      <Filter>Header Files\OgreSetup</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EasyDefines.h">
+      <Filter>Header Files\OgreApplication</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\EasyDefines.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\SimpleOgreInit.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\EasyDefines.cpp">
+      <Filter>Source Files\OgreApplication</Filter>
     </ClCompile>
     <ClCompile Include="src\OgreApplication.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\OgreApplication</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SimpleOgreInit.cpp">
+      <Filter>Source Files\OgreSetup</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
