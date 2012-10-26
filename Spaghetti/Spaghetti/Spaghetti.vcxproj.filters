@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\Physics">
-      <UniqueIdentifier>{bb07a039-2020-448e-a97a-91b2f9555c92}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\OgreApplication">
       <UniqueIdentifier>{3e51f90b-4b69-4592-bc3e-f07064c8cdbe}</UniqueIdentifier>
     </Filter>
@@ -30,12 +27,12 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\Magneto.ico">
+    <None Include="res\Spaghetti.ico">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="res\Magneto.rc">
+    <ResourceCompile Include="res\Spaghetti.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
