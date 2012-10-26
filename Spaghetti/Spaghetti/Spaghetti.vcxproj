@@ -12,7 +12,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{44F4486C-8F59-4E37-86F8-6FD3F8E67E59}</ProjectGuid>
-    <RootNamespace>Magneto</RootNamespace>
+    <RootNamespace>Spaghetti</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -115,10 +115,10 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="res\Magneto.ico" />
+    <None Include="res\Spaghetti.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="res\Magneto.rc" />
+    <ResourceCompile Include="res\Spaghetti.rc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\EasyDefines.h" />
