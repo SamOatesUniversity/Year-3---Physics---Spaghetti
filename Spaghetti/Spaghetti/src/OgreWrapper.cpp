@@ -21,12 +21,12 @@ OgreWrapper::~OgreWrapper()
 */
 const bool OgreWrapper::Initialize()
 {
-	const Ogre::String lConfigFileName = "";
-	const Ogre::String lPluginsFileName = "";
-	const Ogre::String lLogFileName = "Ogre.log";
+	const Ogre::String configFileName = "";
+	const Ogre::String pluginsFileName = "";
+	const Ogre::String logFileName = "Ogre.log";
 
 	// Create our ogre root
-	m_root = new Ogre::Root(lConfigFileName, lPluginsFileName, lLogFileName);
+	m_root = new Ogre::Root(configFileName, pluginsFileName, logFileName);
 
 	// Load the plugins we want to use with ogre
 	std::vector<Ogre::String> plugins;
@@ -56,10 +56,10 @@ const bool OgreWrapper::Initialize()
 	const Ogre::String windowTitle = "Sam Oates - Spaghetti Physics";
 	const unsigned int width = 800;
 	const unsigned int height = 600;
-	Ogre::NameValuePairList lParams;
+	Ogre::NameValuePairList windowParameters;
 
 	// create our window
-	m_window = m_root->createRenderWindow(windowTitle, width, height, false, &lParams);
+	m_window = m_root->createRenderWindow(windowTitle, width, height, false, &windowParameters);
 
 	return true;
 }
