@@ -10,18 +10,18 @@
 class OgreWrapper
 {
 private:
-	Ogre::Root						*m_root;									//!< 
-	Ogre::RenderWindow				*m_window;									//!< 
+	Ogre::Root						*m_root;									//!< The root ogre object
+	Ogre::RenderWindow				*m_window;									//!< The ogre window object
 
 private:
 									//! Copy constructor
 									OgreWrapper(
-										const OgreWrapper &source				//!< 
+										const OgreWrapper &source				//!< The source instance of the class to copy from
 									);
 
 									//! Assignment operator
 	OgreWrapper&					operator=(
-										const OgreWrapper &source				//!< 
+										const OgreWrapper &source				//!< The source instance of the class to copy from
 									);
 
 public:
