@@ -46,7 +46,7 @@ void OgreApplication::cleanUp()
 bool OgreApplication::init()
 {
 	
-	if(!lOgreInit.initOgre())
+	if(!lOgreInit.Initialize())
 	{
 		std::cout<<"Impossible to init Ogre correctly."<<std::endl;
 		
@@ -55,8 +55,8 @@ bool OgreApplication::init()
 	
 	// Create  Root, RenderWindow, SceneManager, and SceneNode 
 	// Get RootSceneNode from SceneManager
-	lRoot = lOgreInit.mRoot.get();
-	lWindow = lOgreInit.mWindow;
+	lRoot = lOgreInit.GetRoot();
+	lWindow = lOgreInit.GetWindow();
 	lScene = lRoot->createSceneManager(Ogre::ST_GENERIC, "MySceneManager");
 	lRootSceneNode = lScene->getRootSceneNode();
 

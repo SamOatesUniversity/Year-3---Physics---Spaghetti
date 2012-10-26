@@ -36,7 +36,7 @@ void RunOgreApplication()
 	OIS::Mouse *const mouse = application->getMouse();
 	
 	// Main game loop
-	while(!application->getSimpleOgreInitHandle().mWindow->isClosed())
+	while(!application->GetOgreWrapper().GetWindow()->isClosed())
 	{
 		// calculate the delta time
 		const unsigned long currentTime = timer->getMicroseconds();

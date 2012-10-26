@@ -17,13 +17,9 @@
 #include "OGRE/OgreMeshManager.h"
 #include "OIS/Ois.h"
 
-
-#include "SimpleOgreInit.h"
-
+#include "OgreWrapper.h"
 
 using namespace Ogre;
-using namespace OgreEasy;
-
 
 class OgreApplication
 {
@@ -43,7 +39,7 @@ public:
 	Ogre::Timer* createTimer();
 	void resetTimer();
 
-	const OgreEasy::SimpleOgreInit& getSimpleOgreInitHandle(){return lOgreInit;} 
+	const OgreWrapper& GetOgreWrapper(){return lOgreInit;} 
 	Ogre::SceneManager*  getSceneManager(){return lScene;}
 	Ogre::SceneNode* getChildSceneNodeByName(Ogre::String name);
 
@@ -62,7 +58,7 @@ private:
 
 	std::vector<sceneNode>  childSceneNodeList;
 
-	OgreEasy::SimpleOgreInit lOgreInit;
+	OgreWrapper lOgreInit;
 	Ogre::Root* lRoot;
 	Ogre::RenderWindow*lWindow;
 	Ogre::SceneManager* lScene;
