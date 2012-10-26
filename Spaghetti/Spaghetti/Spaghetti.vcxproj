@@ -121,13 +121,11 @@
     <ResourceCompile Include="res\Spaghetti.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\EasyDefines.h" />
     <ClInclude Include="src\main.h" />
     <ClInclude Include="src\OgreApplication.h" />
     <ClInclude Include="src\SimpleOgreInit.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\EasyDefines.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\OgreApplication.cpp" />
     <ClCompile Include="src\SimpleOgreInit.cpp" />

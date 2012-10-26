@@ -46,16 +46,10 @@
     <ClInclude Include="src\SimpleOgreInit.h">
       <Filter>Header Files\OgreSetup</Filter>
     </ClInclude>
-    <ClInclude Include="src\EasyDefines.h">
-      <Filter>Header Files\OgreApplication</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\EasyDefines.cpp">
-      <Filter>Source Files\OgreApplication</Filter>
     </ClCompile>
     <ClCompile Include="src\OgreApplication.cpp">
       <Filter>Source Files\OgreApplication</Filter>
