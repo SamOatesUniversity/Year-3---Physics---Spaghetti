@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Magneto", "Magneto\Magneto.vcxproj", "{44F4486C-8F59-4E37-86F8-6FD3F8E67E59}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Spaghetti", "Spaghetti\Spaghetti.vcxproj", "{44F4486C-8F59-4E37-86F8-6FD3F8E67E59}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
