@@ -1,0 +1,104 @@
+
+material 08-Default
+{
+	technique
+	{
+		pass
+		{
+			ambient 0.501961 0 0.482353 1
+			diffuse 0.501961 0 0.482353 1
+			specular 0 0 0 1 10
+		}
+
+	}
+
+}
+
+
+
+material 09-Default
+{
+	technique
+	{
+		pass
+		{
+			ambient 1 0.917647 0.0117647 1
+			diffuse 1 0.917647 0.0117647 1
+			specular 0 0 0 1 10
+		}
+
+	}
+
+}
+
+
+
+material 07-Default
+{
+	technique
+	{
+		pass
+		{
+			ambient 0.117647 1 0 1
+			diffuse 0.117647 1 0 1
+			specular 0 0 0 1 10
+		}
+
+	}
+
+}
+
+
+
+material 01-Default
+{
+	technique
+	{
+		pass
+		{
+			ambient 1 0 0 1
+			diffuse 1 0 0 1
+			specular 0 0 0 1 10
+
+			texture_unit
+			{
+			}
+		}
+
+	}
+
+}
+
+
+
+material 02-Default
+{
+	technique
+	{
+		pass
+		{
+			ambient 0 0.235294 1 1
+			diffuse 0 0.235294 1 1
+			specular 0 0 0 1 10
+		}
+
+	}
+
+}
+
+
+
+material 03-Default
+{
+	technique
+	{
+		pass
+		{
+			specular 0 0 0 1 10
+		}
+
+	}
+
+}
+
+
