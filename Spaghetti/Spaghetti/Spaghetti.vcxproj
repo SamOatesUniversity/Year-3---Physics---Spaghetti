@@ -123,12 +123,12 @@
   <ItemGroup>
     <ClInclude Include="src\main.h" />
     <ClInclude Include="src\OgreApplication.h" />
-    <ClInclude Include="src\SimpleOgreInit.h" />
+    <ClInclude Include="src\OgreWrapper.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\OgreApplication.cpp" />
-    <ClCompile Include="src\SimpleOgreInit.cpp" />
+    <ClCompile Include="src\OgreWrapper.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
