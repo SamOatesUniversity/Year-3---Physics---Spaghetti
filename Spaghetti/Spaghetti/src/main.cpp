@@ -8,7 +8,7 @@ void RunOgreApplication()
 	// Create and initialise the application
 	OgreApplication *const application = new OgreApplication;
 	
-	if (!application->init())
+	if (!application->Initialize())
 	{
 		std::cout << __FILE__ << " (" << __LINE__ << ") - " << "Failed to initialise the application" << std::endl; 
 		return;
@@ -16,24 +16,22 @@ void RunOgreApplication()
 	
 	// create a camera, setup viewport 
 	Ogre::String cameraName = "MainCamera";
-	application->createCamera(cameraName);
-	Ogre::String nameOfChildNode = cameraName.append("Node");
-	Ogre::SceneNode *const cameraNode = application->getChildSceneNodeByName(nameOfChildNode);
+	Ogre::SceneNode *const cameraNode = application->CreateCamera(cameraName);
 
 	//create O/I system for keyboard and mouse inputs
-	application->createOIS();
-	application->createScene();
+	application->CreateIOS();
+	application->CreateScene();
 
 	// create a timer to access system time information
-	Ogre::Timer *const timer = application->createTimer();
-    application->resetTimer();
+	Ogre::Timer *const timer = application->CreateTimer();
+    timer->reset();
 
 	unsigned long lastTime = timer->getMilliseconds();
     unsigned long deltatTime = 0;
 
 	// get the keyboard and mouse to capture their input information
-	OIS::Keyboard *const keyboard = application->getKeyboard();
-	OIS::Mouse *const mouse = application->getMouse();
+	OIS::Keyboard *const keyboard = application->GetKeyboard();
+	OIS::Mouse *const mouse = application->GetMouse();
 	
 	// Main game loop
 	while(!application->GetOgreWrapper().GetWindow()->isClosed())
@@ -53,7 +51,7 @@ void RunOgreApplication()
 		//spaghetti->Update? or something magical
 
 		// update the application
-		application->run(false, true);
+		application->Run(false, true);
 		Ogre::WindowEventUtilities::messagePump();
 	}
 

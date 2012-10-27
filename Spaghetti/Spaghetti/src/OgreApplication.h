@@ -21,6 +21,11 @@
 // My Ogre wrapper
 #include "OgreWrapper.h"
 
+struct SceneNodeAndName {
+	Ogre::String name;
+	Ogre::SceneNode *node;
+};
+
 // OgreApplication class declaration
 class OgreApplication
 {
@@ -37,11 +42,19 @@ private:
 
 	Ogre::Timer								*m_timer;									//!< 
 
-	Ogre::String							m_nameOfResourceGroup;						//!< 
-	Ogre::String							m_directoryToLoadMeshes;					//!< 
-	Ogre::String							m_directoryToLoadTextures;					//!< 
+	std::vector<SceneNodeAndName>			m_sceneNodes;								//!< 
 
 	Ogre::SceneNode							*m_camera;									//!< A pointer to the camrera node
+
+private:
+											//! 
+	void									CreateLights();
+
+											//! 
+	void									AddNodeToList(
+												const Ogre::String name, 
+												Ogre::SceneNode *const node
+											);
 
 public:
 											//! Class constructor
@@ -57,15 +70,12 @@ public:
 	const bool								Initialize();
 
 											//! 
-	void									CreateCamera(
+	Ogre::SceneNode							*CreateCamera(
 												const Ogre::String name					//!<
 											);
 
 											//! 
-	void									CreateOIS();
-
-											//! 
-	void									CreateLights();
+	void									CreateIOS();
 
 											//! 
 	void									CreateScene();
@@ -78,9 +88,6 @@ public:
 	
 											//! 
 	Ogre::Timer								*CreateTimer();
-	
-											//! 
-	void									ResetTimer();
 		
 											//! 
 	const OgreWrapper						&GetOgreWrapper()
@@ -93,11 +100,6 @@ public:
 											{
 												return m_scene;
 											}
-
-											//! 
-	Ogre::SceneNode							*GetChildSceneNodeByName(
-												const Ogre::String name					//!< 
-											) const;
 
 											//! 
 	OIS::Keyboard							*GetKeyboard() const
