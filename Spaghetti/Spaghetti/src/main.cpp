@@ -33,6 +33,9 @@ void RunOgreApplication()
 	OIS::Keyboard *const keyboard = application->GetKeyboard();
 	OIS::Mouse *const mouse = application->GetMouse();
 	
+	// clear all events before we go into our main loop
+	application->GetOgreWrapper().GetRoot()->clearEventTimes();
+
 	// Main game loop
 	while(!application->GetOgreWrapper().GetWindow()->isClosed())
 	{
