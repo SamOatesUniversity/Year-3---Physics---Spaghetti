@@ -30,30 +30,29 @@ struct SceneNodeAndName {
 class OgreApplication
 {
 private:
-	OgreWrapper								m_ogreWrapper;								//!< 
+	OgreWrapper								m_ogreWrapper;								//!< Instance of our ogre intialisation wrapper
 
-	Ogre::SceneManager						*m_scene;									//!< 
-	Ogre::SceneNode							*m_rootSceneNode;							//!< 
-	Ogre::Viewport							*m_vp;										//!< 
-
-	OIS::InputManager						*m_inputManager;							//!< 
-	OIS::Mouse								*m_mouse;									//!< 
-	OIS::Keyboard							*m_keyboard;								//!< 
-
+	Ogre::SceneManager						*m_scene;									//!< The instance of the ogre scene
+	Ogre::SceneNode							*m_rootSceneNode;							//!< The root node of our scene
+	Ogre::Viewport							*m_vp;										//!< The render viewport
 	Ogre::Timer								*m_timer;									//!< 
 
-	std::vector<SceneNodeAndName>			m_sceneNodes;								//!< 
+	OIS::InputManager						*m_inputManager;							//!< Instance of the input manager
+	OIS::Mouse								*m_mouse;									//!< Instance of the mouse device
+	OIS::Keyboard							*m_keyboard;								//!< Instance of the keyboard device
+	
+	std::vector<SceneNodeAndName>			m_sceneNodes;								//!< The list of all our nodes in the scene. Identified by a name
 
-	Ogre::SceneNode							*m_camera;									//!< A pointer to the camrera node
+	Ogre::SceneNode							*m_camera;									//!< A pointer to the camrera node for easy access
 
 private:
-											//! 
+											//! Create all the lights in the scene
 	void									CreateLights();
 
-											//! 
+											//! Add a scene node to out list of scene nodes
 	void									AddNodeToList(
-												const Ogre::String name, 
-												Ogre::SceneNode *const node
+												const Ogre::String name,				//!< Name of the scene node to add
+												Ogre::SceneNode *const node				//!< A pointer to the scene node to add
 											);
 
 public:
@@ -69,45 +68,45 @@ public:
 											//! Initialize the ogre application class
 	const bool								Initialize();
 
-											//! 
+											//! Create a camera and attach it to a scene node
 	Ogre::SceneNode							*CreateCamera(
-												const Ogre::String name					//!<
+												Ogre::String name						//!< A name to give to the camera
 											);
 
-											//! 
+											//! Create the input output system
 	void									CreateIOS();
 
-											//! 
+											//! Create the ogre scene
 	void									CreateScene();
 
-											//! 
+											//! The main run loop
 	void									Run(
 												bool updateOption = false,				//!< 
 												bool synchroOption = true				//!< 
 											);
 	
-											//! 
+											//! Create a timer
 	Ogre::Timer								*CreateTimer();
 		
-											//! 
+											//! Get access to the ogre wrapper instance
 	const OgreWrapper						&GetOgreWrapper()
 											{
 												return m_ogreWrapper;
 											}
 
-											//! 
+											//! Get external access to the scene pointer
 	Ogre::SceneManager						*GetSceneManager() const
 											{
 												return m_scene;
 											}
 
-											//! 
+											//! Get external access to the keyboard pointer
 	OIS::Keyboard							*GetKeyboard() const
 											{
 												return m_keyboard;
 											}
 
-											//! 
+											//! Get external access to the mouse pointer
 	OIS::Mouse								*GetMouse() const
 											{
 												return m_mouse;
