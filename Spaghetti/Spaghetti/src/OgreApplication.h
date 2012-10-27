@@ -1,6 +1,7 @@
-#pragma once
+#ifndef _INCLUDE_OGRE_APPLICATION_
+#define _INCLUDE_OGRE_APPLICATION_
 
-//Ogre headers
+// Required Ogre includes
 #include "OGRE/OgreRoot.h"
 #include "OGRE/OgreRenderSystem.h"
 #include "OGRE/OgreRenderWindow.h"
@@ -17,70 +18,98 @@
 #include "OGRE/OgreMeshManager.h"
 #include "OIS/Ois.h"
 
+// My Ogre wrapper
 #include "OgreWrapper.h"
 
-using namespace Ogre;
-
+// OgreApplication class declaration
 class OgreApplication
 {
-public:
-	OgreApplication(void);
-	~OgreApplication(void);
-	void cleanUp();
-
-	bool init(); // init SimpleOgreInit 
-	void createCamera(Ogre::String  name);
-	void createOIS(); // create output/input system
-	void createLights();
-	void createScene(); // setup everything we want to render
-
-	void run(bool updateOption=false, bool synchroOption=true); // run the application
-	
-	Ogre::Timer* createTimer();
-	void resetTimer();
-
-	const OgreWrapper& GetOgreWrapper(){return lOgreInit;} 
-	Ogre::SceneManager*  getSceneManager(){return lScene;}
-	Ogre::SceneNode* getChildSceneNodeByName(Ogre::String name);
-
-	OIS::Keyboard* getKeyboard(){return lKeyboard;}
-	OIS::Mouse* getMouse(){return lMouse;}
-
-    
 private:
+	OgreWrapper								m_ogreWrapper;								//!< 
+
+	Ogre::SceneManager						*m_scene;									//!< 
+	Ogre::SceneNode							*m_rootSceneNode;							//!< 
+	Ogre::Viewport							*m_vp;										//!< 
+
+	OIS::InputManager						*m_inputManager;							//!< 
+	OIS::Mouse								*m_mouse;									//!< 
+	OIS::Keyboard							*m_keyboard;								//!< 
+
+	Ogre::Timer								*m_timer;									//!< 
+
+	Ogre::String							m_nameOfResourceGroup;						//!< 
+	Ogre::String							m_directoryToLoadMeshes;					//!< 
+	Ogre::String							m_directoryToLoadTextures;					//!< 
+
+	Ogre::SceneNode							*m_camera;									//!< A pointer to the camrera node
+
+public:
+											//! Class constructor
+											OgreApplication();
+
+											//! Class destructor
+											~OgreApplication();
+
+											//! Free all allocated resources
+	void									Release();
+
+											//! Initialize the ogre application class
+	const bool								Initialize();
+
+											//! 
+	void									CreateCamera(
+												const Ogre::String name					//!<
+											);
+
+											//! 
+	void									CreateOIS();
+
+											//! 
+	void									CreateLights();
+
+											//! 
+	void									CreateScene();
+
+											//! 
+	void									Run(
+												bool updateOption = false,				//!< 
+												bool synchroOption = true				//!< 
+											);
 	
-	void addChildNodeToList(Ogre::String name,  Ogre::SceneNode *cNode);
-	struct sceneNode
-	{
-		Ogre::String Name;
-		Ogre::SceneNode*  Node;
-	};
+											//! 
+	Ogre::Timer								*CreateTimer();
+	
+											//! 
+	void									ResetTimer();
+		
+											//! 
+	const OgreWrapper						&GetOgreWrapper()
+											{
+												return m_ogreWrapper;
+											}
 
-	std::vector<sceneNode>  childSceneNodeList;
+											//! 
+	Ogre::SceneManager						*GetSceneManager() const
+											{
+												return m_scene;
+											}
 
-	OgreWrapper lOgreInit;
-	Ogre::Root* lRoot;
-	Ogre::RenderWindow*lWindow;
-	Ogre::SceneManager* lScene;
-	Ogre::SceneNode* lRootSceneNode;
-	Ogre::Viewport* vp;
+											//! 
+	Ogre::SceneNode							*GetChildSceneNodeByName(
+												const Ogre::String name					//!< 
+											) const;
 
-	// O/I: mouse and keyboard inputs
-    //Create the necessary objects of OIS to manage Keyboard and Mouse.
-	OIS::InputManager* lInputManager;
-	OIS::Mouse* lMouse;
-	OIS::Keyboard* lKeyboard;
+											//! 
+	OIS::Keyboard							*GetKeyboard() const
+											{
+												return m_keyboard;
+											}
 
-	// timer
-	Ogre::Timer* lOgreTimer;
-
-	//resource groups
-	Ogre::String lNameOfResourceGroup;
-	Ogre::String lDirectoryToLoadMeshes; 
-	Ogre::String lDirectoryToLoadTextures; 
-
-	Ogre::SceneNode						*m_camera;					//!< A pointer to the camrera node
-	Ogre::SceneNode						*m_ninjaNode;				//!< A pointer to the player enity node
-
+											//! 
+	OIS::Mouse								*GetMouse() const
+											{
+												return m_mouse;
+											}
 };
 
+#endif
