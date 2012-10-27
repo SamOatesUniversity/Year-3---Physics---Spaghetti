@@ -54,7 +54,9 @@ const bool OgreApplication::Initialize()
 /*
 *	\brief Create a camera and attach it to a scene node
 */
-Ogre::SceneNode *OgreApplication::CreateCamera(Ogre::String name)
+Ogre::SceneNode *OgreApplication::CreateCamera(
+		Ogre::String name								//!< A name to give to the camera node
+	)
 {
 	// Create a camera using SceneManager. It represents a 'point of view' in the scene.
 	Ogre::Camera *const camera = m_scene->createCamera(name);
@@ -119,8 +121,8 @@ void OgreApplication::CreateScene()
 *	\brief Add a new node to our node list
 */
 void OgreApplication::AddNodeToList(
-		const Ogre::String name, 
-		Ogre::SceneNode *const node
+		const Ogre::String name,					//!< Name of the node to add to the list
+		Ogre::SceneNode *const node					//!< Pointer to the node to add to the list
 	)
 {
 	SceneNodeAndName newSceneNode;
@@ -133,8 +135,8 @@ void OgreApplication::AddNodeToList(
 *	\brief The main run loop
 */
 void OgreApplication::Run(
-		const bool updateOption, 
-		const bool synchroOption
+		const bool updateOption,					//!< 
+		const bool synchroOption					//!< 
 	)
 {
 	Ogre::RenderWindow *const window = m_ogreWrapper.GetWindow();
@@ -166,7 +168,7 @@ void OgreApplication::CreateIOS()
 	OIS::ParamList lSpecialParameters;
 	lSpecialParameters.insert(std::make_pair(std::string("WINDOW"), windowsHandleAsString));
 
-	// dont steel all the focus
+	// don't steel all the focus
 	lSpecialParameters.insert(std::make_pair(std::string("w32_mouse"), std::string("DISCL_FOREGROUND" )));
     lSpecialParameters.insert(std::make_pair(std::string("w32_mouse"), std::string("DISCL_NONEXCLUSIVE")));
     lSpecialParameters.insert(std::make_pair(std::string("w32_keyboard"), std::string("DISCL_FOREGROUND")));
