@@ -106,7 +106,60 @@ Ogre::SceneNode *OgreApplication::CreateCamera(
 */
 void OgreApplication::CreateLights()
 {
+	// Create a new SceneNode - light Scene Node
+	// Create a light in the SceneManager, and set the type of the light: {LT_POINT = 0, LT_DIRECTIONAL = 1, LT_SPOTLIGHT = 2 }
 
+	// create a directional light
+	Ogre::SceneNode* lLightSceneNodeDir = NULL;
+	Ogre::String tempName = "DirectionLight";
+	Ogre::Light* lDirectionalLight = m_scene->createLight(tempName);
+	lDirectionalLight->setType(Ogre::Light::LT_DIRECTIONAL);
+
+	//Set light clolur to white
+	lDirectionalLight->setDiffuseColour(0.8f, 0.8f, 0.8f); 
+	lDirectionalLight->setSpecularColour(1.0f, 1.0f, 1.0f);
+
+	//Set light node as the child node of the RootSceneNode
+	//Attach the light to the chid node
+	lLightSceneNodeDir = m_rootSceneNode->createChildSceneNode(tempName.append("Node"));
+	lLightSceneNodeDir->attachObject(lDirectionalLight);
+	//Set light position : rember must set the light position after attached it to SceneNode
+	lLightSceneNodeDir->setDirection(1.0f, 1.0f, -1.0f);
+
+	// add directional light to the child node list
+	AddNodeToList(lLightSceneNodeDir->getName(), lLightSceneNodeDir);
+
+	// create a spot light
+	Ogre::SceneNode* lLightSceneNodeSpot = NULL;
+	tempName = "SpotLight";
+	Ogre::Light* lSpotLight = m_scene->createLight(tempName);
+	lSpotLight->setType(Ogre::Light::LT_SPOTLIGHT);
+
+	//Set light clolur to red
+	lSpotLight->setDiffuseColour(0.0f, 0.8f, 0.8f); 
+	lSpotLight->setSpecularColour(0.0f, 1.0f, 1.0f);
+
+	//Set light node as the child node of the RootSceneNode
+	//Attach the light to the chid node
+	lLightSceneNodeSpot = m_rootSceneNode->createChildSceneNode(tempName.append("Node"));
+	lLightSceneNodeSpot->attachObject(lSpotLight);
+	lLightSceneNodeSpot->setDirection(1.0f, 1.0f, 0.0f);
+	lLightSceneNodeSpot->setPosition(Ogre::Vector3(50.0, 80.0, 0.0));
+	//set the spot light corn beam width
+	lSpotLight->setSpotlightRange(Ogre::Degree(20), Ogre::Degree(50));
+
+	// add to child node list
+	AddNodeToList(lLightSceneNodeSpot->getName(), lLightSceneNodeSpot);
+
+	// tell the SceneManager where the mesh objects are stored and prepare the sence for load and render entities       //
+	// First, add an ambient color to lit the scene. The ambient color is managed in the scenemanager.
+	// If you want to learn more about ambient/specular/diffuse color, check the 'basic material tutorial'.
+	Ogre::ColourValue lAmbientColour(0.2f, 0.2f, 0.2f, 1.0f);
+	m_scene->setAmbientLight(lAmbientColour);
+
+	// There are three shadow techniques: Ogre::SHADOWTYPE_TEXTURE_MODULATIVE - least expensive and accurate,
+	// Ogre::SHADOWTYPE_STENCIL_MODULATIVE - less expensive and accurate,  Ogre::SHADOWTYPE_STENCIL_ADDITIVE -most expensive and accurate
+	m_scene->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
 }
 
 /*
@@ -114,7 +167,116 @@ void OgreApplication::CreateLights()
 */
 void OgreApplication::CreateScene()
 {
+	CreateLights();
 
+	// 2. Secondly, get a reference on the material manager, which is a singleton. 
+	Ogre::MaterialManager& materialManager = Ogre::MaterialManager::getSingleton();
+
+	const Ogre::String resourceGroupName = "Physics Simulation";
+
+	// Create a resource group manager and create the resource group
+	Ogre::ResourceGroupManager& lRgMgr = Ogre::ResourceGroupManager::getSingleton();
+	lRgMgr.createResourceGroup(resourceGroupName);
+
+	bool lIsRecursive = false;
+
+	// Assign directories for meshes, and textures, and add to the resource group "Physics Simulation"
+	lRgMgr.addResourceLocation("../../media/meshes", "FileSystem", resourceGroupName, lIsRecursive);
+	lRgMgr.addResourceLocation("../../media/textures", "FileSystem", resourceGroupName, lIsRecursive);
+
+	// The function 'initialiseResourceGroup' parses scripts if any in the locations.
+	lRgMgr.initialiseResourceGroup(resourceGroupName);
+
+	// Files that can be loaded are loaded.
+	lRgMgr.loadResourceGroup(resourceGroupName);
+	
+	// Third,  setup surface color using material manager.
+	// It often requires the object to have correct normals (see my manual object construction),
+	// and some lights in the scene. need to check Ogre for Ogre::Technique
+	{
+		Ogre::MaterialPtr lMaterial = materialManager.create("GroundTexture",resourceGroupName);
+		Ogre::Technique* lFirstTechnique = lMaterial->getTechnique(0);
+		Ogre::Pass* lFirstPass = lFirstTechnique->getPass(0);
+
+		Ogre::TextureUnitState* lTextureUnit = lFirstPass->createTextureUnitState();
+		lTextureUnit->setTextureName("Dirt.jpg", Ogre::TEX_TYPE_2D);
+		lTextureUnit->setTextureCoordSet(0);
+
+	}
+
+	{
+		Ogre::MaterialPtr lMaterial = materialManager.create("M_SurfaceColor",resourceGroupName);
+		Ogre::Technique* lFirstTechnique = lMaterial->getTechnique(0);
+		Ogre::Pass* lFirstPass = lFirstTechnique->getPass(0);
+
+		// Lighting is allowed on this pass.
+		lFirstPass->setLightingEnabled(true);
+
+		// Emissive / self illumination is the color 'produced' by the object.
+		// Color values vary between 0.0(minimum) to 1.0 (maximum).
+		//Ogre::ColourValue lSelfIllumnationColour(0.1f, 0.3f, 0.1f, 1.0f);
+		//lFirstPass->setSelfIllumination(lSelfIllumnationColour);
+
+		// diffuse color is the traditionnal color of the object surface.
+		Ogre::ColourValue lDiffuseColour(0.7f, 0.0f, 0.0f, 1.0f);
+		lFirstPass->setDiffuse(lDiffuseColour);
+
+		// ambient colour is linked to ambient lighting to the surface.
+		// If there is no ambient lighting, then this has no influence.
+		// It the ambient lighting is at 1, then this colour is fully added.
+		// This is often use to change the general feeling of a whole scene.
+		Ogre::ColourValue lAmbientColour(0.1f, 0.4f, 0.1f, 1.0f);
+		lFirstPass->setAmbient(lAmbientColour);
+
+		// specular colour describes how a surface reflects light, generating specular highlight on the surface
+		Ogre::ColourValue lSpecularColour(1.0f, 1.0f, 1.0f, 1.0f);
+		lFirstPass->setSpecular(lSpecularColour);
+
+		// Shininess is the 'inverse of specular color splattering' coefficient.
+		// If this is big (e.g : 64) you get a very tiny dot with a quite strong color (on round surface).
+		// If this is 0, you get a simple color layer (the dot has become very wide).
+		Ogre::Real lShininess = 64.0f;
+		lFirstPass->setShininess(lShininess);
+
+	}
+
+	// add the second object
+	Ogre::String cubeName = "Cube"; 
+	Ogre::Entity* lCube = m_scene->createEntity(cubeName, "cube.mesh");
+	lCube->setCastShadows(true);
+
+	// create a scene node to the entity scene node for our character
+	Ogre::SceneNode* lCubeNode = m_rootSceneNode->createChildSceneNode(cubeName.append("Node"));
+	//attach the mesh
+	lCubeNode->attachObject(lCube);
+	lCubeNode->setPosition(0.0f, 10.0f, 0.0f);
+	lCubeNode->scale(0.05f, 0.05f, 0.05f);
+	lCube->setMaterialName("M_SurfaceColor");
+
+	// add to child scene node list
+	AddNodeToList(lCubeNode->getName(), lCubeNode);
+
+	// make a floor to project shadow onto
+	Ogre::Plane plane(Ogre::Vector3::UNIT_Y, 0);
+	Ogre::MeshManager::getSingleton().createPlane(
+		"ground", 
+		Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+		plane, 
+		50, 50, 20, 20, 
+		true, 
+		1, 5, 5, 
+		Ogre::Vector3::UNIT_Z
+	);
+
+	Ogre::String floorName = "Floor";
+	Ogre::Entity* lGround = m_scene->createEntity(floorName, "ground");
+	lGround->setCastShadows(false);
+	Ogre::SceneNode* lFloorNode = m_rootSceneNode->createChildSceneNode(floorName.append("Node"));
+	lFloorNode->attachObject(lGround);
+	lGround->setMaterialName("GroundTexture");
+
+	// add to child scene node list
+	AddNodeToList(lFloorNode->getName(), lFloorNode);
 }
 
 /*
