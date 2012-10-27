@@ -66,17 +66,17 @@ Ogre::SceneNode *OgreApplication::CreateCamera(Ogre::String name)
 
 	// Setup viewport parameters 
 	// Add viewport to the window with the camera 
-	float lViewportWidth = 1.0f;
-	float lViewportHeight = 1.0f;
-	float lViewportLeft	= (1.0f - lViewportWidth) * 0.5f;
-	float lViewportTop = (1.0f - lViewportHeight) * 0.5f;
-	unsigned short lMainViewportZOrder = 100;
+	const float viewportWidth = 1.0f;
+	const float viewportHeight = 1.0f;
+	const float viewportLeft = (1.0f - viewportWidth) * 0.5f;
+	const float viewportTop = (1.0f - viewportHeight) * 0.5f;
+	const unsigned short viewportZOrder = 100;
 	
 	Ogre::RenderWindow *const window = m_ogreWrapper.GetWindow();
-	m_vp = window->addViewport(camera, lMainViewportZOrder, lViewportLeft, lViewportTop, lViewportWidth, lViewportHeight);
+	m_vp = window->addViewport(camera, viewportZOrder, viewportLeft, viewportTop, viewportWidth, viewportHeight);
 
 	// Set the viewport to draw the scene automatically
-	// whenever the window is updated by the call lWindow->update();
+	// whenever the window is updated
 	m_vp->setAutoUpdated(true);
 
 	// Choose a color for this viewport. 
@@ -84,13 +84,9 @@ Ogre::SceneNode *OgreApplication::CreateCamera(Ogre::String name)
 	m_vp->setBackgroundColour(Ogre::ColourValue(0.2f, 0.2f, 0.3f));
 
 	// Setup the visual ratio of the camera. To make it looks real, same as the viewport.
-	float ratio = float(m_vp->getActualWidth()) / float(m_vp->getActualHeight());
-	camera->setAspectRatio(ratio);
+	camera->setAspectRatio(static_cast<float>(m_vp->getActualWidth()) / static_cast<float>(m_vp->getActualHeight()));
 	camera->setNearClipDistance(0.1f);
 	camera->setFarClipDistance(3000.0f); 
-
-	m_camera->setPosition(Ogre::Vector3(0.00f, 20.0f, 30.0f));
-	camera->lookAt(0.0f, 0.0f, 0.0f);
 
 	AddNodeToList(m_camera->getName(), m_camera);
 	
@@ -99,12 +95,6 @@ Ogre::SceneNode *OgreApplication::CreateCamera(Ogre::String name)
 
 	// Update the content of the window not automatically.
 	window->setAutoUpdated(false);
-
-	// cleaning of windows events managed by Ogre::WindowEventUtilities::...
-	// I call it after a 'pause in window updating', in order to maintain smoothness.
-	// Explanation : if you clicked 2000 times when the windows was being created, there are
-	// at least 2000 messages created by the OS to listen to. This is made to clean them.
-	m_ogreWrapper.GetRoot()->clearEventTimes();
 
 	return m_camera;
 }
@@ -168,15 +158,11 @@ void OgreApplication::CreateIOS()
 	window->getCustomAttribute("WINDOW", &windowHandle);
 
 	//2/convert it into a string
-	std::string windowsHandleAsString="";
-	{
-		std::ostringstream windowHndStr;
-		windowHndStr << windowHandle;
-		windowsHandleAsString = windowHndStr.str();
-	}
+	std::ostringstream windowHndStr;
+	windowHndStr << windowHandle;
+	const std::string windowsHandleAsString = windowHndStr.str();
 
 	// 3/ we translate it into a format accepted by OIS (the input library). 
-
 	OIS::ParamList lSpecialParameters;
 	lSpecialParameters.insert(std::make_pair(std::string("WINDOW"), windowsHandleAsString));
 
@@ -189,15 +175,13 @@ void OgreApplication::CreateIOS()
 	//4/ we create the input/output system itself.
 	m_inputManager = OIS::InputManager::createInputSystem( lSpecialParameters );
 	
-	//the events can be stored or not in a buffer 
-	bool lBufferedKeys = false;
-	bool lBufferedMouse = false;
-
 	//creation of the keyboard-representing object 
-	m_keyboard = static_cast<OIS::Keyboard*>(m_inputManager->createInputObject(OIS::OISKeyboard, lBufferedKeys));
+	const bool bufferedKeys = false;
+	m_keyboard = static_cast<OIS::Keyboard*>(m_inputManager->createInputObject(OIS::OISKeyboard, bufferedKeys));
 	
 	//creation of the mouse-representing object 
-	m_mouse = static_cast<OIS::Mouse*>(m_inputManager->createInputObject( OIS::OISMouse, lBufferedMouse));
+	const bool bufferedMouse = false;
+	m_mouse = static_cast<OIS::Mouse*>(m_inputManager->createInputObject( OIS::OISMouse, bufferedMouse));
 	
 	//then must tell the mouse how much it is allowed to move. 
 	int top, left;
