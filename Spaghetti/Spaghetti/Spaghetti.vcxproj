@@ -124,11 +124,16 @@
     <ClInclude Include="src\main.h" />
     <ClInclude Include="src\OgreApplication.h" />
     <ClInclude Include="src\OgreWrapper.h" />
+    <ClInclude Include="src\Spaghetti\CSpaghettiRigidBody.h" />
+    <ClInclude Include="src\Spaghetti\CSpaghettiWorld.h" />
+    <ClInclude Include="src\Spaghetti\Spaghetti.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\OgreApplication.cpp" />
     <ClCompile Include="src\OgreWrapper.cpp" />
+    <ClCompile Include="src\Spaghetti\CSpaghettiWorld.cpp" />
+    <ClCompile Include="src\Spaghetti\Spaghetti.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

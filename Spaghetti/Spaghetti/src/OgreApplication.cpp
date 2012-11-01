@@ -305,8 +305,8 @@ void OgreApplication::Run(
 	Ogre::Root *const root = m_ogreWrapper.GetRoot();
 
 	window->update(updateOption);
-    window->swapBuffers(synchroOption);
-    root->renderOneFrame();
+	window->swapBuffers(synchroOption);
+	root->renderOneFrame();
 }
 
 /*
