@@ -38,8 +38,11 @@ void RunOgreApplication()
 	// clear all events before we go into our main loop
 	application->GetOgreWrapper().GetRoot()->clearEventTimes();
 
+	CSpaghetti *const spaghetti = new CSpaghetti();
+	CSpaghettiWorld *const world = spaghetti->CreateWorld();
+
 	// Main game loop
-	while(!application->GetOgreWrapper().GetWindow()->isClosed())
+	while (!application->GetOgreWrapper().GetWindow()->isClosed())
 	{
 		// calculate the delta time
 		const unsigned long currentTime = timer->getMicroseconds();
@@ -53,15 +56,17 @@ void RunOgreApplication()
 		mouse->capture();
 
 		// update all our physics
-		//spaghetti->Update? or something magical
+		
 
 		// update the application
-		application->Run(false, true);
 		Ogre::WindowEventUtilities::messagePump();
+		if (!application->GetOgreWrapper().GetWindow()->isClosed())
+			application->Run(false, true);
 	}
 
 	// clean up
 	delete application;
+	delete spaghetti;
 }
 
 /*
