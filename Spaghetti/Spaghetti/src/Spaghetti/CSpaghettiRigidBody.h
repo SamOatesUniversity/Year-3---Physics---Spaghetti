@@ -1,13 +1,13 @@
 #pragma once
 
-#include "../SAM/SAM.h"
+#include "../../../SAM/SAM/SAM.h"
 
 class CSpaghettiRigidBody {
 private:
 
-	SAM::Vector<3, float>					m_position;
-	SAM::Vector<3, float>					m_newPosition;
-	SAM::Vector<3, float>					m_velocity;	
+	SAM::TVector<float, 3>					m_position;
+	SAM::TVector<float, 3>					m_newPosition;
+	SAM::TVector<float, 3>					m_velocity;	
 
 public:
 											//! Class constructor
