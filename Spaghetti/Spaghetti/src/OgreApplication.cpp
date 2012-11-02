@@ -217,7 +217,7 @@ void OgreApplication::CreateScene()
 		//Ogre::ColourValue lSelfIllumnationColour(0.1f, 0.3f, 0.1f, 1.0f);
 		//lFirstPass->setSelfIllumination(lSelfIllumnationColour);
 
-		// diffuse color is the traditionnal color of the object surface.
+		// diffuse color is the traditional color of the object surface.
 		Ogre::ColourValue lDiffuseColour(0.7f, 0.0f, 0.0f, 1.0f);
 		lFirstPass->setDiffuse(lDiffuseColour);
 

@@ -78,5 +78,8 @@
     <ClCompile Include="src\Spaghetti\CSpaghettiWorld.cpp">
       <Filter>Source Files\Spaghetti</Filter>
     </ClCompile>
+    <ClCompile Include="src\Spaghetti\CSpaghettiRigidBody.cpp">
+      <Filter>Source Files\Spaghetti</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
