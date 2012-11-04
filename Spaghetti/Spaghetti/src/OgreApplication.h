@@ -111,6 +111,10 @@ public:
 											{
 												return m_mouse;
 											}
+
+	Ogre::SceneNode							*FindNodeByName(
+												const Ogre::String name
+											) const;
 };
 
 #endif

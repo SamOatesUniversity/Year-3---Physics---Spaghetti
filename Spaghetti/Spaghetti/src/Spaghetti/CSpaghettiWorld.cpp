@@ -5,9 +5,7 @@
 */
 CSpaghettiWorld::CSpaghettiWorld()
 {
-	m_gravity[0] = 0.0f;
-	m_gravity[1] = -9.81f;
-	m_gravity[2] = 0.0f;
+	m_gravity.Set(0.0f, -0.00000981f, 0.0f);
 }
 
 /*
@@ -26,6 +24,24 @@ CSpaghettiWorld::~CSpaghettiWorld()
 }
 
 /*
+*	\brief Add a rigid body to the world
+*/
+void CSpaghettiWorld::AddRigidBody( 
+	CSpaghettiRigidBody *rigidBody							//!< The rigid body to add to the scene
+	)
+{
+	m_rigidBodies.push_back(rigidBody);
+}
+
+/*
+*	\brief Get the worlds gravity vector
+*/
+SAM::TVector<float, 3> CSpaghettiWorld::GetGravity() const
+{
+	return m_gravity;
+}
+
+/*
 *	\brief Update all simulation objects in the world
 */
 void CSpaghettiWorld::Update(
@@ -37,6 +53,6 @@ void CSpaghettiWorld::Update(
 	for (std::vector<CSpaghettiRigidBody*>::const_iterator bodyIt = begin; bodyIt != end; bodyIt++)
 	{
 		CSpaghettiRigidBody *const body = (*bodyIt);
-		body->Update(deltaTime);
+		body->Update(this, deltaTime);
 	}
 }
