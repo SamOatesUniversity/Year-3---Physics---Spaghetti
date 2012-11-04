@@ -56,7 +56,7 @@ void RunOgreApplication()
 		mouse->capture();
 
 		// update all our physics
-		// world->Update(deltatTime);
+		world->Update(deltatTime);
 
 		// update the application
 		Ogre::WindowEventUtilities::messagePump();
