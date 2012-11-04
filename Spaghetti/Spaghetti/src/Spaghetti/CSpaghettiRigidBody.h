@@ -20,6 +20,8 @@ public:
 	void									Initialize();
 
 											//! Update the rigid body
-	void									Update();
+	void									Update(
+												const unsigned long deltaTime						//!< Delta time (The amount of time past since the last update)
+											);
 
 };

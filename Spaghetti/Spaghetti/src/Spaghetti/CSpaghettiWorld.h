@@ -17,4 +17,9 @@ public:
 											//! Class destructor
 											~CSpaghettiWorld();
 
+											//! Update all simulation objects in the world
+	void									Update(
+												const unsigned long deltaTime				//!< Delta time (The amount of time past since the last update)
+											);
+
 };
