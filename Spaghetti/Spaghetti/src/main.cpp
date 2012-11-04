@@ -41,6 +41,11 @@ void RunOgreApplication()
 	CSpaghetti *const spaghetti = new CSpaghetti();
 	CSpaghettiWorld *const world = spaghetti->CreateWorld();
 
+	CSpaghettiRigidBody *const cubeBody = spaghetti->CreateRigidBody("Cube", world);
+	cubeBody->SetPosition(0.0f, 10.0f, 0.0f);
+
+	Ogre::SceneNode *const cubeMesh = application->FindNodeByName("CubeNode");
+
 	// Main game loop
 	while (!application->GetOgreWrapper().GetWindow()->isClosed())
 	{
@@ -57,6 +62,9 @@ void RunOgreApplication()
 
 		// update all our physics
 		world->Update(deltatTime);
+
+		SAM::TVector<float, 3> position = cubeBody->GetPosition();
+		cubeMesh->setPosition(position.X(), position.Y(), position.Z());
 
 		// update the application
 		Ogre::WindowEventUtilities::messagePump();

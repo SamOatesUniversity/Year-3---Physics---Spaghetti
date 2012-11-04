@@ -294,6 +294,25 @@ void OgreApplication::AddNodeToList(
 }
 
 /*
+*	\brief Add a new node to our node list
+*/
+Ogre::SceneNode *OgreApplication::FindNodeByName(
+		const Ogre::String name
+	) const
+{
+	std::vector<SceneNodeAndName>::const_iterator begin = m_sceneNodes.begin();
+	std::vector<SceneNodeAndName>::const_iterator end = m_sceneNodes.end();
+	for (std::vector<SceneNodeAndName>::const_iterator sceneNodeIt = begin; sceneNodeIt != end; sceneNodeIt++)
+	{
+		SceneNodeAndName node = (*sceneNodeIt);
+		if (node.name == name.c_str()) {
+			return node.node;
+		}
+	}
+	return nullptr;
+}
+
+/*
 *	\brief The main run loop
 */
 void OgreApplication::Run(
