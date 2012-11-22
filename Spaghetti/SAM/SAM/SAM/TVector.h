@@ -44,6 +44,52 @@ namespace SAM
 														m_element[0] = x;
 														m_element[1] = y;
 													}
+
+													//! Set the x element of the vector
+		void										SetX(
+														TYPE x
+													)
+													{
+														m_element[0] = x;
+													}
+
+													//! Set the y element of the vector
+		void										SetY(
+														TYPE y
+													)
+													{
+														m_element[1] = y;
+													}
+
+													//! Get the length of the vector
+		TYPE										Length() const
+													{
+														return sqrt((m_element[0] * m_element[0]) + (m_element[1] * m_element[1]));
+													}
+
+													//! Add another vector to this vector and return the result as a new vector
+		TVector<TYPE, 2>							operator+(const TVector<TYPE, 2> &otherVector) const
+													{
+														TVector<TYPE, 2> result;
+														result.Set(m_element[0] + otherVector.X(), m_element[1] + otherVector.Y());
+														return result;
+													}
+
+													//! Subtract another vector to this vector and return the result as a new vector
+		TVector<TYPE, 2>							operator-(const TVector<TYPE, 2> &otherVector) const
+													{
+														TVector<TYPE, 2> result;
+														result.Set(m_element[0] - otherVector.X(), m_element[1] - otherVector.Y());
+														return result;
+													}
+	
+													//! Scale a vector by a value
+		TVector<TYPE, 2>							operator*(const TYPE other) const
+													{
+														TVector<TYPE, 2> result;
+														result.Set(m_element[0] * other, m_element[1] * other);
+														return result;
+													}
 	};
 
 	template <class TYPE>
@@ -181,6 +227,68 @@ namespace SAM
 														m_element[1] = y;
 														m_element[2] = z;
 														m_element[3] = w;
+													}
+
+													//! Set the x element of the vector
+		void										SetX(
+														TYPE x
+													)
+													{
+														m_element[0] = x;
+													}
+
+													//! Set the y element of the vector
+		void										SetY(
+														TYPE y
+													)
+													{
+														m_element[1] = y;
+													}
+
+													//! Set the z element of the vector
+		void										SetZ(
+														TYPE z
+													)
+													{
+														m_element[2] = z;
+													}
+
+													//! Set the w element of the vector
+		void										SetW(
+														TYPE w
+													)
+													{
+														m_element[3] = w;
+													}
+
+													//! Get the length of the vector
+		TYPE										Length() const
+													{
+														return sqrt((m_element[0] * m_element[0]) + (m_element[1] * m_element[1]) + (m_element[2] * m_element[2]) + (m_element[3] * m_element[3]));
+													}
+
+													//! Add another vector to this vector and return the result as a new vector
+		TVector<TYPE, 4>							operator+(const TVector<TYPE, 4> &otherVector) const
+													{
+														TVector<TYPE, 4> result;
+														result.Set(m_element[0] + otherVector.X(), m_element[1] + otherVector.Y(), m_element[2] + otherVector.Z(), m_element[3] + otherVector.W());
+														return result;
+													}
+
+													//! Subtract another vector to this vector and return the result as a new vector
+		TVector<TYPE, 4>							operator-(const TVector<TYPE, 4> &otherVector) const
+													{
+														TVector<TYPE, 4> result;
+														result.Set(m_element[0] - otherVector.X(), m_element[1] - otherVector.Y(), m_element[2] - otherVector.Z(), m_element[3] - otherVector.W());
+														return result;
+													}
+	
+													//! Scale a vector by a value
+		TVector<TYPE, 4>							operator*(const TYPE other) const
+													{
+														TVector<TYPE, 4> result;
+														result.Set(m_element[0] * other, m_element[1] * other, m_element[2] * other, m_element[3] * other);
+														return result;
 													}
 	};
 
