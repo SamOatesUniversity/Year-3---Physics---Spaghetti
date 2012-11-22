@@ -46,7 +46,7 @@ void CSpaghettiRigidBody::Update(
 	SAM::TVector<float, 3> velocity = m_velocity + world->GetGravity() * (static_cast<float>(deltaTime) * 0.001f);
 	SAM::TVector<float, 3> position = m_position + (m_velocity * (static_cast<float>(deltaTime) * 0.001f));
 
-	if (position.Y() < 2.2f) 
+	if (position.Y() < 2.5f) 
 	{
 		m_velocity.Set(0.0f, 0.0f, 0.0f);
 		return;

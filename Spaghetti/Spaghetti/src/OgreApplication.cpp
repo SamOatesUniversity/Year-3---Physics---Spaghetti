@@ -256,6 +256,21 @@ void OgreApplication::CreateScene()
 	// add to child scene node list
 	AddNodeToList(lCubeNode->getName(), lCubeNode);
 
+	Ogre::String cubeName1 = "Cube1"; 
+	Ogre::Entity* lCube1 = m_scene->createEntity(cubeName1, "cube.mesh");
+	lCube1->setCastShadows(true);
+
+	// create a scene node to the entity scene node for our character
+	Ogre::SceneNode* lCubeNode1 = m_rootSceneNode->createChildSceneNode(cubeName1.append("Node"));
+	//attach the mesh
+	lCubeNode1->attachObject(lCube1);
+	lCubeNode1->setPosition(0.0f, 10.0f, 0.0f);
+	lCubeNode1->scale(0.025f, 0.05f, 0.025f);
+	lCube1->setMaterialName("M_SurfaceColor");
+
+	// add to child scene node list
+	AddNodeToList(lCubeNode1->getName(), lCubeNode1);
+
 	// make a floor to project shadow onto
 	Ogre::Plane plane(Ogre::Vector3::UNIT_Y, 0);
 	Ogre::MeshManager::getSingleton().createPlane(
