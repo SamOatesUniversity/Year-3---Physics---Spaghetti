@@ -112,9 +112,16 @@ public:
 												return m_mouse;
 											}
 
+											//! 
 	Ogre::SceneNode							*FindNodeByName(
 												const Ogre::String name
 											) const;
+
+											//! 
+	Ogre::SceneNode*						CreateEntityFromMesh(
+												std::string mesh,
+												std::string name
+											);
 };
 
 #endif
