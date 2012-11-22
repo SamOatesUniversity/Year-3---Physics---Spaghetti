@@ -41,11 +41,10 @@ void RunOgreApplication()
 	CSpaghetti *const spaghetti = new CSpaghetti();
 	CSpaghettiWorld *const world = spaghetti->CreateWorld();
 
-	CSpaghettiRigidBody *const cubeBody = spaghetti->CreateRigidBody(application->FindNodeByName("CubeNode"), world);
+	Ogre::SceneNode* cubeNode = application->CreateEntityFromMesh("cube.mesh", "CubeNode");
+	cubeNode->setScale(0.05, 0.05, 0.05);
+	CSpaghettiRigidBody *const cubeBody = spaghetti->CreateRigidBody(cubeNode, world);
 	cubeBody->SetPosition(0.0f, 10.0f, 0.0f);
-
-	CSpaghettiRigidBody *const cubeBody1 = spaghetti->CreateRigidBody(application->FindNodeByName("Cube1Node"), world);
-	cubeBody1->SetPosition(10.0f, 30.0f, 0.0f);
 
 	// Main game loop
 	while (!application->GetOgreWrapper().GetWindow()->isClosed())
@@ -67,10 +66,6 @@ void RunOgreApplication()
 		// update the first cube
 		SAM::TVector<float, 3> position = cubeBody->GetPosition();
 		static_cast<Ogre::SceneNode*>(cubeBody->GetRenderObject())->setPosition(position.X(), position.Y(), position.Z());
-
-		// updae the second cube
-		position = cubeBody1->GetPosition();
-		static_cast<Ogre::SceneNode*>(cubeBody1->GetRenderObject())->setPosition(position.X(), position.Y(), position.Z());
 
 		// update the application
 		Ogre::WindowEventUtilities::messagePump();

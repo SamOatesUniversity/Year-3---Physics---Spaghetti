@@ -189,87 +189,6 @@ void OgreApplication::CreateScene()
 
 	// Files that can be loaded are loaded.
 	lRgMgr.loadResourceGroup(resourceGroupName);
-	
-	// Third,  setup surface color using material manager.
-	// It often requires the object to have correct normals (see my manual object construction),
-	// and some lights in the scene. need to check Ogre for Ogre::Technique
-	{
-		Ogre::MaterialPtr lMaterial = materialManager.create("GroundTexture",resourceGroupName);
-		Ogre::Technique* lFirstTechnique = lMaterial->getTechnique(0);
-		Ogre::Pass* lFirstPass = lFirstTechnique->getPass(0);
-
-		Ogre::TextureUnitState* lTextureUnit = lFirstPass->createTextureUnitState();
-		lTextureUnit->setTextureName("Dirt.jpg", Ogre::TEX_TYPE_2D);
-		lTextureUnit->setTextureCoordSet(0);
-
-	}
-
-	{
-		Ogre::MaterialPtr lMaterial = materialManager.create("M_SurfaceColor",resourceGroupName);
-		Ogre::Technique* lFirstTechnique = lMaterial->getTechnique(0);
-		Ogre::Pass* lFirstPass = lFirstTechnique->getPass(0);
-
-		// Lighting is allowed on this pass.
-		lFirstPass->setLightingEnabled(true);
-
-		// Emissive / self illumination is the color 'produced' by the object.
-		// Color values vary between 0.0(minimum) to 1.0 (maximum).
-		//Ogre::ColourValue lSelfIllumnationColour(0.1f, 0.3f, 0.1f, 1.0f);
-		//lFirstPass->setSelfIllumination(lSelfIllumnationColour);
-
-		// diffuse color is the traditional color of the object surface.
-		Ogre::ColourValue lDiffuseColour(0.7f, 0.0f, 0.0f, 1.0f);
-		lFirstPass->setDiffuse(lDiffuseColour);
-
-		// ambient colour is linked to ambient lighting to the surface.
-		// If there is no ambient lighting, then this has no influence.
-		// It the ambient lighting is at 1, then this colour is fully added.
-		// This is often use to change the general feeling of a whole scene.
-		Ogre::ColourValue lAmbientColour(0.1f, 0.4f, 0.1f, 1.0f);
-		lFirstPass->setAmbient(lAmbientColour);
-
-		// specular colour describes how a surface reflects light, generating specular highlight on the surface
-		Ogre::ColourValue lSpecularColour(1.0f, 1.0f, 1.0f, 1.0f);
-		lFirstPass->setSpecular(lSpecularColour);
-
-		// Shininess is the 'inverse of specular color splattering' coefficient.
-		// If this is big (e.g : 64) you get a very tiny dot with a quite strong color (on round surface).
-		// If this is 0, you get a simple color layer (the dot has become very wide).
-		Ogre::Real lShininess = 64.0f;
-		lFirstPass->setShininess(lShininess);
-
-	}
-
-	// add the second object
-	Ogre::String cubeName = "Cube"; 
-	Ogre::Entity* lCube = m_scene->createEntity(cubeName, "cube.mesh");
-	lCube->setCastShadows(true);
-
-	// create a scene node to the entity scene node for our character
-	Ogre::SceneNode* lCubeNode = m_rootSceneNode->createChildSceneNode(cubeName.append("Node"));
-	//attach the mesh
-	lCubeNode->attachObject(lCube);
-	lCubeNode->setPosition(0.0f, 10.0f, 0.0f);
-	lCubeNode->scale(0.05f, 0.05f, 0.05f);
-	lCube->setMaterialName("M_SurfaceColor");
-
-	// add to child scene node list
-	AddNodeToList(lCubeNode->getName(), lCubeNode);
-
-	Ogre::String cubeName1 = "Cube1"; 
-	Ogre::Entity* lCube1 = m_scene->createEntity(cubeName1, "cube.mesh");
-	lCube1->setCastShadows(true);
-
-	// create a scene node to the entity scene node for our character
-	Ogre::SceneNode* lCubeNode1 = m_rootSceneNode->createChildSceneNode(cubeName1.append("Node"));
-	//attach the mesh
-	lCubeNode1->attachObject(lCube1);
-	lCubeNode1->setPosition(0.0f, 10.0f, 0.0f);
-	lCubeNode1->scale(0.025f, 0.05f, 0.025f);
-	lCube1->setMaterialName("M_SurfaceColor");
-
-	// add to child scene node list
-	AddNodeToList(lCubeNode1->getName(), lCubeNode1);
 
 	// make a floor to project shadow onto
 	Ogre::Plane plane(Ogre::Vector3::UNIT_Y, 0);
@@ -281,7 +200,7 @@ void OgreApplication::CreateScene()
 		true, 
 		1, 5, 5, 
 		Ogre::Vector3::UNIT_Z
-	);
+		);
 
 	Ogre::String floorName = "Floor";
 	Ogre::Entity* lGround = m_scene->createEntity(floorName, "ground");
@@ -290,8 +209,31 @@ void OgreApplication::CreateScene()
 	lFloorNode->attachObject(lGround);
 	lGround->setMaterialName("GroundTexture");
 
-	// add to child scene node list
 	AddNodeToList(lFloorNode->getName(), lFloorNode);
+}
+
+/*
+*	\brief Add a new node to our node list
+*/
+Ogre::SceneNode* OgreApplication::CreateEntityFromMesh(
+		std::string mesh,
+		std::string name
+	)
+{
+	// add the second object
+	Ogre::String meshName = mesh.substr(0, mesh.find(".mesh")); 
+	Ogre::Entity* meshEntity = m_scene->createEntity(meshName, mesh);
+
+	// create a scene node to the entity scene node for our character
+	Ogre::SceneNode *const node = m_rootSceneNode->createChildSceneNode(name);
+	//attach the mesh
+	node->attachObject(meshEntity);
+	node->setPosition(0.0f, 0.0f, 0.0f);
+
+	// add to child scene node list
+	AddNodeToList(node->getName(), node);
+
+	return node;
 }
 
 /*
