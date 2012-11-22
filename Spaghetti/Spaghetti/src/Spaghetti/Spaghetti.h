@@ -20,7 +20,7 @@ public:
 
 									//! Creates a rigid body
 	CSpaghettiRigidBody				*CreateRigidBody(
-										std::string id,								//!< A string id representing the graphical instance of this rigid body
+										void *renderObject,							//!< A pointer to an object the new rigid body will represent
 										CSpaghettiWorld *world						//!< The world the rigid body should be long too
 									);
 

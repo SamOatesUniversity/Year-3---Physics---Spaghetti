@@ -10,16 +10,23 @@ friend class CSpaghettiWorld;
 
 private:
 
-	std::string								m_id;													//!< The id of the rigid body
+	void									*m_renderObject;										//!< A pointer to an object this rigid body will represent
 
 	SAM::TVector<float, 3>					m_position;												//!< 
 	SAM::TVector<float, 3>					m_newPosition;											//!< 
 	SAM::TVector<float, 3>					m_velocity;												//!< 
 
 public:
+
+	void									*GetRenderObject() const
+											{
+												return m_renderObject;
+											}
+
+public:
 											//! Class constructor
 											CSpaghettiRigidBody(
-												const std::string	id								//!< The id of the rigid body	
+												void *renderObject									//!< A pointer to an object this rigid body will represent
 											);
 
 											//! Class destructor
