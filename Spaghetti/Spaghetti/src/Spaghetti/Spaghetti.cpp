@@ -38,11 +38,11 @@ CSpaghettiWorld *CSpaghetti::CreateWorld()
 *	\brief Creates a rigid body
 */
 CSpaghettiRigidBody *CSpaghetti::CreateRigidBody(
-		std::string id,										//!< A string id representing the graphical instance of this rigid body
+		void *renderObject,									//!< A pointer to an object the new igid body will represent
 		CSpaghettiWorld *world								//!< The world the rigid body should be long too
 	)
 {
-	CSpaghettiRigidBody *const newRigidBody = new CSpaghettiRigidBody(id);
+	CSpaghettiRigidBody *const newRigidBody = new CSpaghettiRigidBody(renderObject);
 	if (world != nullptr) {
 		world->AddRigidBody(newRigidBody);
 	}

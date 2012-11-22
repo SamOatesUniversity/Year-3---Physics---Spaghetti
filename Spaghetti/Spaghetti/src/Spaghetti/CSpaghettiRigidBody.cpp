@@ -4,10 +4,10 @@
 *	\brief Class constructor
 */
 CSpaghettiRigidBody::CSpaghettiRigidBody(
-		const std::string	id									//!< The id of the rigid body	
+		void* renderObject										//!< A pointer to an object this rigid body will represent
 	)
 {
-	m_id = id;
+	m_renderObject = renderObject;
 
 	m_position.Set(0.0f, 0.0f, 0.0f);
 	m_newPosition.Set(0.0f, 0.0f, 0.0f);
@@ -19,7 +19,7 @@ CSpaghettiRigidBody::CSpaghettiRigidBody(
 */
 CSpaghettiRigidBody::~CSpaghettiRigidBody()
 {
-
+	m_renderObject = nullptr;
 }
 
 /*
