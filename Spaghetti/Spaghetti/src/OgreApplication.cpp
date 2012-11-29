@@ -222,13 +222,30 @@ Ogre::SceneNode* OgreApplication::CreateEntityFromMesh(
 {
 	// add the second object
 	Ogre::String meshName = mesh.substr(0, mesh.find(".mesh")); 
-	Ogre::Entity* meshEntity = m_scene->createEntity(meshName, mesh);
+
+	Ogre::Entity* meshEntity = NULL;
+	try 
+	{
+		meshEntity = m_scene->getEntity(meshName);
+		meshEntity->clone(meshName + "-" + name);
+	}
+	catch(Ogre::ItemIdentityException ex) 
+	{
+		meshEntity = m_scene->createEntity(meshName, mesh);
+	}
 
 	// create a scene node to the entity scene node for our character
 	Ogre::SceneNode *const node = m_rootSceneNode->createChildSceneNode(name);
 	//attach the mesh
-	node->attachObject(meshEntity);
-	node->setPosition(0.0f, 0.0f, 0.0f);
+	try
+	{
+		node->attachObject(meshEntity);
+		node->setPosition(0.0f, 0.0f, 0.0f);
+	}
+	catch (Ogre::InvalidParametersException ex)
+	{
+		return NULL;
+	}
 
 	// add to child scene node list
 	AddNodeToList(node->getName(), node);

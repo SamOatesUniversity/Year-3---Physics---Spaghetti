@@ -48,21 +48,16 @@ void CSpaghettiRigidBody::Update(
 
 	if (position.Y() < 2.5f) 
 	{
-		m_velocity.Set(0.0f, 0.0f, 0.0f);
-		return;
+		const float vel = velocity.Length();
+		if (vel < 0.002f && vel > -0.002f)
+		{
+			m_velocity.Set(0.0f, 0.0f, 0.0f);
+			m_position.SetY(2.5f);
+			return;
+		}
+		velocity.Set(0.0f, velocity.Y() * -0.70f, 0.0f);
+		position.SetY(2.5f);
 	}
-
-	//if (m_velocity.Length() > 0.05f || (abs(m_position.Y())) > 0.05)
-	//{   
-	//	float drag = 0.98f;
-	//	velocity = m_velocity * drag + world->GetGravity() * (static_cast<float>(deltaTime) * 0.001f);
-	//	position = m_position + m_velocity * (static_cast<float>(deltaTime) * 0.001f);
-	//	if (position.Y() < 2.0f)
-	//	{
-	//		velocity.SetY(velocity.Y() * -1.0f);
-	//		position.SetY(2.0f);
-	//	}
-	//}
 
 	m_velocity = velocity;
 	m_position = position;
