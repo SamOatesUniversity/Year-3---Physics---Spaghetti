@@ -41,10 +41,21 @@ void RunOgreApplication()
 	CSpaghetti *const spaghetti = new CSpaghetti();
 	CSpaghettiWorld *const world = spaghetti->CreateWorld();
 
-	Ogre::SceneNode* cubeNode = application->CreateEntityFromMesh("cube.mesh", "CubeNode");
-	cubeNode->setScale(0.05, 0.05, 0.05);
-	CSpaghettiRigidBody *const cubeBody = spaghetti->CreateRigidBody(cubeNode, world);
-	cubeBody->SetPosition(0.0f, 10.0f, 0.0f);
+	// create some things to bounce around
+	static const int noofBoxes = 10;
+	CSpaghettiRigidBody* box[noofBoxes];
+	for (int boxIndex = 0; boxIndex < noofBoxes; ++boxIndex)
+	{
+		std::stringstream nodeName;
+		nodeName << "CubeNode-" << boxIndex;
+
+		Ogre::SceneNode *const cubeNode = application->CreateEntityFromMesh("ogrehead.mesh", nodeName.str());
+		cubeNode->setScale(0.1, 0.1, 0.1);
+		cubeNode->showBoundingBox(true);
+		
+		box[boxIndex] = spaghetti->CreateRigidBody(cubeNode, world);
+		box[boxIndex]->SetPosition(50.0f + (boxIndex * -10.0f), 10.0f, 0.0f);
+	}
 
 	// Main game loop
 	while (!application->GetOgreWrapper().GetWindow()->isClosed())
@@ -63,9 +74,12 @@ void RunOgreApplication()
 		// update all our physics
 		world->Update(deltatTime);
 
-		// update the first cube
-		SAM::TVector<float, 3> position = cubeBody->GetPosition();
-		static_cast<Ogre::SceneNode*>(cubeBody->GetRenderObject())->setPosition(position.X(), position.Y(), position.Z());
+		// update the graphical representations of the physics
+		for (int boxIndex = 0; boxIndex < noofBoxes; ++boxIndex)
+		{
+			SAM::TVector<float, 3> position = box[boxIndex]->GetPosition();
+			static_cast<Ogre::SceneNode*>(box[boxIndex]->GetRenderObject())->setPosition(position.X(), position.Y(), position.Z());
+		}
 
 		// update the application
 		Ogre::WindowEventUtilities::messagePump();
