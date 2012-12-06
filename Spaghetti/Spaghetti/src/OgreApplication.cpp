@@ -227,7 +227,7 @@ Ogre::SceneNode* OgreApplication::CreateEntityFromMesh(
 	try 
 	{
 		meshEntity = m_scene->getEntity(meshName);
-		meshEntity->clone(meshName + "-" + name);
+		meshEntity = meshEntity->clone(meshName + "-" + name);
 	}
 	catch(Ogre::ItemIdentityException ex) 
 	{
