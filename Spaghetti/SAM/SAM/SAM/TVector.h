@@ -1,5 +1,7 @@
 #pragma once
 
+#include <math.h>
+
 namespace SAM 
 {
 	template <class TYPE, unsigned int SIZE>
@@ -10,7 +12,11 @@ namespace SAM
 
 	public:
 													//! Class constructor
-													TVector();
+													TVector()
+													{
+														for (int element = 0; element < SIZE; ++element)
+															m_element[element] = 0;
+													}
 
 													//! Class destructor
 													~TVector();
@@ -23,6 +29,14 @@ namespace SAM
 		TYPE										m_element[2];							//!< The elements of the vector
 
 	public:
+
+													//! Class constructor
+													TVector()
+													{
+														for (int element = 0; element < 2; ++element)
+															m_element[element] = 0;
+													}
+
 													//! Get the X element of the vector
 		const TYPE									&X() const
 													{
@@ -99,6 +113,14 @@ namespace SAM
 		TYPE										m_element[3];							//!< The elements of the vector
 
 	public:
+
+													//! Class constructor
+													TVector()
+													{
+														for (int element = 0; element < 3; ++element)
+															m_element[element] = 0;
+													}
+
 													//! Get the X element of the vector
 		const TYPE									&X() const
 													{
@@ -159,6 +181,12 @@ namespace SAM
 														return sqrt((m_element[0] * m_element[0]) + (m_element[1] * m_element[1]) + (m_element[2] * m_element[2]));
 													}
 
+													//! The sum of all the elements
+		TYPE										SumOf() const
+													{
+														return m_element[0] + m_element[1] + m_element[2];
+													}
+
 													//! Add another vector to this vector and return the result as a new vector
 		TVector<TYPE, 3>							operator+(const TVector<TYPE, 3> &otherVector) const
 													{
@@ -176,11 +204,18 @@ namespace SAM
 													}
 	
 													//! Scale a vector by a value
-		TVector<TYPE, 3>							operator*(const TYPE other) const
+		TVector<TYPE, 3>							operator*(const TYPE &other) const
 													{
 														TVector<TYPE, 3> result;
 														result.Set(m_element[0] * other, m_element[1] * other, m_element[2] * other);
 														return result;
+													}
+
+													//! Set this vector to the values of another
+		TVector<TYPE, 3>							&operator=(const TVector<TYPE, 3> &otherVector)
+													{
+														Set(otherVector.X(), otherVector.Y(), otherVector.Z());
+														return *this;
 													}
 	};
 

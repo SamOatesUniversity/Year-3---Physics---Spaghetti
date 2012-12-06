@@ -63,3 +63,13 @@ void CSpaghettiRigidBody::Update(
 	m_position = position;
 	m_newPosition = position;  
 }
+
+/*
+*	\brief	Set a rigid bodies bounding box
+*/
+void CSpaghettiRigidBody::SetBoundingBox( 
+		CSpaghettiBoundingBox &boundingBox								//!< 
+	)
+{
+	m_boundingBox = boundingBox;
+}
