@@ -60,7 +60,7 @@ void RunOgreApplication()
 			Ogre::Entity *const meshEntity = application->GetSceneManager()->getEntity("ogrehead");
 			Ogre::AxisAlignedBox meshBoundingBox = meshEntity->getBoundingBox();
 
-			SAM::TVector<float, 3> boundingBoxCorners[8];
+			SAM::TVector<float, 3> boundingBoxCorners[NOOF_BOUNDINGBOX_CORNERS];
 			const Ogre::Vector3 *const boundCorners = meshBoundingBox.getAllCorners();
 			
 			for (int corner = 0; corner < 8; ++corner)
@@ -68,12 +68,10 @@ void RunOgreApplication()
 				const Ogre::Vector3 currenCorner = boundCorners[corner];
 				boundingBoxCorners[corner].Set(currenCorner.x, currenCorner.y, currenCorner.z);
 			}
-			
-			// miguel casillas
 
-			//BoundingBox boundingBox;
-			//boundingBox.SetCorners(boundingBoxCorners);
-			//box[boxIndex]->SetBoundingBox(boundingBox);
+			CSpaghettiBoundingBox boundingBox;
+			boundingBox.SetCorners(boundingBoxCorners);
+			box[boxIndex]->SetBoundingBox(boundingBox);
 		}
 	}
 

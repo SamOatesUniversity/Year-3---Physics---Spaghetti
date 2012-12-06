@@ -3,6 +3,7 @@
 #include <string>
 #include "../../../SAM/SAM/SAM.h"
 #include "CSpaghettiWorld.h"
+#include "CSpaghettiBoundingBox.h"
 
 class CSpaghettiRigidBody {
 
@@ -15,6 +16,8 @@ private:
 	SAM::TVector<float, 3>					m_position;												//!< 
 	SAM::TVector<float, 3>					m_newPosition;											//!< 
 	SAM::TVector<float, 3>					m_velocity;												//!< 
+
+	CSpaghettiBoundingBox					m_boundingBox;											//!< The rigid bodies bounding box
 
 public:
 
@@ -53,6 +56,11 @@ public:
 	void									Update(
 												const CSpaghettiWorld *world,
 												const unsigned long deltaTime						//!< Delta time (The amount of time past since the last update)
+											);
+
+											//! Set the rigid bodies bounding box
+	void									SetBoundingBox(
+												CSpaghettiBoundingBox &boundingBox					//!< 
 											);
 
 };
