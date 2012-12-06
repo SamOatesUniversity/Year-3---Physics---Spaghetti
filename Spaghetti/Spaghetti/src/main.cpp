@@ -49,14 +49,31 @@ void RunOgreApplication()
 		std::stringstream nodeName;
 		nodeName << "CubeNode-" << boxIndex;
 
-		Ogre::SceneNode *const cubeNode = application->CreateEntityFromMesh("ogrehead.mesh", nodeName.str());
-		if (cubeNode) 
+		if (Ogre::SceneNode *const cubeNode = application->CreateEntityFromMesh("ogrehead.mesh", nodeName.str())) 
 		{
 			cubeNode->setScale(0.1, 0.1, 0.1);
 			cubeNode->showBoundingBox(true);
-		
+
 			box[boxIndex] = spaghetti->CreateRigidBody(cubeNode, world);
 			box[boxIndex]->SetPosition(0.0f, 10.0f + (boxIndex * 10.0f), 0.0f);
+
+			Ogre::Entity *const meshEntity = application->GetSceneManager()->getEntity("ogrehead");
+			Ogre::AxisAlignedBox meshBoundingBox = meshEntity->getBoundingBox();
+
+			SAM::TVector<float, 3> boundingBoxCorners[8];
+			const Ogre::Vector3 *const boundCorners = meshBoundingBox.getAllCorners();
+			
+			for (int corner = 0; corner < 8; ++corner)
+			{
+				const Ogre::Vector3 currenCorner = boundCorners[corner];
+				boundingBoxCorners[corner].Set(currenCorner.x, currenCorner.y, currenCorner.z);
+			}
+			
+			// miguel casillas
+
+			//BoundingBox boundingBox;
+			//boundingBox.SetCorners(boundingBoxCorners);
+			//box[boxIndex]->SetBoundingBox(boundingBox);
 		}
 	}
 

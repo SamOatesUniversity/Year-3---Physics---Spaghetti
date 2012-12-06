@@ -18,6 +18,7 @@ private:
 
 public:
 
+											//! 
 	void									*GetRenderObject() const
 											{
 												return m_renderObject;
