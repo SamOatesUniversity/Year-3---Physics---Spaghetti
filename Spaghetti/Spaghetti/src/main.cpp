@@ -42,7 +42,7 @@ void RunOgreApplication()
 	CSpaghettiWorld *const world = spaghetti->CreateWorld();
 
 	// create some things to bounce around
-	static const int noofBoxes = 10;
+	static const int noofBoxes = 2;
 	CSpaghettiRigidBody* box[noofBoxes];
 	for (int boxIndex = 0; boxIndex < noofBoxes; ++boxIndex)
 	{
@@ -50,11 +50,14 @@ void RunOgreApplication()
 		nodeName << "CubeNode-" << boxIndex;
 
 		Ogre::SceneNode *const cubeNode = application->CreateEntityFromMesh("ogrehead.mesh", nodeName.str());
-		cubeNode->setScale(0.1, 0.1, 0.1);
-		cubeNode->showBoundingBox(true);
+		if (cubeNode) 
+		{
+			cubeNode->setScale(0.1, 0.1, 0.1);
+			cubeNode->showBoundingBox(true);
 		
-		box[boxIndex] = spaghetti->CreateRigidBody(cubeNode, world);
-		box[boxIndex]->SetPosition(50.0f + (boxIndex * -10.0f), 10.0f, 0.0f);
+			box[boxIndex] = spaghetti->CreateRigidBody(cubeNode, world);
+			box[boxIndex]->SetPosition(0.0f, 10.0f + (boxIndex * 10.0f), 0.0f);
+		}
 	}
 
 	// Main game loop
