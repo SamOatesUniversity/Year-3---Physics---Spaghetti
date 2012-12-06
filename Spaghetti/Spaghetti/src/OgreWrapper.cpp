@@ -35,7 +35,7 @@ const bool OgreWrapper::Initialize()
 	for (std::vector<Ogre::String>::iterator it = plugins.begin(); it != plugins.end(); ++it)
 	{
 		Ogre::String &pluginName = (*it);
-#ifdef OGRE_DEBUG_MODE
+#ifdef _DEBUG
 		pluginName.append("_d");
 #endif
 		m_root->loadPlugin(pluginName);

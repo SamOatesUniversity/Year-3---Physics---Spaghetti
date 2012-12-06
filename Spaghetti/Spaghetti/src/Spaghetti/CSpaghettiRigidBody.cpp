@@ -10,7 +10,7 @@ CSpaghettiRigidBody::CSpaghettiRigidBody(
 	m_renderObject = renderObject;
 
 	m_position.Set(0.0f, 0.0f, 0.0f);
-	m_newPosition.Set(0.0f, 0.0f, 0.0f);
+	m_lastPosition.Set(0.0f, 0.0f, 0.0f);
 	m_velocity.Set(0.0f, 0.0f, 0.0f);
 }
 
@@ -32,7 +32,6 @@ void CSpaghettiRigidBody::SetPosition(
 	)
 {
 	m_position.Set(x, y, z);
-	m_newPosition.Set(x, y, z);
 }
 
 /*
@@ -43,33 +42,53 @@ void CSpaghettiRigidBody::Update(
 		const unsigned long deltaTime							//!< Delta time (The amount of time past since the last update)
 	)
 {
+	m_lastPosition = m_position;
+
 	SAM::TVector<float, 3> velocity = m_velocity + world->GetGravity() * (static_cast<float>(deltaTime) * 0.001f);
 	SAM::TVector<float, 3> position = m_position + (m_velocity * (static_cast<float>(deltaTime) * 0.001f));
 
-	if (position.Y() < 2.5f) 
+	if (position.Y() < 1.25f) 
 	{
 		const float vel = velocity.Length();
 		if (vel < 0.002f && vel > -0.002f)
 		{
 			m_velocity.Set(0.0f, 0.0f, 0.0f);
-			m_position.SetY(2.5f);
+			m_position.SetY(1.25f);
 			return;
 		}
-		velocity.Set(0.0f, velocity.Y() * -0.70f, 0.0f);
-		position.SetY(2.5f);
+		velocity.Set(0.0f, velocity.Y() * -0.50f, 0.0f);
+		position.SetY(1.25f);
 	}
 
 	m_velocity = velocity;
 	m_position = position;
-	m_newPosition = position;  
+
+	m_boundingBox.Transform(m_position);
 }
 
 /*
 *	\brief	Set a rigid bodies bounding box
 */
 void CSpaghettiRigidBody::SetBoundingBox( 
-		CSpaghettiBoundingBox &boundingBox								//!< 
+		CSpaghettiBoundingBox &boundingBox								//!< The bounding box to set this bodies bounding box too
 	)
 {
 	m_boundingBox = boundingBox;
+}
+
+/*
+*	\brief	Handle collision against another rigid body
+*/
+void CSpaghettiRigidBody::HandleCollision(
+		CSpaghettiRigidBody *otherRigidBody								//!< The other rigid body to compare against
+	)
+{
+	if (m_boundingBox.Intersects(otherRigidBody->GetBoundingBox()))
+	{
+		SetVelocity(m_velocity * -0.50f);
+		m_position = m_lastPosition;
+
+		otherRigidBody->SetVelocity(otherRigidBody->GetVelocity() * -0.50f);
+		otherRigidBody->SetPosition(otherRigidBody->GetLastPosition());
+	}
 }

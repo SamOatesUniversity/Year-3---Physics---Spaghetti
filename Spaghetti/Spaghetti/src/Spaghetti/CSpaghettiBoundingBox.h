@@ -12,6 +12,8 @@ private:
 	SAM::TVector<float, 3>		m_min;													//!< The minimum corner
 	SAM::TVector<float, 3>		m_max;													//!< The maximum corner
 
+	SAM::TVector<float, 3>		m_position;
+
 public:
 
 								//! Class constructor
@@ -55,5 +57,24 @@ public:
 								) const
 								{
 									return m_corner[index];
+								}
+
+								//! Does this bounding box intersect with another
+	const bool					Intersects(
+									CSpaghettiBoundingBox &otherBox						//!< The bounding box to test against
+								);
+
+								//! 
+	void						Transform(
+									SAM::TVector<float, 3> &position					//!< 
+								)
+								{
+									m_position = position;
+								}
+
+								//!
+	SAM::TVector<float, 3>		GetTransform() const
+								{
+									return m_position;
 								}
 };
