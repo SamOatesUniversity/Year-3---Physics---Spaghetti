@@ -42,7 +42,7 @@ void RunOgreApplication()
 	CSpaghettiWorld *const world = spaghetti->CreateWorld();
 
 	// create some things to bounce around
-	static const int noofBoxes = 2;
+	static const int noofBoxes = 4;
 	CSpaghettiRigidBody* box[noofBoxes];
 	for (int boxIndex = 0; boxIndex < noofBoxes; ++boxIndex)
 	{
@@ -51,8 +51,9 @@ void RunOgreApplication()
 
 		if (Ogre::SceneNode *const cubeNode = application->CreateEntityFromMesh("ogrehead.mesh", nodeName.str())) 
 		{
-			cubeNode->setScale(0.1, 0.1, 0.1);
-			cubeNode->showBoundingBox(true);
+			static const float meshScale = 0.05f;
+			cubeNode->setScale(meshScale, meshScale, meshScale);
+			//cubeNode->showBoundingBox(true);
 
 			box[boxIndex] = spaghetti->CreateRigidBody(cubeNode, world);
 			box[boxIndex]->SetPosition(0.0f, 10.0f + (boxIndex * 10.0f), 0.0f);
@@ -67,6 +68,7 @@ void RunOgreApplication()
 			{
 				const Ogre::Vector3 currenCorner = boundCorners[corner];
 				boundingBoxCorners[corner].Set(currenCorner.x, currenCorner.y, currenCorner.z);
+				boundingBoxCorners[corner] = boundingBoxCorners[corner] * meshScale;
 			}
 
 			CSpaghettiBoundingBox boundingBox;
