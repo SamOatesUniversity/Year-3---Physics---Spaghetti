@@ -189,27 +189,6 @@ void OgreApplication::CreateScene()
 
 	// Files that can be loaded are loaded.
 	lRgMgr.loadResourceGroup(resourceGroupName);
-
-	// make a floor to project shadow onto
-	Ogre::Plane plane(Ogre::Vector3::UNIT_Y, 0);
-	Ogre::MeshManager::getSingleton().createPlane(
-		"ground", 
-		Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-		plane, 
-		50, 50, 20, 20, 
-		true, 
-		1, 5, 5, 
-		Ogre::Vector3::UNIT_Z
-		);
-
-	Ogre::String floorName = "Floor";
-	Ogre::Entity* lGround = m_scene->createEntity(floorName, "ground");
-	lGround->setCastShadows(false);
-	Ogre::SceneNode* lFloorNode = m_rootSceneNode->createChildSceneNode(floorName.append("Node"));
-	lFloorNode->attachObject(lGround);
-	lGround->setMaterialName("GroundTexture");
-
-	AddNodeToList(lFloorNode->getName(), lFloorNode);
 }
 
 /*

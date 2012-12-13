@@ -41,6 +41,38 @@ void RunOgreApplication()
 	CSpaghetti *const spaghetti = new CSpaghetti();
 	CSpaghettiWorld *const world = spaghetti->CreateWorld();
 
+	// create the static floor
+	CSpaghettiRigidBody *floorBody = nullptr;
+	if (Ogre::SceneNode *const floorNode = application->CreateEntityFromMesh("cube.mesh", "floorNode")) 
+	{
+		floorNode->setScale(0.2f, 0.01f, 0.2f);
+		floorNode->showBoundingBox(true);
+
+		floorBody = spaghetti->CreateRigidBody(floorNode, world);
+		floorBody->SetIsStatic(true);
+
+		Ogre::Entity *const meshEntity = application->GetSceneManager()->getEntity("cube");
+		Ogre::AxisAlignedBox meshBoundingBox = meshEntity->getBoundingBox();
+
+		SAM::TVector<float, 3> boundingBoxCorners[NOOF_BOUNDINGBOX_CORNERS];
+		const Ogre::Vector3 *const boundCorners = meshBoundingBox.getAllCorners();
+
+		const Ogre::Vector3 entityScale = floorNode->getScale();
+		for (int corner = 0; corner < NOOF_BOUNDINGBOX_CORNERS; ++corner)
+		{
+			const Ogre::Vector3 currenCorner = boundCorners[corner];
+			boundingBoxCorners[corner].Set(
+				currenCorner.x * entityScale.x, 
+				currenCorner.y * entityScale.y, 
+				currenCorner.z * entityScale.z
+			);
+		}
+
+		CSpaghettiBoundingBox boundingBox;
+		boundingBox.SetCorners(boundingBoxCorners);
+		floorBody->SetBoundingBox(boundingBox);
+	}
+
 	// create some things to bounce around
 	static const int noofBoxes = 4;
 	CSpaghettiRigidBody* box[noofBoxes];
@@ -53,7 +85,7 @@ void RunOgreApplication()
 		{
 			static const float meshScale = 0.05f;
 			cubeNode->setScale(meshScale, meshScale, meshScale);
-			//cubeNode->showBoundingBox(true);
+			cubeNode->showBoundingBox(true);
 
 			box[boxIndex] = spaghetti->CreateRigidBody(cubeNode, world);
 			box[boxIndex]->SetPosition(0.0f, 10.0f + (boxIndex * 10.0f), 0.0f);
@@ -64,7 +96,7 @@ void RunOgreApplication()
 			SAM::TVector<float, 3> boundingBoxCorners[NOOF_BOUNDINGBOX_CORNERS];
 			const Ogre::Vector3 *const boundCorners = meshBoundingBox.getAllCorners();
 			
-			for (int corner = 0; corner < 8; ++corner)
+			for (int corner = 0; corner < NOOF_BOUNDINGBOX_CORNERS; ++corner)
 			{
 				const Ogre::Vector3 currenCorner = boundCorners[corner];
 				boundingBoxCorners[corner].Set(currenCorner.x, currenCorner.y, currenCorner.z);
@@ -93,6 +125,9 @@ void RunOgreApplication()
 
 		// update all our physics
 		world->Update(deltatTime);
+
+		SAM::TVector<float, 3> floorPosition = floorBody->GetPosition();
+		static_cast<Ogre::SceneNode*>(floorBody->GetRenderObject())->setPosition(floorPosition.X(), floorPosition.Y(), floorPosition.Z());
 
 		// update the graphical representations of the physics
 		for (int boxIndex = 0; boxIndex < noofBoxes; ++boxIndex)
