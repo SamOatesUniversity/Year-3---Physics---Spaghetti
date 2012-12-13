@@ -187,6 +187,15 @@ namespace SAM
 														return m_element[0] + m_element[1] + m_element[2];
 													}
 
+													//! Get a unit vector of this vector
+		TVector<TYPE, 3>							Unit() const
+													{
+														const TYPE len = Length();
+														TVector<TYPE, 3> value;
+														value.Set(m_element[0] / len, m_element[1] / len, m_element[2] / len);
+														return value;
+													}
+
 													//! Add another vector to this vector and return the result as a new vector
 		TVector<TYPE, 3>							operator+(const TVector<TYPE, 3> &otherVector) const
 													{

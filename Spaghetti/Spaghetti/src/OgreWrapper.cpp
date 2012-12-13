@@ -54,8 +54,8 @@ const bool OgreWrapper::Initialize()
 
 	// setup some window variables
 	const Ogre::String windowTitle = "Sam Oates - Spaghetti Physics";
-	const unsigned int width = 800;
-	const unsigned int height = 600;
+	const unsigned int width = 1280;
+	const unsigned int height = 720;
 	Ogre::NameValuePairList windowParameters;
 
 	// create our window

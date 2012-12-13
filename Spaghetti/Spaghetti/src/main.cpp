@@ -17,7 +17,7 @@ void RunOgreApplication()
 	// create a camera, setup viewport 
 	Ogre::String cameraName = "MainCamera";
 	Ogre::SceneNode *const cameraNode = application->CreateCamera(cameraName);
-	cameraNode->setPosition(Ogre::Vector3(20.0f, 5.0f, 20.0f));
+	cameraNode->setPosition(Ogre::Vector3(400.0f, 50.0f, 400.0f));
 	static_cast<Ogre::Camera*>(cameraNode->getAttachedObject("MainCamera"))->lookAt(0.0f, 0.0f, 0.0f);
 
 	//create O/I system for keyboard and mouse inputs
@@ -45,7 +45,7 @@ void RunOgreApplication()
 	CSpaghettiRigidBody *floorBody = nullptr;
 	if (Ogre::SceneNode *const floorNode = application->CreateEntityFromMesh("cube.mesh", "floorNode")) 
 	{
-		floorNode->setScale(0.5f, 0.01f, 0.5f);
+		floorNode->setScale(5.0f, 0.01f, 5.0f);
 		floorNode->showBoundingBox(true);
 
 		floorBody = spaghetti->CreateRigidBody(floorNode, world);
@@ -74,7 +74,7 @@ void RunOgreApplication()
 	}
 
 	// create some things to bounce around
-	static const int noofBoxes = 4;
+	static const int noofBoxes = 100;
 	CSpaghettiRigidBody* box[noofBoxes];
 	for (int boxIndex = 0; boxIndex < noofBoxes; ++boxIndex)
 	{
@@ -88,7 +88,7 @@ void RunOgreApplication()
 			cubeNode->showBoundingBox(true);
 
 			box[boxIndex] = spaghetti->CreateRigidBody(cubeNode, world);
-			box[boxIndex]->SetPosition(0.0f, 10.0f + (boxIndex * 15.0f), 0.0f);
+			box[boxIndex]->SetPosition((rand() % 200) - 100, (rand() % 100), (rand() % 200) - 100);
 
 			Ogre::Entity *const meshEntity = application->GetSceneManager()->getEntity("ogrehead");
 			Ogre::AxisAlignedBox meshBoundingBox = meshEntity->getBoundingBox();
@@ -108,7 +108,7 @@ void RunOgreApplication()
 			box[boxIndex]->SetBoundingBox(boundingBox);
 
 			SAM::TVector<float, 3> velocity;
-			velocity.Set(0.0025f, 0.0f, 0.0025f);
+			velocity.Set((rand() % 100) * 0.0005f, (rand() % 100) * 0.0005f, (rand() % 100) * 0.0005f);
 			box[boxIndex]->SetVelocity(velocity);
 		}
 	}
