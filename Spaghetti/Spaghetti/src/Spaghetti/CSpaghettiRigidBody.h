@@ -5,6 +5,13 @@
 #include "CSpaghettiWorld.h"
 #include "CSpaghettiBoundingBox.h"
 
+typedef union {
+	struct {
+		bool isStatic				:	1;
+	};
+	int alllags;
+} RigidBodyFlags;
+
 class CSpaghettiRigidBody {
 
 friend class CSpaghettiWorld;
@@ -15,10 +22,11 @@ private:
 
 	SAM::TVector<float, 3>					m_position;												//!< 
 	SAM::TVector<float, 3>					m_velocity;												//!< 
-
 	SAM::TVector<float, 3>					m_lastPosition;											//!< 
 
 	CSpaghettiBoundingBox					m_boundingBox;											//!< The rigid bodies bounding box
+
+	RigidBodyFlags							m_flags;												//!< 
 
 public:
 
@@ -89,7 +97,7 @@ public:
 												CSpaghettiRigidBody *otherRigidBody					//!< The other rigid body to compare against
 											);
 
-											//! 
+											//! Set the velocity of the rigid body
 	void									SetVelocity(
 												SAM::TVector<float, 3> velocity
 											)
@@ -102,9 +110,17 @@ public:
 												}
 											}
 
-											//! 
+											//! Get the current velocity of the rigid body
 	SAM::TVector<float, 3>					GetVelocity() const
 											{
 												return m_velocity;
+											}
+
+											// Set the static flag of the rigid body
+	void									SetIsStatic(
+												const bool isStatic
+											)
+											{
+												m_flags.isStatic = isStatic;
 											}
 };

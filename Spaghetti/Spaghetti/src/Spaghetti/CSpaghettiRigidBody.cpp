@@ -12,6 +12,8 @@ CSpaghettiRigidBody::CSpaghettiRigidBody(
 	m_position.Set(0.0f, 0.0f, 0.0f);
 	m_lastPosition.Set(0.0f, 0.0f, 0.0f);
 	m_velocity.Set(0.0f, 0.0f, 0.0f);
+
+	m_flags.alllags = 0;
 }
 
 /*
@@ -32,6 +34,7 @@ void CSpaghettiRigidBody::SetPosition(
 	)
 {
 	m_position.Set(x, y, z);
+	m_boundingBox.Transform(m_position);
 }
 
 /*
@@ -42,23 +45,14 @@ void CSpaghettiRigidBody::Update(
 		const unsigned long deltaTime							//!< Delta time (The amount of time past since the last update)
 	)
 {
+	// Nothing to update if he rigidbody is static
+	if (m_flags.isStatic)
+		return;
+
 	m_lastPosition = m_position;
 
 	SAM::TVector<float, 3> velocity = m_velocity + world->GetGravity() * (static_cast<float>(deltaTime) * 0.001f);
 	SAM::TVector<float, 3> position = m_position + (m_velocity * (static_cast<float>(deltaTime) * 0.001f));
-
-	if (position.Y() < 1.25f) 
-	{
-		const float vel = velocity.Length();
-		if (vel < 0.002f && vel > -0.002f)
-		{
-			m_velocity.Set(0.0f, 0.0f, 0.0f);
-			m_position.SetY(1.25f);
-			return;
-		}
-		velocity.Set(0.0f, velocity.Y() * -0.50f, 0.0f);
-		position.SetY(1.25f);
-	}
 
 	m_velocity = velocity;
 	m_position = position;
