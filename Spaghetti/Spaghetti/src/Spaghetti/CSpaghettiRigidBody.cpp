@@ -82,15 +82,26 @@ void CSpaghettiRigidBody::HandleCollision(
 		// TODO: need to get the normal of the collision
 		// TODO: create materials, that can be applied to rigid bodies spcifying, friction, bounce and mass
 
-		static const float FRICTION = 0.75f;
+		static const float FRICTION = 0.5f;
+
+		SAM::TVector<float, 3> direction = m_position - otherRigidBody->GetPosition();
+		direction = direction.Unit();
 
 		SAM::TVector<float, 3> thisVeloctiy;
-		thisVeloctiy.Set(m_velocity.X() * FRICTION, m_velocity.Y() * -0.5f, m_velocity.Z() * FRICTION);
+		thisVeloctiy.Set(
+			direction.X() == 0 ? m_velocity.X() : m_velocity.X() * -(direction.X() * FRICTION), 
+			direction.Y() == 0 ? m_velocity.Y() : m_velocity.Y() * -(direction.Y() * FRICTION), 
+			direction.Z() == 0 ? m_velocity.Z() : m_velocity.Z() * -(direction.Z() * FRICTION)
+		);
 		SetVelocity(thisVeloctiy);
 		m_position = m_lastPosition;
 
 		SAM::TVector<float, 3> otherVeloctiy;
-		otherVeloctiy.Set(otherRigidBody->GetVelocity().X() * FRICTION, otherRigidBody->GetVelocity().Y() * -0.5f, otherRigidBody->GetVelocity().Z() * FRICTION);
+		otherVeloctiy.Set(
+			direction.X() == 0 ? otherRigidBody->GetVelocity().X() : otherRigidBody->GetVelocity().X() * -(direction.X() * FRICTION), 
+			direction.Y() == 0 ? otherRigidBody->GetVelocity().Y() : otherRigidBody->GetVelocity().Y() * -(direction.Y() * FRICTION), 
+			direction.Z() == 0 ? otherRigidBody->GetVelocity().Z() : otherRigidBody->GetVelocity().Z() * -(direction.Z() * FRICTION)
+		);
 		otherRigidBody->SetVelocity(otherVeloctiy);
 		otherRigidBody->SetPosition(otherRigidBody->GetLastPosition());
 	}

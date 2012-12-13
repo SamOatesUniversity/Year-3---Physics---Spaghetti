@@ -87,8 +87,8 @@ Ogre::SceneNode *OgreApplication::CreateCamera(
 
 	// Setup the visual ratio of the camera. To make it looks real, same as the viewport.
 	camera->setAspectRatio(static_cast<float>(m_vp->getActualWidth()) / static_cast<float>(m_vp->getActualHeight()));
-	camera->setNearClipDistance(0.1f);
-	camera->setFarClipDistance(3000.0f); 
+	camera->setNearClipDistance(0.01f);
+	camera->setFarClipDistance(30000.0f); 
 
 	AddNodeToList(m_camera->getName(), m_camera);
 	
