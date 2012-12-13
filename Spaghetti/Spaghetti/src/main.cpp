@@ -45,7 +45,7 @@ void RunOgreApplication()
 	CSpaghettiRigidBody *floorBody = nullptr;
 	if (Ogre::SceneNode *const floorNode = application->CreateEntityFromMesh("cube.mesh", "floorNode")) 
 	{
-		floorNode->setScale(0.2f, 0.01f, 0.2f);
+		floorNode->setScale(0.5f, 0.01f, 0.5f);
 		floorNode->showBoundingBox(true);
 
 		floorBody = spaghetti->CreateRigidBody(floorNode, world);
@@ -88,7 +88,7 @@ void RunOgreApplication()
 			cubeNode->showBoundingBox(true);
 
 			box[boxIndex] = spaghetti->CreateRigidBody(cubeNode, world);
-			box[boxIndex]->SetPosition(0.0f, 10.0f + (boxIndex * 10.0f), 0.0f);
+			box[boxIndex]->SetPosition(0.0f, 10.0f + (boxIndex * 15.0f), 0.0f);
 
 			Ogre::Entity *const meshEntity = application->GetSceneManager()->getEntity("ogrehead");
 			Ogre::AxisAlignedBox meshBoundingBox = meshEntity->getBoundingBox();
@@ -106,6 +106,10 @@ void RunOgreApplication()
 			CSpaghettiBoundingBox boundingBox;
 			boundingBox.SetCorners(boundingBoxCorners);
 			box[boxIndex]->SetBoundingBox(boundingBox);
+
+			SAM::TVector<float, 3> velocity;
+			velocity.Set(0.0025f, 0.0f, 0.0025f);
+			box[boxIndex]->SetVelocity(velocity);
 		}
 	}
 

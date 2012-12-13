@@ -79,10 +79,19 @@ void CSpaghettiRigidBody::HandleCollision(
 {
 	if (m_boundingBox.Intersects(otherRigidBody->GetBoundingBox()))
 	{
-		SetVelocity(m_velocity * -0.50f);
+		// TODO: need to get the normal of the collision
+		// TODO: create materials, that can be applied to rigid bodies spcifying, friction, bounce and mass
+
+		static const float FRICTION = 0.75f;
+
+		SAM::TVector<float, 3> thisVeloctiy;
+		thisVeloctiy.Set(m_velocity.X() * FRICTION, m_velocity.Y() * -0.5f, m_velocity.Z() * FRICTION);
+		SetVelocity(thisVeloctiy);
 		m_position = m_lastPosition;
 
-		otherRigidBody->SetVelocity(otherRigidBody->GetVelocity() * -0.50f);
+		SAM::TVector<float, 3> otherVeloctiy;
+		otherVeloctiy.Set(otherRigidBody->GetVelocity().X() * FRICTION, otherRigidBody->GetVelocity().Y() * -0.5f, otherRigidBody->GetVelocity().Z() * FRICTION);
+		otherRigidBody->SetVelocity(otherVeloctiy);
 		otherRigidBody->SetPosition(otherRigidBody->GetLastPosition());
 	}
 }
