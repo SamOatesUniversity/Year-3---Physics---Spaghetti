@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SAM/TVector.h"
+#include "SAM/TMatrix.h"
 
 namespace SAM 
 {

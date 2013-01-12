@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SAM.h" />
+    <ClInclude Include="SAM\TMatrix.h" />
     <ClInclude Include="SAM\TVector.h" />
   </ItemGroup>
   <ItemGroup>
