@@ -75,6 +75,12 @@ namespace SAM
 														m_element[1] = y;
 													}
 
+													//! overload the subscript operator
+		TYPE										&operator[] (const unsigned int index)
+													{
+														return m_element[index];
+													}
+
 													//! Get the length of the vector
 		TYPE										Length() const
 													{
@@ -173,6 +179,12 @@ namespace SAM
 													)
 													{
 														m_element[2] = z;
+													}
+
+													//! overload the subscript operator
+		TYPE										&operator[] (const unsigned int index)
+													{
+														return m_element[index];
 													}
 
 													//! Get the length of the vector
@@ -303,6 +315,12 @@ namespace SAM
 													)
 													{
 														m_element[3] = w;
+													}
+
+													//! overload the subscript operator
+		TYPE										&operator[] (const unsigned int index)
+													{
+														return m_element[index];
 													}
 
 													//! Get the length of the vector
