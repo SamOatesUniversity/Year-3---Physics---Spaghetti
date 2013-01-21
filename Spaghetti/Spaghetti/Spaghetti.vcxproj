@@ -39,9 +39,10 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IntDir>.\bin\obj\$(ProjectName)$(Configuration)\</IntDir>
-    <OutDir>.\bin\Debug\</OutDir>
     <LinkIncremental>false</LinkIncremental>
-    <LibraryPath>$(SolutionDir)$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)$(Configuration)\;G:\OGRE\OgreSDK_vc10_v1-8-0\lib\debug;G:\OGRE\OgreSDK_vc10_v1-8-0\boost\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>G:\OGRE\OgreSDK_vc10_v1-8-0\include;G:\OGRE\OgreSDK_vc10_v1-8-0\boost;$(IncludePath)</IncludePath>
+    <OutDir>.\bin\Debug</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IntDir>.\bin\obj\$(ProjectName)$(Configuration)\</IntDir>
@@ -77,7 +78,8 @@
     </Link>
     <PostBuildEvent>
       <Message>Copying exe to samples bin directory ...</Message>
-      <Command>copy "$(OutDir)\$(TargetFileName)" "$(OGRE_HOME)\Bin\$(Configuration)"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
