@@ -8,16 +8,16 @@ void RunOgreApplication()
 	// Create and initialise the application
 	OgreApplication *const application = new OgreApplication;
 	
-	if (!application->Initialize())
+	if (application == nullptr || !application->Initialize())
 	{
 		std::cout << __FILE__ << " (" << __LINE__ << ") - " << "Failed to initialise the application" << std::endl; 
 		return;
 	}
-	
+
 	// create a camera, setup viewport 
 	Ogre::String cameraName = "MainCamera";
 	Ogre::SceneNode *const cameraNode = application->CreateCamera(cameraName);
-	cameraNode->setPosition(Ogre::Vector3(400.0f, 50.0f, 400.0f));
+	cameraNode->setPosition(Ogre::Vector3(0.0f, 50.0f, 250.0f));
 	static_cast<Ogre::Camera*>(cameraNode->getAttachedObject("MainCamera"))->lookAt(0.0f, 0.0f, 0.0f);
 
 	//create O/I system for keyboard and mouse inputs
@@ -74,7 +74,9 @@ void RunOgreApplication()
 	}
 
 	// create some things to bounce around
-	static const int noofBoxes = 100;
+	srand(1);
+
+	static const int noofBoxes = 5;
 	CSpaghettiRigidBody* box[noofBoxes];
 	for (int boxIndex = 0; boxIndex < noofBoxes; ++boxIndex)
 	{
@@ -83,12 +85,12 @@ void RunOgreApplication()
 
 		if (Ogre::SceneNode *const cubeNode = application->CreateEntityFromMesh("ogrehead.mesh", nodeName.str())) 
 		{
-			static const float meshScale = 0.05f;
+			static const float meshScale = 0.5f;
 			cubeNode->setScale(meshScale, meshScale, meshScale);
 			cubeNode->showBoundingBox(true);
 
 			box[boxIndex] = spaghetti->CreateRigidBody(cubeNode, world);
-			box[boxIndex]->SetPosition((rand() % 200) - 100, (rand() % 100), (rand() % 200) - 100);
+			box[boxIndex]->SetPosition(static_cast<float>((rand() % 200) - 100), static_cast<float>((rand() % 100)), static_cast<float>((rand() % 200) - 100));
 
 			Ogre::Entity *const meshEntity = application->GetSceneManager()->getEntity("ogrehead");
 			Ogre::AxisAlignedBox meshBoundingBox = meshEntity->getBoundingBox();
@@ -113,6 +115,8 @@ void RunOgreApplication()
 		}
 	}
 
+	Ogre::Vector3 cameraPosition = cameraNode->getPosition();
+
 	// Main game loop
 	while (!application->GetOgreWrapper().GetWindow()->isClosed())
 	{
@@ -126,6 +130,22 @@ void RunOgreApplication()
 		// capture the mouse and keyboard
 		keyboard->capture();
 		mouse->capture();
+
+		// update the camera position
+		cameraNode->setPosition(Ogre::Vector3(300.0f, 50.0f, 200.0f));
+		static_cast<Ogre::Camera*>(cameraNode->getAttachedObject("MainCamera"))->lookAt(0.0f, 0.0f, 0.0f);
+		
+		if (keyboard->isKeyDown(OIS::KeyCode::KC_A))
+			cameraPosition.x--;
+		else if (keyboard->isKeyDown(OIS::KeyCode::KC_D))
+			cameraPosition.x++;
+		else if (keyboard->isKeyDown(OIS::KeyCode::KC_W))
+			cameraPosition.z--;
+		else if (keyboard->isKeyDown(OIS::KeyCode::KC_S))
+			cameraPosition.z++;
+
+		cameraNode->setPosition(cameraPosition);
+		static_cast<Ogre::Camera*>(cameraNode->getAttachedObject("MainCamera"))->lookAt(0.0f, 0.0f, 0.0f);
 
 		// update all our physics
 		world->Update(deltatTime);
@@ -143,7 +163,7 @@ void RunOgreApplication()
 		// update the application
 		Ogre::WindowEventUtilities::messagePump();
 		if (!application->GetOgreWrapper().GetWindow()->isClosed())
-			application->Run(false, true);
+			application->Run(false, false);
 	}
 
 	// clean up
