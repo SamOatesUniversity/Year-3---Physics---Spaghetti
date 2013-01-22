@@ -117,6 +117,36 @@ namespace SAM
 																			for (int columnIndex = 0; columnIndex < 3; ++columnIndex)
 																				m_element[rowIndex][columnIndex] = static_cast<TYPE>(0);
 																	}
+
+																	//! Calculate the inverse matrix of this matrix
+		TMatrix<TYPE, 3, 3>											Inverse()
+																	{
+																		const float invDeterminant = 1.0f / Determinant();
+
+																		TMatrix<TYPE, 3, 3>	inverse;
+
+																		inverse[0][0] =	 ((m_element[1][1] * m_element[2][2]) - (m_element[2][1] * m_element[1][2])) * invDeterminant;
+																		inverse[0][1] = -((m_element[0][1] * m_element[2][2]) - (m_element[0][2] * m_element[2][1])) * invDeterminant;
+																		inverse[0][2] =  ((m_element[0][1] * m_element[1][2]) - (m_element[0][2] * m_element[1][1])) * invDeterminant;
+
+																		inverse[1][0] = -((m_element[1][0] * m_element[2][2]) - (m_element[1][2] * m_element[2][0])) * invDeterminant;
+																		inverse[1][1] =  ((m_element[0][0] * m_element[2][2]) - (m_element[0][2] * m_element[2][0])) * invDeterminant;
+																		inverse[1][2] = -((m_element[0][0] * m_element[1][2]) - (m_element[1][0] * m_element[0][2])) * invDeterminant;
+
+																		inverse[2][0] =  ((m_element[1][0] * m_element[2][1]) - (m_element[2][0] * m_element[1][1])) * invDeterminant;
+																		inverse[2][1] = -((m_element[0][0] * m_element[2][1]) - (m_element[2][0] * m_element[0][1])) * invDeterminant;
+																		inverse[2][2] =  ((m_element[0][0] * m_element[1][1]) - (m_element[1][0] * m_element[0][1])) * invDeterminant;
+
+																		return inverse;
+																	}
+
+																	//! Calculate the matrices determinant
+		TYPE														Determinant()
+																	{
+																		return	(m_element[0][0] * (m_element[1][1] * m_element[2][2] - m_element[1][2] * m_element[2][1])) - 
+																				(m_element[0][1] * (m_element[2][2] * m_element[1][0] - m_element[1][2] * m_element[2][0])) + 
+																				(m_element[0][2] * (m_element[1][0] * m_element[2][1] - m_element[1][1] * m_element[2][0]));
+																	}
 	};
 
 	//! Matrix 4x4
