@@ -64,7 +64,7 @@ public:
 									CSpaghettiBoundingBox &otherBox						//!< The bounding box to test against
 								);
 
-								//! 
+								//! Set the position of the bounding box
 	void						Transform(
 									SAM::TVector<float, 3> &position					//!< 
 								)
@@ -72,9 +72,27 @@ public:
 									m_position = position;
 								}
 
-								//!
+								//! Get the position of the bounding box
 	SAM::TVector<float, 3>		GetTransform() const
 								{
 									return m_position;
+								}
+
+								//! Get the height of the bounding box
+	float						Height() const
+								{
+									return m_max.Y() - m_min.Y();
+								}
+
+								//! Get the width of the bounding box
+	float						Width() const
+								{
+									return m_max.X() - m_min.X();
+								}
+
+								//! Get the depth of the bounding box
+	float						Depth() const
+								{
+									return m_max.Z() - m_min.Z();
 								}
 };

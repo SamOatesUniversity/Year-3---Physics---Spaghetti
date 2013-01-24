@@ -11,9 +11,16 @@ CSpaghettiRigidBody::CSpaghettiRigidBody(
 
 	m_position.Set(0.0f, 0.0f, 0.0f);
 	m_lastPosition.Set(0.0f, 0.0f, 0.0f);
-	m_velocity.Set(0.0f, 0.0f, 0.0f);
 
+	m_velocity.Set(0.0f, 0.0f, 0.0f);
+	m_torque.Set(0.0f, 0.0f, 0.0f);
+	
+	m_mass = 1.0f;
 	m_flags.alllags = 0;
+
+	m_centerOfMass.Set(0, 0, 0);
+
+	CalculateInertiaTensor();
 }
 
 /*
@@ -35,6 +42,34 @@ void CSpaghettiRigidBody::SetPosition(
 {
 	m_position.Set(x, y, z);
 	m_boundingBox.Transform(m_position);
+}
+
+/*
+*	\brief	Set a rigid bodies bounding box
+*/
+void CSpaghettiRigidBody::SetBoundingBox( 
+	CSpaghettiBoundingBox &boundingBox								//!< The bounding box to set this bodies bounding box too
+	)
+{
+	m_boundingBox = boundingBox;
+	CalculateInertiaTensor();
+}
+
+/*
+*	\brief	Calculate the inertia based upon the bounding box
+*/
+void CSpaghettiRigidBody::CalculateInertiaTensor()
+{
+	const float oneOverTwelve = 1.0f / 12.0f;
+	const float heightSquared = m_boundingBox.Height() * m_boundingBox.Height();
+	const float depthSquared = m_boundingBox.Depth() * m_boundingBox.Depth();
+	const float widthSquared = m_boundingBox.Width() * m_boundingBox.Width();
+
+	m_inertiaTensor[0][0] = (oneOverTwelve * m_mass) * (heightSquared + depthSquared); m_inertiaTensor[0][1] = 0; m_inertiaTensor[0][2] = 0;
+	m_inertiaTensor[1][0] = 0; m_inertiaTensor[1][1] = (oneOverTwelve * m_mass) * (widthSquared + depthSquared);  m_inertiaTensor[1][2] = 0;
+	m_inertiaTensor[2][0] = 0; m_inertiaTensor[2][1] = 0; m_inertiaTensor[2][2] = (oneOverTwelve * m_mass) * (widthSquared + heightSquared);
+
+	m_inertiaTensorInverse = m_inertiaTensor.Inverse();
 }
 
 /*
@@ -61,16 +96,6 @@ void CSpaghettiRigidBody::Update(
 }
 
 /*
-*	\brief	Set a rigid bodies bounding box
-*/
-void CSpaghettiRigidBody::SetBoundingBox( 
-		CSpaghettiBoundingBox &boundingBox								//!< The bounding box to set this bodies bounding box too
-	)
-{
-	m_boundingBox = boundingBox;
-}
-
-/*
 *	\brief	Handle collision against another rigid body
 */
 void CSpaghettiRigidBody::HandleCollision(
@@ -80,7 +105,7 @@ void CSpaghettiRigidBody::HandleCollision(
 	if (m_boundingBox.Intersects(otherRigidBody->GetBoundingBox()))
 	{
 		// TODO: need to get the normal of the collision
-		// TODO: create materials, that can be applied to rigid bodies spcifying, friction, bounce and mass
+		// TODO: create materials, that can be applied to rigid bodies specifying, friction and bounce
 
 		static const float FRICTION = 0.5f;
 
