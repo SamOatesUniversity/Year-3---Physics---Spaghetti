@@ -13,11 +13,12 @@
   <ItemGroup>
     <ClInclude Include="SAM.h" />
     <ClInclude Include="SAM\TMatrix.h" />
+    <ClInclude Include="SAM\TQuaternion.h" />
     <ClInclude Include="SAM\TVector.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SAM.cpp" />
-    <ClCompile Include="SAM\TVector.cpp" />
+    <ClCompile Include="SAM\TQuaternion.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{6DAF37AF-C7D4-4CD8-925F-2B4031523CA8}</ProjectGuid>

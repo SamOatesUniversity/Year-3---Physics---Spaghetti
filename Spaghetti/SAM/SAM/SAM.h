@@ -2,6 +2,7 @@
 
 #include "SAM/TVector.h"
 #include "SAM/TMatrix.h"
+#include "SAM/TQuaternion.h"
 
 namespace SAM 
 {

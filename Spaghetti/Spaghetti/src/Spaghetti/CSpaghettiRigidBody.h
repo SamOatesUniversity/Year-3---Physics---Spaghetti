@@ -8,6 +8,7 @@
 typedef union {
 	struct {
 		bool isStatic				:	1;
+		bool isEnabled				:	1;
 	};
 	int alllags;
 } RigidBodyFlags;
