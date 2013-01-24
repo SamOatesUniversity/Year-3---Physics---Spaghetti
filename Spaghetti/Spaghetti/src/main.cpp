@@ -83,16 +83,16 @@ void RunOgreApplication()
 		std::stringstream nodeName;
 		nodeName << "CubeNode-" << boxIndex;
 
-		if (Ogre::SceneNode *const cubeNode = application->CreateEntityFromMesh("ogrehead.mesh", nodeName.str())) 
+		if (Ogre::SceneNode *const cubeNode = application->CreateEntityFromMesh("cube.mesh", nodeName.str())) 
 		{
-			static const float meshScale = 0.5f;
+			static const float meshScale = 0.25f;
 			cubeNode->setScale(meshScale, meshScale, meshScale);
 			cubeNode->showBoundingBox(true);
 
 			box[boxIndex] = spaghetti->CreateRigidBody(cubeNode, world);
 			box[boxIndex]->SetPosition(static_cast<float>((rand() % 200) - 100), static_cast<float>((rand() % 100)), static_cast<float>((rand() % 200) - 100));
 
-			Ogre::Entity *const meshEntity = application->GetSceneManager()->getEntity("ogrehead");
+			Ogre::Entity *const meshEntity = application->GetSceneManager()->getEntity("cube");
 			Ogre::AxisAlignedBox meshBoundingBox = meshEntity->getBoundingBox();
 
 			SAM::TVector<float, 3> boundingBoxCorners[NOOF_BOUNDINGBOX_CORNERS];
