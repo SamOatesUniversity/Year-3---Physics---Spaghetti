@@ -30,12 +30,15 @@
     <ClInclude Include="SAM\TMatrix.h">
       <Filter>Header Files\SAM</Filter>
     </ClInclude>
+    <ClInclude Include="SAM\TQuaternion.h">
+      <Filter>Header Files\SAM</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SAM.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SAM\TVector.cpp">
+    <ClCompile Include="SAM\TQuaternion.cpp">
       <Filter>Source Files\SAM</Filter>
     </ClCompile>
   </ItemGroup>

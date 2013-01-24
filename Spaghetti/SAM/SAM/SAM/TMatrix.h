@@ -147,6 +147,27 @@ namespace SAM
 																				(m_element[0][1] * (m_element[2][2] * m_element[1][0] - m_element[1][2] * m_element[2][0])) + 
 																				(m_element[0][2] * (m_element[1][0] * m_element[2][1] - m_element[1][1] * m_element[2][0]));
 																	}
+
+																	//! Return a transposed version of this matrix
+		TMatrix<TYPE, 3, 3>											Transpose()
+																	{
+																		TMatrix<TYPE, 3, 3>	transpose;
+
+																		transpose[0][0] = m_element[0][0]; 
+																		transpose[0][1] = m_element[1][0]; 
+																		transpose[0][2] = m_element[2][0]; 
+
+																		transpose[1][0] = m_element[0][1];
+																		transpose[1][1] = m_element[1][1];
+																		transpose[1][2] = m_element[2][1];
+
+																		transpose[2][0] = m_element[0][2];
+																		transpose[2][1] = m_element[1][2];
+																		transpose[2][2] = m_element[2][2];
+
+																		return transpose;
+																	}
+
 	};
 
 	//! Matrix 4x4
