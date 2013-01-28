@@ -30,6 +30,11 @@ namespace SAM {
 															//! Convert the quaternion to a 3x3 matrix
 		TMatrix<float, 3, 3>								ToMatrix3x3();
 
+															//! Convert a 3x3 matrix to a quaternion
+		void												FromMatrix3x3(
+																TMatrix<float, 3, 3> matrix
+															);
+
 															//! Get the scalar part of the quaternion
 		float												W() const
 															{

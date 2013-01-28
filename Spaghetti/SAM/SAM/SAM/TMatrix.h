@@ -168,6 +168,22 @@ namespace SAM
 																		return transpose;
 																	}
 
+																	//! Add a matrix by another matrix
+		TMatrix<TYPE, 3, 3>											operator+(TMatrix<TYPE, 3, 3> &other)
+																	{
+																		TMatrix<TYPE, 3, 3> result;
+																		
+																		for (int rowIndex = 0; rowIndex < 3; ++rowIndex)
+																		{
+																			for (int columnIndex = 0; columnIndex < 3; ++columnIndex)
+																			{
+																				result[rowIndex][columnIndex] = m_element[rowIndex][columnIndex] + other[rowIndex][columnIndex];
+																			}
+																		}
+
+																		return result;
+																	}
+
 																	//! Multiply a matrix by another matrix
 		TMatrix<TYPE, 3, 3>											operator*(TMatrix<TYPE, 3, 3> &other)
 																	{
@@ -196,6 +212,22 @@ namespace SAM
 																		result[0] = (m_element[0][0] * other[0]) + (m_element[0][1] * other[1]) + (m_element[0][2] * other[2]);
 																		result[1] = (m_element[1][0] * other[0]) + (m_element[1][1] * other[1]) + (m_element[1][2] * other[2]);
 																		result[2] = (m_element[2][0] * other[0]) + (m_element[2][1] * other[1]) + (m_element[2][2] * other[2]);
+
+																		return result;
+																	}
+
+																	//! Multiply a matrix by a scaler
+		TMatrix<TYPE, 3, 3>											operator*(TYPE scaler)
+																	{
+																		TMatrix<TYPE, 3, 3> result;
+
+																		for (int rowIndex = 0; rowIndex < 3; ++rowIndex)
+																		{
+																			for (int columnIndex = 0; columnIndex < 3; ++columnIndex)
+																			{
+																				result[rowIndex][columnIndex] = m_element[rowIndex][columnIndex] * scaler;
+																			}
+																		}
 
 																		return result;
 																	}

@@ -106,10 +106,12 @@ void CSpaghettiRigidBody::Update(
 	if (m_flags.isStatic || !m_flags.isEnabled)
 		return;
 
+	static const float SPEEDSCALER = 0.0025f;
+
 	m_lastPosition = m_position;
 
-	m_velocity = m_velocity + world->GetGravity() * (static_cast<float>(deltaTime) * 0.002f);
-	m_position = m_position + (m_velocity * (static_cast<float>(deltaTime) * 0.002f));
+	m_velocity = m_velocity + world->GetGravity() * (static_cast<float>(deltaTime) * SPEEDSCALER);
+	m_position = m_position + (m_velocity * (static_cast<float>(deltaTime) * SPEEDSCALER));
 	m_angularMomentum = m_angularMomentum;
 
 	UpdateInertiaTensor();
@@ -117,13 +119,24 @@ void CSpaghettiRigidBody::Update(
 
 	// update skew matrix
 	SAM::TMatrix<float, 3, 3> skewMatrix;
+	skewMatrix[0][0] = 0.0f;
+	skewMatrix[0][1] = -m_angularVelocity.Z();
+	skewMatrix[0][2] = m_angularVelocity.Y();
+
+	skewMatrix[1][0] = m_angularVelocity.Z();
+	skewMatrix[1][1] = 0.0f;
+	skewMatrix[1][2] = -m_angularVelocity.X();
+
+	skewMatrix[2][0] = -m_angularVelocity.Y();
+	skewMatrix[2][1] = m_angularVelocity.X();
+	skewMatrix[2][2] = 0.0f;
 
 	// update rotation matrix
-	//m_rotation = m_rotation + ((skewMatrix * m_rotation) * (static_cast<float>(deltaTime) * 0.002f));
-	
-	/*m_quaternion = m_quaternion + (((m_quaternion * m_angularVelocity) * (static_cast<float>(deltaTime) * 0.002f)) * 0.5f);
+	m_rotation = m_rotation + ((skewMatrix * m_rotation) * (static_cast<float>(deltaTime) * SPEEDSCALER));
+
+	// update and normalize the quaternion
+	m_quaternion.FromMatrix3x3(m_rotation);
 	m_quaternion.Normalize();
-	m_rotation = m_quaternion.ToMatrix3x3();*/
 
 	m_boundingBox.Transform(m_position);
 }
@@ -140,28 +153,24 @@ void CSpaghettiRigidBody::HandleCollision(
 
 	if (m_boundingBox.Intersects(otherRigidBody->GetBoundingBox()))
 	{
-		// TODO: need to get the normal of the collision
-		// TODO: create materials, that can be applied to rigid bodies specifying, friction and bounce
-
-		static const float FRICTION = 0.5f;
-
 		SAM::TVector<float, 3> direction = m_position - otherRigidBody->GetPosition();
 		direction = direction.Unit();
+		direction = direction * 0.5f;
 
 		SAM::TVector<float, 3> thisVeloctiy;
 		thisVeloctiy.Set(
-			direction.X() == 0 ? m_velocity.X() : m_velocity.X() * -(direction.X() * FRICTION), 
-			direction.Y() == 0 ? m_velocity.Y() : m_velocity.Y() * -(direction.Y() * FRICTION), 
-			direction.Z() == 0 ? m_velocity.Z() : m_velocity.Z() * -(direction.Z() * FRICTION)
+			m_velocity.X() * direction.X(), 
+			m_velocity.Y() * direction.Y(),
+			m_velocity.Z() * direction.Z()
 		);
 		SetVelocity(thisVeloctiy);
 		m_position = m_lastPosition;
 
 		SAM::TVector<float, 3> otherVeloctiy;
 		otherVeloctiy.Set(
-			direction.X() == 0 ? otherRigidBody->GetVelocity().X() : otherRigidBody->GetVelocity().X() * -(direction.X() * FRICTION), 
-			direction.Y() == 0 ? otherRigidBody->GetVelocity().Y() : otherRigidBody->GetVelocity().Y() * -(direction.Y() * FRICTION), 
-			direction.Z() == 0 ? otherRigidBody->GetVelocity().Z() : otherRigidBody->GetVelocity().Z() * -(direction.Z() * FRICTION)
+			otherRigidBody->GetVelocity().X() * direction.X(), 
+			otherRigidBody->GetVelocity().Y() * direction.Y(),
+			otherRigidBody->GetVelocity().Z() * direction.Z()
 		);
 		otherRigidBody->SetVelocity(otherVeloctiy);
 		otherRigidBody->SetPosition(otherRigidBody->GetLastPosition());

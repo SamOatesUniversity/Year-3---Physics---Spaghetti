@@ -46,7 +46,6 @@ void RunOgreApplication()
 	if (Ogre::SceneNode *const floorNode = application->CreateEntityFromMesh("cube.mesh", "floorNode")) 
 	{
 		floorNode->setScale(5.0f, 0.01f, 5.0f);
-		floorNode->showBoundingBox(true);
 
 		floorBody = spaghetti->CreateRigidBody(floorNode, world);
 		floorBody->SetIsStatic(true);
@@ -76,7 +75,7 @@ void RunOgreApplication()
 	// create some things to bounce around
 	srand(1);
 
-	static const int noofBoxes = 5;
+	static const int noofBoxes = 2;
 	CSpaghettiRigidBody* box[noofBoxes];
 	for (int boxIndex = 0; boxIndex < noofBoxes; ++boxIndex)
 	{
@@ -87,10 +86,9 @@ void RunOgreApplication()
 		{
 			static const float meshScale = 0.25f;
 			cubeNode->setScale(meshScale, meshScale, meshScale);
-			cubeNode->showBoundingBox(true);
 
 			box[boxIndex] = spaghetti->CreateRigidBody(cubeNode, world);
-			box[boxIndex]->SetPosition(static_cast<float>((rand() % 200) - 100), static_cast<float>((rand() % 100)), static_cast<float>((rand() % 200) - 100));
+			box[boxIndex]->SetPosition(boxIndex * 12.5f, (boxIndex + 1) * 50.0f, 0.0f);
 
 			Ogre::Entity *const meshEntity = application->GetSceneManager()->getEntity("cube");
 			Ogre::AxisAlignedBox meshBoundingBox = meshEntity->getBoundingBox();
@@ -109,9 +107,9 @@ void RunOgreApplication()
 			boundingBox.SetCorners(boundingBoxCorners);
 			box[boxIndex]->SetBoundingBox(boundingBox);
 
-			SAM::TVector<float, 3> velocity;
-			velocity.Set((rand() % 100) * 0.0005f, (rand() % 100) * 0.0005f, (rand() % 100) * 0.0005f);
-			box[boxIndex]->SetVelocity(velocity);
+			//SAM::TVector<float, 3> velocity;
+			//velocity.Set((rand() % 100) * 0.0005f, (rand() % 100) * 0.0005f, (rand() % 100) * 0.0005f);
+			//box[boxIndex]->SetVelocity(velocity);
 		}
 	}
 
@@ -158,10 +156,10 @@ void RunOgreApplication()
 		{
 			Ogre::SceneNode *const node = static_cast<Ogre::SceneNode*>(box[boxIndex]->GetRenderObject());
 			SAM::TVector<float, 3> position = box[boxIndex]->GetPosition();
-			SAM::TQuaternion orientation;
+			SAM::TQuaternion orientation = box[boxIndex]->GetOrientation();
 
 			node->setPosition(position.X(), position.Y(), position.Z());
-			//node->setOrientation(orientation.W(), orientation.X(), orientation.Y(), orientation.Z());
+			node->setOrientation(orientation.W(), orientation.X(), orientation.Y(), orientation.Z());
 		}
 
 		// update the application
