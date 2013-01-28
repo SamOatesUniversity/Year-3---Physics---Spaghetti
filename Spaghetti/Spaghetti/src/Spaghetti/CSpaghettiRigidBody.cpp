@@ -17,10 +17,13 @@ CSpaghettiRigidBody::CSpaghettiRigidBody(
 	
 	m_mass = 1.0f;
 	m_flags.alllags = 0;
+	m_flags.isEnabled = true;
 
 	m_centerOfMass.Set(0, 0, 0);
-
-	CalculateInertiaTensor();
+	
+	m_rotation.Identity();
+	m_angularVelocity.Set(0, 0, 0);
+	m_angularMomentum.Set(0, 0, 0);
 }
 
 /*
@@ -52,15 +55,18 @@ void CSpaghettiRigidBody::SetBoundingBox(
 	)
 {
 	m_boundingBox = boundingBox;
-	CalculateInertiaTensor();
+
+	CalculateInertiaBodyTensor();
+	UpdateInertiaTensor();
+	UpdateAngularVelocity();
 }
 
 /*
 *	\brief	Calculate the inertia based upon the bounding box
 */
-void CSpaghettiRigidBody::CalculateInertiaTensor()
+void CSpaghettiRigidBody::CalculateInertiaBodyTensor()
 {
-	const float oneOverTwelve = 1.0f / 12.0f;
+	static const float oneOverTwelve = 1.0f / 12.0f;
 	const float heightSquared = m_boundingBox.Height() * m_boundingBox.Height();
 	const float depthSquared = m_boundingBox.Depth() * m_boundingBox.Depth();
 	const float widthSquared = m_boundingBox.Width() * m_boundingBox.Width();
@@ -69,7 +75,23 @@ void CSpaghettiRigidBody::CalculateInertiaTensor()
 	m_inertiaTensor[1][0] = 0; m_inertiaTensor[1][1] = (oneOverTwelve * m_mass) * (widthSquared + depthSquared);  m_inertiaTensor[1][2] = 0;
 	m_inertiaTensor[2][0] = 0; m_inertiaTensor[2][1] = 0; m_inertiaTensor[2][2] = (oneOverTwelve * m_mass) * (widthSquared + heightSquared);
 
-	m_inertiaTensorInverse = m_inertiaTensor.Inverse();
+	m_inertiaTensorBodyInverse = m_inertiaTensor.Inverse();
+}
+
+/*
+*	\brief	
+*/
+void CSpaghettiRigidBody::UpdateInertiaTensor()
+{
+	m_inertiaTensorInverse = m_rotation * (m_inertiaTensorBodyInverse * m_rotation.Transpose());
+}
+
+/*
+*	\brief	
+*/
+void CSpaghettiRigidBody::UpdateAngularVelocity()
+{
+	m_angularVelocity = m_inertiaTensorInverse * m_angularMomentum;
 }
 
 /*
@@ -80,17 +102,28 @@ void CSpaghettiRigidBody::Update(
 		const unsigned long deltaTime							//!< Delta time (The amount of time past since the last update)
 	)
 {
-	// Nothing to update if he rigidbody is static
-	if (m_flags.isStatic)
+	// Nothing to update if he rigid body is static or disabled
+	if (m_flags.isStatic || !m_flags.isEnabled)
 		return;
 
 	m_lastPosition = m_position;
 
-	SAM::TVector<float, 3> velocity = m_velocity + world->GetGravity() * (static_cast<float>(deltaTime) * 0.001f);
-	SAM::TVector<float, 3> position = m_position + (m_velocity * (static_cast<float>(deltaTime) * 0.001f));
+	m_velocity = m_velocity + world->GetGravity() * (static_cast<float>(deltaTime) * 0.002f);
+	m_position = m_position + (m_velocity * (static_cast<float>(deltaTime) * 0.002f));
+	m_angularMomentum = m_angularMomentum;
 
-	m_velocity = velocity;
-	m_position = position;
+	UpdateInertiaTensor();
+	UpdateAngularVelocity();
+
+	// update skew matrix
+	SAM::TMatrix<float, 3, 3> skewMatrix;
+
+	// update rotation matrix
+	//m_rotation = m_rotation + ((skewMatrix * m_rotation) * (static_cast<float>(deltaTime) * 0.002f));
+	
+	/*m_quaternion = m_quaternion + (((m_quaternion * m_angularVelocity) * (static_cast<float>(deltaTime) * 0.002f)) * 0.5f);
+	m_quaternion.Normalize();
+	m_rotation = m_quaternion.ToMatrix3x3();*/
 
 	m_boundingBox.Transform(m_position);
 }
@@ -102,6 +135,9 @@ void CSpaghettiRigidBody::HandleCollision(
 		CSpaghettiRigidBody *otherRigidBody								//!< The other rigid body to compare against
 	)
 {
+	if (!m_flags.isEnabled)
+		return;
+
 	if (m_boundingBox.Intersects(otherRigidBody->GetBoundingBox()))
 	{
 		// TODO: need to get the normal of the collision

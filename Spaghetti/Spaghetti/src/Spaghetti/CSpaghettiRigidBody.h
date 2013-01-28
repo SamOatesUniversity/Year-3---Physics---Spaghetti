@@ -26,23 +26,34 @@ private:
 
 	float									m_mass;													//!<
 	SAM::TMatrix<float, 3, 3>				m_inertiaTensor;										//!< 
+	SAM::TMatrix<float, 3, 3>				m_inertiaTensorBodyInverse;								//!< 
 	SAM::TMatrix<float, 3, 3>				m_inertiaTensorInverse;									//!< 
 
 	SAM::TVector<float, 3>					m_position;												//!< 
 	SAM::TVector<float, 3>					m_lastPosition;											//!< 
+
 	SAM::TMatrix<float, 3, 3>				m_rotation;												//!< 
+	SAM::TQuaternion						m_quaternion;											//!< 
 
 	SAM::TVector<float, 3>					m_centerOfMass;											//!< 
 
 	SAM::TVector<float, 3>					m_velocity;												//!< 
+	SAM::TVector<float, 3>					m_angularMomentum;										//!< 
+
 	SAM::TVector<float, 3>					m_angularVelocity;										//!< The direction gives the direction of the axis about which the body is spinning. The magnitude tells how fast the body is spinning
-	
+
 	SAM::TVector<float, 3>					m_torque;												//!< 
 	SAM::TVector<float, 3>					m_force;												//!< 
 
 private:
 											//! Calculate the inertia tensor based upon the bounding box
-	void									CalculateInertiaTensor();
+	void									CalculateInertiaBodyTensor();
+
+											//! 
+	void									UpdateInertiaTensor();
+
+											//! 
+	void									UpdateAngularVelocity();
 
 public:
 

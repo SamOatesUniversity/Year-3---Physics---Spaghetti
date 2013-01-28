@@ -168,6 +168,38 @@ namespace SAM
 																		return transpose;
 																	}
 
+																	//! Multiply a matrix by another matrix
+		TMatrix<TYPE, 3, 3>											operator*(TMatrix<TYPE, 3, 3> &other)
+																	{
+																		TMatrix<TYPE, 3, 3> result;
+																		
+																		for (int rowIndex = 0; rowIndex < 3; ++rowIndex)
+																		{
+																			for (int columnIndex = 0; columnIndex < 3; ++columnIndex)
+																			{
+																				result[rowIndex][columnIndex] = 0;
+																				for (int multiplyIndex = 0; multiplyIndex < 3; ++multiplyIndex)
+																				{
+																					result[rowIndex][columnIndex] = result[rowIndex][columnIndex] + (m_element[rowIndex][multiplyIndex] * other[multiplyIndex][columnIndex]);
+																				}
+																			}
+																		}
+
+																		return result;
+																	}
+
+																	//! Multiply a matrix by a vector
+		TVector<TYPE, 3>											operator*(TVector<TYPE, 3> &other)
+																	{
+																		TVector<TYPE, 3> result;
+
+																		result[0] = (m_element[0][0] * other[0]) + (m_element[0][1] * other[1]) + (m_element[0][2] * other[2]);
+																		result[1] = (m_element[1][0] * other[0]) + (m_element[1][1] * other[1]) + (m_element[1][2] * other[2]);
+																		result[2] = (m_element[2][0] * other[0]) + (m_element[2][1] * other[1]) + (m_element[2][2] * other[2]);
+
+																		return result;
+																	}
+
 	};
 
 	//! Matrix 4x4
