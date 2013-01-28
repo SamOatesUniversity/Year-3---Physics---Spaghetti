@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CSpaghettiWorld.h"
+#include "CSpaghettiRigidBodyBox.h"
 #include <vector>
 
 class CSpaghetti {

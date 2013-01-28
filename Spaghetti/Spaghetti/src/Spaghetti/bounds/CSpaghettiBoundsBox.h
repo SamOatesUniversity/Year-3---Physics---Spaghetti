@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../../../SAM/SAM/SAM.h"
+#include "../CSpaghettiBounds.h"
 
 #define NOOF_BOUNDINGBOX_CORNERS	8
 
-class CSpaghettiBoundingBox {
+class CSpaghettiBoundsBox : public CSpaghettiBounds {
 
 private:
 
@@ -12,18 +12,16 @@ private:
 	SAM::TVector<float, 3>		m_min;													//!< The minimum corner
 	SAM::TVector<float, 3>		m_max;													//!< The maximum corner
 
-	SAM::TVector<float, 3>		m_position;
-
 public:
 
 								//! Class constructor
-								CSpaghettiBoundingBox();
+								CSpaghettiBoundsBox();
 
 								//! Class destructor
-								~CSpaghettiBoundingBox();
+								~CSpaghettiBoundsBox();
 
 								//! Other ride the equals operator
-	CSpaghettiBoundingBox		&operator=(const CSpaghettiBoundingBox &otherBox)
+	CSpaghettiBoundsBox			&operator=(const CSpaghettiBoundsBox &otherBox)
 								{
 									m_min = otherBox.GetMin();
 									m_max = otherBox.GetMax();
@@ -61,22 +59,8 @@ public:
 
 								//! Does this bounding box intersect with another
 	const bool					Intersects(
-									CSpaghettiBoundingBox &otherBox						//!< The bounding box to test against
+									CSpaghettiBounds *other							//!< The bounding box to test against
 								);
-
-								//! Set the position of the bounding box
-	void						Transform(
-									SAM::TVector<float, 3> &position					//!< 
-								)
-								{
-									m_position = position;
-								}
-
-								//! Get the position of the bounding box
-	SAM::TVector<float, 3>		GetTransform() const
-								{
-									return m_position;
-								}
 
 								//! Get the height of the bounding box
 	float						Height() const

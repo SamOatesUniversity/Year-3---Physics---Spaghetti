@@ -31,6 +31,12 @@
     <Filter Include="Header Files\Spaghetti">
       <UniqueIdentifier>{d759a04c-24ea-40cf-a375-4d3d1ba9e0c0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Spaghetti\bounds">
+      <UniqueIdentifier>{bc0389dc-a0c0-47b3-85de-df1bd79aff54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Spaghetti\bounds">
+      <UniqueIdentifier>{8caedee7-09ef-4a02-9c3e-972d1f54d340}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\Spaghetti.ico">
@@ -61,8 +67,14 @@
     <ClInclude Include="src\Spaghetti\CSpaghettiRigidBody.h">
       <Filter>Header Files\Spaghetti</Filter>
     </ClInclude>
-    <ClInclude Include="src\Spaghetti\CSpaghettiBoundingBox.h">
+    <ClInclude Include="src\Spaghetti\CSpaghettiRigidBodyBox.h">
       <Filter>Header Files\Spaghetti</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Spaghetti\CSpaghettiBounds.h">
+      <Filter>Header Files\Spaghetti</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Spaghetti\bounds\CSpaghettiBoundsBox.h">
+      <Filter>Header Files\Spaghetti\bounds</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -84,8 +96,14 @@
     <ClCompile Include="src\Spaghetti\CSpaghettiRigidBody.cpp">
       <Filter>Source Files\Spaghetti</Filter>
     </ClCompile>
-    <ClCompile Include="src\Spaghetti\CSpaghettiBoundingBox.cpp">
+    <ClCompile Include="src\Spaghetti\CSpaghettiRigidBodyBox.cpp">
       <Filter>Source Files\Spaghetti</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Spaghetti\CSpaghettiBounds.cpp">
+      <Filter>Source Files\Spaghetti</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Spaghetti\bounds\CSpaghettiBoundsBox.cpp">
+      <Filter>Source Files\Spaghetti\bounds</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
