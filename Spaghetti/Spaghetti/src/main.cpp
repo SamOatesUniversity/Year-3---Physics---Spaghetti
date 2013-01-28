@@ -67,9 +67,9 @@ void RunOgreApplication()
 			);
 		}
 
-		CSpaghettiBoundingBox boundingBox;
-		boundingBox.SetCorners(boundingBoxCorners);
-		floorBody->SetBoundingBox(boundingBox);
+		CSpaghettiBoundsBox *const boundingBox = new CSpaghettiBoundsBox();
+		boundingBox->SetCorners(boundingBoxCorners);
+		floorBody->SetBounds(boundingBox);
 	}
 
 	// create some things to bounce around
@@ -80,17 +80,17 @@ void RunOgreApplication()
 	for (int boxIndex = 0; boxIndex < noofBoxes; ++boxIndex)
 	{
 		std::stringstream nodeName;
-		nodeName << "CubeNode-" << boxIndex;
+		nodeName << "SphereNode-" << boxIndex;
 
-		if (Ogre::SceneNode *const cubeNode = application->CreateEntityFromMesh("cube.mesh", nodeName.str())) 
+		if (Ogre::SceneNode *const cubeNode = application->CreateEntityFromMesh("sphere.mesh", nodeName.str())) 
 		{
-			static const float meshScale = 0.25f;
+			static const float meshScale = 0.125f;
 			cubeNode->setScale(meshScale, meshScale, meshScale);
 
 			box[boxIndex] = spaghetti->CreateRigidBody(cubeNode, world);
 			box[boxIndex]->SetPosition(boxIndex * 12.5f, (boxIndex + 1) * 50.0f, 0.0f);
 
-			Ogre::Entity *const meshEntity = application->GetSceneManager()->getEntity("cube");
+			Ogre::Entity *const meshEntity = application->GetSceneManager()->getEntity("sphere");
 			Ogre::AxisAlignedBox meshBoundingBox = meshEntity->getBoundingBox();
 
 			SAM::TVector<float, 3> boundingBoxCorners[NOOF_BOUNDINGBOX_CORNERS];
@@ -103,9 +103,9 @@ void RunOgreApplication()
 				boundingBoxCorners[corner] = boundingBoxCorners[corner] * meshScale;
 			}
 
-			CSpaghettiBoundingBox boundingBox;
-			boundingBox.SetCorners(boundingBoxCorners);
-			box[boxIndex]->SetBoundingBox(boundingBox);
+			CSpaghettiBoundsBox *const boundingBox = new CSpaghettiBoundsBox();
+			boundingBox->SetCorners(boundingBoxCorners);
+			box[boxIndex]->SetBounds(boundingBox);
 
 			//SAM::TVector<float, 3> velocity;
 			//velocity.Set((rand() % 100) * 0.0005f, (rand() % 100) * 0.0005f, (rand() % 100) * 0.0005f);

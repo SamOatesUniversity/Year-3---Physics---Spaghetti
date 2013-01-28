@@ -3,7 +3,7 @@
 #include <string>
 #include "../../../SAM/SAM/SAM.h"
 #include "CSpaghettiWorld.h"
-#include "CSpaghettiBoundingBox.h"
+#include "CSpaghettiBounds.h"
 
 typedef union {
 	struct {
@@ -17,11 +17,11 @@ class CSpaghettiRigidBody {
 
 friend class CSpaghettiWorld;
 
-private:
+protected:
 
 	void									*m_renderObject;										//!< A pointer to an object this rigid body will represent
-
-	CSpaghettiBoundingBox					m_boundingBox;											//!< The rigid bodies bounding box
+	CSpaghettiBounds						*m_bounds;												//!< The rigid bodies bounding box
+		
 	RigidBodyFlags							m_flags;												//!<
 
 	float									m_mass;													//!<
@@ -45,9 +45,9 @@ private:
 	SAM::TVector<float, 3>					m_torque;												//!< 
 	SAM::TVector<float, 3>					m_force;												//!< 
 
-private:
+protected:
 											//! Calculate the inertia tensor based upon the bounding box
-	void									CalculateInertiaBodyTensor();
+	virtual void							CalculateInertiaBodyTensor() = 0;
 
 											//! 
 	void									UpdateInertiaTensor();
@@ -71,9 +71,6 @@ public:
 
 											//! Class destructor
 											~CSpaghettiRigidBody();
-
-											//! Initialize the rigid body
-	void									Initialize();
 
 											//! Set the absolute position of the rigid body
 	void									SetPosition(
@@ -108,48 +105,26 @@ public:
 												return m_quaternion;
 											}
 
-											//! Update the rigid body
-	void									Update(
-												const CSpaghettiWorld *world,
-												const unsigned long deltaTime						//!< Delta time (The amount of time past since the last update)
-											);
-
-											//! Set the rigid bodies bounding box
-	void									SetBoundingBox(
-												CSpaghettiBoundingBox &boundingBox					//!< The bounding box to set this bodies bounding box too
-											);
-
-											//! Get the bounding box
-	CSpaghettiBoundingBox					GetBoundingBox() const
-											{
-												return m_boundingBox;
-											}
-
-											//! Handle collision against another rigid body
-	void									HandleCollision(
-												CSpaghettiRigidBody *otherRigidBody					//!< The other rigid body to compare against
-											);
-
 											//! Set the velocity of the rigid body
 	void									SetVelocity(
 												SAM::TVector<float, 3> velocity
-											)
-											{
-												if (m_flags.isStatic)
-													return;
-
-												m_velocity = velocity;
-												const float vel = velocity.Length();
-												if (vel < 0.002f && vel > -0.002f)
-												{
-													m_velocity.Set(0.0f, 0.0f, 0.0f);
-												}
-											}
+											);
 
 											//! Get the current velocity of the rigid body
 	SAM::TVector<float, 3>					GetVelocity() const
 											{
 												return m_velocity;
+											}
+	
+											//! Set the rigid bodies bounding box
+	void									SetBounds(
+												CSpaghettiBounds *boundingBox					//!< The bounding box to set this bodies bounding box too
+											);
+
+											//! Get the bounding box
+	CSpaghettiBounds						*GetBounds() const
+											{
+												return m_bounds;
 											}
 
 											// Set the static flag of the rigid body
@@ -159,4 +134,15 @@ public:
 											{
 												m_flags.isStatic = isStatic;
 											}
+
+											//! Update the rigid body
+	virtual void							Update(
+												const CSpaghettiWorld *world,
+												const unsigned long deltaTime						//!< Delta time (The amount of time past since the last update)
+											) = 0;
+
+											//! Handle collision against another rigid body
+	virtual void							HandleCollision(
+												CSpaghettiRigidBody *otherRigidBody					//!< The other rigid body to compare against
+											) = 0;
 };

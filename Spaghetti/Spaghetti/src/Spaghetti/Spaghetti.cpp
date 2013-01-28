@@ -42,7 +42,7 @@ CSpaghettiRigidBody *CSpaghetti::CreateRigidBody(
 		CSpaghettiWorld *world								//!< The world the rigid body should be long too
 	)
 {
-	CSpaghettiRigidBody *const newRigidBody = new CSpaghettiRigidBody(renderObject);
+	CSpaghettiRigidBody *const newRigidBody = new CSpaghettiRigidBodyBox(renderObject);
 	if (world != nullptr) {
 		world->AddRigidBody(newRigidBody);
 	}
