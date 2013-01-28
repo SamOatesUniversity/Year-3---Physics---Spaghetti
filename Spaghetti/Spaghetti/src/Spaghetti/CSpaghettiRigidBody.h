@@ -102,6 +102,12 @@ public:
 												return m_lastPosition;
 											}
 
+											//! Get the orientation of the rigid body
+	SAM::TQuaternion						&GetOrientation()
+											{
+												return m_quaternion;
+											}
+
 											//! Update the rigid body
 	void									Update(
 												const CSpaghettiWorld *world,
@@ -129,6 +135,9 @@ public:
 												SAM::TVector<float, 3> velocity
 											)
 											{
+												if (m_flags.isStatic)
+													return;
+
 												m_velocity = velocity;
 												const float vel = velocity.Length();
 												if (vel < 0.002f && vel > -0.002f)
