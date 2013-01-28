@@ -8,7 +8,7 @@ using namespace SAM;
 TQuaternion::TQuaternion()
 {
 	m_vector.Set(0.0f, 0.0f, 0.0f);
-	m_w = 0.0f;
+	m_w = 1.0f;
 }
 
 /*

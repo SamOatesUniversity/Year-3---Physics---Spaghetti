@@ -208,6 +208,16 @@ namespace SAM
 														return value;
 													}
 
+													//! Cross product against another vector
+		TVector<TYPE, 3>							Cross(TVector<TYPE, 3> &otherVector)
+													{
+														TVector<TYPE, 3> result;
+														result[0] = m_element[1] * otherVector[2] - m_element[2] * otherVector[1];
+														result[1] = m_element[2] * otherVector[0] - m_element[0] * otherVector[2];	
+														result[2] = m_element[0] * otherVector[1] - m_element[1] * otherVector[0];												
+														return result;
+													}
+	
 													//! Add another vector to this vector and return the result as a new vector
 		TVector<TYPE, 3>							operator+(const TVector<TYPE, 3> &otherVector) const
 													{

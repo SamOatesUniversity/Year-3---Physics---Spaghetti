@@ -156,8 +156,12 @@ void RunOgreApplication()
 		// update the graphical representations of the physics
 		for (int boxIndex = 0; boxIndex < noofBoxes; ++boxIndex)
 		{
+			Ogre::SceneNode *const node = static_cast<Ogre::SceneNode*>(box[boxIndex]->GetRenderObject());
 			SAM::TVector<float, 3> position = box[boxIndex]->GetPosition();
-			static_cast<Ogre::SceneNode*>(box[boxIndex]->GetRenderObject())->setPosition(position.X(), position.Y(), position.Z());
+			SAM::TQuaternion orientation;
+
+			node->setPosition(position.X(), position.Y(), position.Z());
+			//node->setOrientation(orientation.W(), orientation.X(), orientation.Y(), orientation.Z());
 		}
 
 		// update the application
