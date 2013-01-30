@@ -218,6 +218,17 @@ namespace SAM
 														return result;
 													}
 	
+													// Dot product against another vector
+		TYPE										Dot(TVector<TYPE, 3> &otherVector)
+													{
+														TYPE result = 0;
+
+														for (int vectorIndex = 0; vectorIndex < 3; ++vectorIndex)
+															result += (m_element[vectorIndex] * otherVector[vectorIndex]);
+
+														return result;
+													}
+
 													//! Add another vector to this vector and return the result as a new vector
 		TVector<TYPE, 3>							operator+(const TVector<TYPE, 3> &otherVector) const
 													{
