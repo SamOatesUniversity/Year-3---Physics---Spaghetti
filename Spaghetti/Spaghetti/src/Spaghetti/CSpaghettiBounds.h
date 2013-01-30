@@ -2,11 +2,19 @@
 
 #include "../../../SAM/SAM/SAM.h"
 
-class CSpaghettiBoundsBox;
+struct BoundsType {
+	enum Enum {
+		Box,
+		Sphere,
+		Noof
+	};
+};
 
 class CSpaghettiBounds {
 
 protected:
+
+	BoundsType::Enum			m_type;
 
 	SAM::TVector<float, 3>		m_position;
 
@@ -35,6 +43,12 @@ public:
 	SAM::TVector<float, 3>		GetTransform() const
 								{
 									return m_position;
+								}
+
+								//! Get the type of bounds
+	BoundsType::Enum			GetType() 
+								{
+									return m_type;
 								}
 
 								//! Get the height of the bounding box

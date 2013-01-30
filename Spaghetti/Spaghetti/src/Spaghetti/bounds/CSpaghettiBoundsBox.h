@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../CSpaghettiBounds.h"
+#include "CSpaghettiBoundsSphere.h"
 
 #define NOOF_BOUNDINGBOX_CORNERS	8
 

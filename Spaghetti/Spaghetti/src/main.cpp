@@ -47,7 +47,7 @@ void RunOgreApplication()
 	{
 		floorNode->setScale(5.0f, 0.01f, 5.0f);
 
-		floorBody = spaghetti->CreateRigidBody(floorNode, world);
+		floorBody = spaghetti->CreateRigidBody(floorNode, world, RigidBodyType::Box);
 		floorBody->SetIsStatic(true);
 
 		Ogre::Entity *const meshEntity = application->GetSceneManager()->getEntity("cube");
@@ -75,7 +75,7 @@ void RunOgreApplication()
 	// create some things to bounce around
 	srand(1);
 
-	static const int noofBoxes = 2;
+	static const int noofBoxes = 5;
 	CSpaghettiRigidBody* box[noofBoxes];
 	for (int boxIndex = 0; boxIndex < noofBoxes; ++boxIndex)
 	{
@@ -87,25 +87,16 @@ void RunOgreApplication()
 			static const float meshScale = 0.125f;
 			cubeNode->setScale(meshScale, meshScale, meshScale);
 
-			box[boxIndex] = spaghetti->CreateRigidBody(cubeNode, world);
+			box[boxIndex] = spaghetti->CreateRigidBody(cubeNode, world, RigidBodyType::Sphere);
 			box[boxIndex]->SetPosition(boxIndex * 12.5f, (boxIndex + 1) * 50.0f, 0.0f);
 
 			Ogre::Entity *const meshEntity = application->GetSceneManager()->getEntity("sphere");
-			Ogre::AxisAlignedBox meshBoundingBox = meshEntity->getBoundingBox();
-
-			SAM::TVector<float, 3> boundingBoxCorners[NOOF_BOUNDINGBOX_CORNERS];
-			const Ogre::Vector3 *const boundCorners = meshBoundingBox.getAllCorners();
 			
-			for (int corner = 0; corner < NOOF_BOUNDINGBOX_CORNERS; ++corner)
-			{
-				const Ogre::Vector3 currenCorner = boundCorners[corner];
-				boundingBoxCorners[corner].Set(currenCorner.x, currenCorner.y, currenCorner.z);
-				boundingBoxCorners[corner] = boundingBoxCorners[corner] * meshScale;
-			}
-
-			CSpaghettiBoundsBox *const boundingBox = new CSpaghettiBoundsBox();
-			boundingBox->SetCorners(boundingBoxCorners);
-			box[boxIndex]->SetBounds(boundingBox);
+			const float diameter = (meshEntity->getBoundingRadius() * meshScale);
+			
+			CSpaghettiBoundsSphere *const boundingSphere = new CSpaghettiBoundsSphere();
+			boundingSphere->SetDiameter(diameter);
+			box[boxIndex]->SetBounds(boundingSphere);
 
 			//SAM::TVector<float, 3> velocity;
 			//velocity.Set((rand() % 100) * 0.0005f, (rand() % 100) * 0.0005f, (rand() % 100) * 0.0005f);

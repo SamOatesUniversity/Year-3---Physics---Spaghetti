@@ -5,6 +5,14 @@
 #include "CSpaghettiWorld.h"
 #include "CSpaghettiBounds.h"
 
+struct RigidBodyType {
+	enum Enum {
+		Box,
+		Sphere,
+		Noof
+	};
+};
+
 typedef union {
 	struct {
 		bool isStatic				:	1;

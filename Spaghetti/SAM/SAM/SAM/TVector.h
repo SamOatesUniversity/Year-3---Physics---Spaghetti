@@ -248,6 +248,14 @@ namespace SAM
 														Set(otherVector.X(), otherVector.Y(), otherVector.Z());
 														return *this;
 													}
+
+													//! Get the distance from this vector to another
+		TYPE										DistanceTo(const TVector<TYPE, 3> &otherVector)
+													{
+														TVector<TYPE, 3> distanceVector = (*this) - otherVector;
+														return distanceVector.Length();
+													}
+
 	};
 
 	template <class TYPE>
