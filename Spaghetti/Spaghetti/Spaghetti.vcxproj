@@ -129,9 +129,11 @@
     <ClInclude Include="src\OgreApplication.h" />
     <ClInclude Include="src\OgreWrapper.h" />
     <ClInclude Include="src\Spaghetti\bounds\CSpaghettiBoundsBox.h" />
+    <ClInclude Include="src\Spaghetti\bounds\CSpaghettiBoundsSphere.h" />
     <ClInclude Include="src\Spaghetti\CSpaghettiBounds.h" />
     <ClInclude Include="src\Spaghetti\CSpaghettiRigidBody.h" />
     <ClInclude Include="src\Spaghetti\CSpaghettiRigidBodyBox.h" />
+    <ClInclude Include="src\Spaghetti\CSpaghettiRigidBodySphere.h" />
     <ClInclude Include="src\Spaghetti\CSpaghettiWorld.h" />
     <ClInclude Include="src\Spaghetti\Spaghetti.h" />
   </ItemGroup>
@@ -140,9 +142,11 @@
     <ClCompile Include="src\OgreApplication.cpp" />
     <ClCompile Include="src\OgreWrapper.cpp" />
     <ClCompile Include="src\Spaghetti\bounds\CSpaghettiBoundsBox.cpp" />
+    <ClCompile Include="src\Spaghetti\bounds\CSpaghettiBoundsSphere.cpp" />
     <ClCompile Include="src\Spaghetti\CSpaghettiBounds.cpp" />
     <ClCompile Include="src\Spaghetti\CSpaghettiRigidBody.cpp" />
     <ClCompile Include="src\Spaghetti\CSpaghettiRigidBodyBox.cpp" />
+    <ClCompile Include="src\Spaghetti\CSpaghettiRigidBodySphere.cpp" />
     <ClCompile Include="src\Spaghetti\CSpaghettiWorld.cpp" />
     <ClCompile Include="src\Spaghetti\Spaghetti.cpp" />
   </ItemGroup>

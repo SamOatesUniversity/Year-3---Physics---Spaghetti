@@ -37,6 +37,12 @@
     <Filter Include="Source Files\Spaghetti\bounds">
       <UniqueIdentifier>{8caedee7-09ef-4a02-9c3e-972d1f54d340}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Spaghetti\bodies">
+      <UniqueIdentifier>{7a2c0b70-03df-4d38-9abd-f20f04e81e4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Spaghetti\bodies">
+      <UniqueIdentifier>{7b662e3e-8301-4cb8-afad-de38a0cc6179}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\Spaghetti.ico">
@@ -67,13 +73,19 @@
     <ClInclude Include="src\Spaghetti\CSpaghettiRigidBody.h">
       <Filter>Header Files\Spaghetti</Filter>
     </ClInclude>
-    <ClInclude Include="src\Spaghetti\CSpaghettiRigidBodyBox.h">
-      <Filter>Header Files\Spaghetti</Filter>
-    </ClInclude>
     <ClInclude Include="src\Spaghetti\CSpaghettiBounds.h">
       <Filter>Header Files\Spaghetti</Filter>
     </ClInclude>
     <ClInclude Include="src\Spaghetti\bounds\CSpaghettiBoundsBox.h">
+      <Filter>Header Files\Spaghetti\bounds</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Spaghetti\CSpaghettiRigidBodyBox.h">
+      <Filter>Header Files\Spaghetti\bodies</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Spaghetti\CSpaghettiRigidBodySphere.h">
+      <Filter>Header Files\Spaghetti\bodies</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Spaghetti\bounds\CSpaghettiBoundsSphere.h">
       <Filter>Header Files\Spaghetti\bounds</Filter>
     </ClInclude>
   </ItemGroup>
@@ -96,13 +108,19 @@
     <ClCompile Include="src\Spaghetti\CSpaghettiRigidBody.cpp">
       <Filter>Source Files\Spaghetti</Filter>
     </ClCompile>
-    <ClCompile Include="src\Spaghetti\CSpaghettiRigidBodyBox.cpp">
-      <Filter>Source Files\Spaghetti</Filter>
-    </ClCompile>
     <ClCompile Include="src\Spaghetti\CSpaghettiBounds.cpp">
       <Filter>Source Files\Spaghetti</Filter>
     </ClCompile>
     <ClCompile Include="src\Spaghetti\bounds\CSpaghettiBoundsBox.cpp">
+      <Filter>Source Files\Spaghetti\bounds</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Spaghetti\CSpaghettiRigidBodyBox.cpp">
+      <Filter>Source Files\Spaghetti\bodies</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Spaghetti\CSpaghettiRigidBodySphere.cpp">
+      <Filter>Source Files\Spaghetti\bodies</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Spaghetti\bounds\CSpaghettiBoundsSphere.cpp">
       <Filter>Source Files\Spaghetti\bounds</Filter>
     </ClCompile>
   </ItemGroup>

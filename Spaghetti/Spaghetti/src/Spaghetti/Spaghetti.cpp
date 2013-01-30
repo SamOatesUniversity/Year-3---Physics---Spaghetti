@@ -39,11 +39,23 @@ CSpaghettiWorld *CSpaghetti::CreateWorld()
 */
 CSpaghettiRigidBody *CSpaghetti::CreateRigidBody(
 		void *renderObject,									//!< A pointer to an object the new igid body will represent
-		CSpaghettiWorld *world								//!< The world the rigid body should be long too
+		CSpaghettiWorld *world,								//!< The world the rigid body should be long too
+		RigidBodyType::Enum bodyType						//!< The type of rigidbody to create
 	)
 {
-	CSpaghettiRigidBody *const newRigidBody = new CSpaghettiRigidBodyBox(renderObject);
-	if (world != nullptr) {
+	CSpaghettiRigidBody *newRigidBody = nullptr;
+	
+	switch (bodyType)
+	{
+		case RigidBodyType::Box:
+			newRigidBody = new CSpaghettiRigidBodyBox(renderObject);
+			break;
+		case RigidBodyType::Sphere:
+			newRigidBody = new CSpaghettiRigidBodySphere(renderObject);
+			break;
+	}
+	
+	if (world != nullptr && newRigidBody != nullptr) {
 		world->AddRigidBody(newRigidBody);
 	}
 

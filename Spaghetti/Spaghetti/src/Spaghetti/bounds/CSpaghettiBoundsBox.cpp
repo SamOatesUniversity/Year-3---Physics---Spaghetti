@@ -5,7 +5,7 @@
 */
 CSpaghettiBoundsBox::CSpaghettiBoundsBox()
 {
-
+	m_type = BoundsType::Box;
 }
 
 /*
@@ -43,14 +43,32 @@ const bool CSpaghettiBoundsBox::Intersects(
 		CSpaghettiBounds *other								//! The bounding box to test against
 	)
 {
-	CSpaghettiBoundsBox *const otherBox = static_cast<CSpaghettiBoundsBox*>(other);
+	if (other->GetType() == BoundsType::Box)
+	{
+		CSpaghettiBoundsBox *const otherBox = static_cast<CSpaghettiBoundsBox*>(other);
 
-	if (m_position.X() + m_max.X() < otherBox->GetTransform().X() + otherBox->GetMin().X()) return false;
-	if (m_position.X() + m_min.X() > otherBox->GetTransform().X() + otherBox->GetMax().X()) return false;
-	if (m_position.Y() + m_max.Y() < otherBox->GetTransform().Y() + otherBox->GetMin().Y()) return false;
-	if (m_position.Y() + m_min.Y() > otherBox->GetTransform().Y() + otherBox->GetMax().Y()) return false;
-	if (m_position.Z() + m_max.Z() < otherBox->GetTransform().Z() + otherBox->GetMin().Z()) return false;
-	if (m_position.Z() + m_min.Z() > otherBox->GetTransform().Z() + otherBox->GetMax().Z()) return false;
+		if (m_position.X() + m_max.X() < otherBox->GetTransform().X() + otherBox->GetMin().X()) return false;
+		if (m_position.X() + m_min.X() > otherBox->GetTransform().X() + otherBox->GetMax().X()) return false;
+		if (m_position.Y() + m_max.Y() < otherBox->GetTransform().Y() + otherBox->GetMin().Y()) return false;
+		if (m_position.Y() + m_min.Y() > otherBox->GetTransform().Y() + otherBox->GetMax().Y()) return false;
+		if (m_position.Z() + m_max.Z() < otherBox->GetTransform().Z() + otherBox->GetMin().Z()) return false;
+		if (m_position.Z() + m_min.Z() > otherBox->GetTransform().Z() + otherBox->GetMax().Z()) return false;
 
-	return true;
+		return true;
+	}
+	else if (other->GetType() == BoundsType::Sphere)
+	{
+		CSpaghettiBoundsSphere *const otherSphere = static_cast<CSpaghettiBoundsSphere*>(other);
+
+		if (m_position.X() + m_max.X() < otherSphere->GetTransform().X() - otherSphere->GetRadius()) return false;
+		if (m_position.X() + m_min.X() > otherSphere->GetTransform().X() + otherSphere->GetRadius()) return false;
+		if (m_position.Y() + m_max.Y() < otherSphere->GetTransform().Y() - otherSphere->GetRadius()) return false;
+		if (m_position.Y() + m_min.Y() > otherSphere->GetTransform().Y() + otherSphere->GetRadius()) return false;
+		if (m_position.Z() + m_max.Z() < otherSphere->GetTransform().Z() - otherSphere->GetRadius()) return false;
+		if (m_position.Z() + m_min.Z() > otherSphere->GetTransform().Z() + otherSphere->GetRadius()) return false;
+
+		return true;
+	}
+	
+	return false;
 }
