@@ -47,8 +47,6 @@ void CSpaghettiRigidBodyBox::Update(
 	if (m_flags.isStatic || !m_flags.isEnabled)
 		return;
 
-	static const float SPEEDSCALER = 0.0025f;
-
 	m_lastPosition = m_position;
 
 	m_velocity = m_velocity + world->GetGravity() * (static_cast<float>(deltaTime) * SPEEDSCALER);

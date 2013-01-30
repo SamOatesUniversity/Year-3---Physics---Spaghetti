@@ -228,6 +228,13 @@ namespace SAM
 
 														return result;
 													}
+		
+													//! Get the distance from this vector to another
+		TYPE										DistanceTo(const TVector<TYPE, 3> &otherVector)
+													{
+														TVector<TYPE, 3> distanceVector = (*this) - otherVector;
+														return distanceVector.Length();
+													}
 
 													//! Add another vector to this vector and return the result as a new vector
 		TVector<TYPE, 3>							operator+(const TVector<TYPE, 3> &otherVector) const
@@ -260,11 +267,12 @@ namespace SAM
 														return *this;
 													}
 
-													//! Get the distance from this vector to another
-		TYPE										DistanceTo(const TVector<TYPE, 3> &otherVector)
+													//! Scale a vector by a value
+		TVector<TYPE, 3>							operator/(const TYPE &other) const
 													{
-														TVector<TYPE, 3> distanceVector = (*this) - otherVector;
-														return distanceVector.Length();
+														TVector<TYPE, 3> result;
+														result.Set(m_element[0] / other, m_element[1] / other, m_element[2] / other);
+														return result;
 													}
 
 	};
