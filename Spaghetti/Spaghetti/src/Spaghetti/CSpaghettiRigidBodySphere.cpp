@@ -46,8 +46,6 @@ void CSpaghettiRigidBodySphere::Update(
 	if (m_flags.isStatic || !m_flags.isEnabled)
 		return;
 
-	static const float SPEEDSCALER = 0.0025f;
-
 	m_lastPosition = m_position;
 
 	m_velocity = m_velocity + world->GetGravity() * (static_cast<float>(deltaTime) * SPEEDSCALER);
@@ -93,26 +91,26 @@ void CSpaghettiRigidBodySphere::HandleCollision(
 
 	if (m_bounds->Intersects(otherRigidBody->GetBounds()))
 	{
-		SAM::TVector<float, 3> direction = m_position - otherRigidBody->GetPosition();
-		direction = direction.Unit();
-		direction = direction * 0.5f;
+		SAM::TVector<float, 3> x = m_position - otherRigidBody->GetPosition();
+		x.Unit();
 
-		SAM::TVector<float, 3> thisVeloctiy;
-		thisVeloctiy.Set(
-			m_velocity.X() * direction.X(), 
-			m_velocity.Y() * direction.Y(),
-			m_velocity.Z() * direction.Z()
-			);
-		SetVelocity(thisVeloctiy);
-		m_position = m_lastPosition;
+		SAM::TVector<float, 3> v1 = m_velocity;
+		float x1 = x.Dot(v1);
+		SAM::TVector<float, 3> v1x = x * x1;
+		SAM::TVector<float, 3> v1y = v1 - v1x;
+		float m1 = m_mass;
 
-		SAM::TVector<float, 3> otherVeloctiy;
-		otherVeloctiy.Set(
-			otherRigidBody->GetVelocity().X() * direction.X(), 
-			otherRigidBody->GetVelocity().Y() * direction.Y(),
-			otherRigidBody->GetVelocity().Z() * direction.Z()
-			);
-		otherRigidBody->SetVelocity(otherVeloctiy);
-		otherRigidBody->SetPosition(otherRigidBody->GetLastPosition());
+		x = x * -1.0f;
+		SAM::TVector<float, 3> v2 = otherRigidBody->GetVelocity();
+		float x2 = x.Dot(v2);
+		SAM::TVector<float, 3> v2x = x * x2;
+		SAM::TVector<float, 3> v2y = v2 - v2x;
+		float m2 = otherRigidBody->GetMass();
+
+		SAM::TVector<float, 3> newVelocity = ((v1x * ((m1 - m2) / (m1 + m2))) + (v2x * ((2 * m2) / (m1 + m2))) + v1y) * SPEEDSCALER;
+		SetVelocity(newVelocity);
+
+		SAM::TVector<float, 3> otherNewVelocity = ((v1x * ((2 * m1) / (m1 + m2))) + (v2x * ((m2 - m1) / (m1 + m2))) + v2y) * SPEEDSCALER;
+		otherRigidBody->SetVelocity(otherNewVelocity);
 	}
 }

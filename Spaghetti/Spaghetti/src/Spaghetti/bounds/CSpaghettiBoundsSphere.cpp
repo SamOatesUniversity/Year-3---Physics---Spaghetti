@@ -39,15 +39,13 @@ const bool CSpaghettiBoundsSphere::Intersects(
 	else if (other->GetType() == BoundsType::Sphere)
 	{
 		CSpaghettiBoundsSphere *const otherSphere = static_cast<CSpaghettiBoundsSphere*>(other);
+		const float distance = m_position.DistanceTo(otherSphere->GetTransform());
+		const float radius = GetRadius() + otherSphere->GetRadius();
 
-		if (m_position.X() + GetRadius() < otherSphere->GetTransform().X() - otherSphere->GetRadius()) return false;
-		if (m_position.X() - GetRadius() > otherSphere->GetTransform().X() + otherSphere->GetRadius()) return false;
-		if (m_position.Y() + GetRadius() < otherSphere->GetTransform().Y() - otherSphere->GetRadius()) return false;
-		if (m_position.Y() - GetRadius() > otherSphere->GetTransform().Y() + otherSphere->GetRadius()) return false;
-		if (m_position.Z() + GetRadius() < otherSphere->GetTransform().Z() - otherSphere->GetRadius()) return false;
-		if (m_position.Z() - GetRadius() > otherSphere->GetTransform().Z() + otherSphere->GetRadius()) return false;
+		if (distance < radius)
+			return true;
 
-		return true;
+		return false;
 	}
 
 	return false;

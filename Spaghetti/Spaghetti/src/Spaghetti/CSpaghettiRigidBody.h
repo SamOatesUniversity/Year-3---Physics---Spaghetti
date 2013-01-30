@@ -143,6 +143,12 @@ public:
 												m_flags.isStatic = isStatic;
 											}
 
+											//! Get the rigid bodies mass
+	float									GetMass() const
+											{
+												return m_mass;
+											}
+
 											//! Update the rigid body
 	virtual void							Update(
 												const CSpaghettiWorld *world,
@@ -154,3 +160,5 @@ public:
 												CSpaghettiRigidBody *otherRigidBody					//!< The other rigid body to compare against
 											) = 0;
 };
+
+static const float SPEEDSCALER = 0.0025f;
