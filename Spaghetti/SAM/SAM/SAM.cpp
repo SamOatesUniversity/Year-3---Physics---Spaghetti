@@ -20,5 +20,4 @@ namespace SAM
 	{
 		return static_cast<TYPE>(TYPE * 0.01745);
 	}
-
 }

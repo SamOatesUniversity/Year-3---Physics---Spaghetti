@@ -21,4 +21,15 @@ namespace SAM
 	template<class TYPE>
 	TYPE DegreesToRad(TYPE val);
 
+	/*
+	*	\Brief Clamp a value between a minimum and maximum value
+	*/
+	template<class TYPE>
+	TYPE Clamp(TYPE val, TYPE min, TYPE max)
+	{
+		if (val > max) return max;
+		if (val < min) return min;
+		return val;
+	}
+
 }

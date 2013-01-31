@@ -80,4 +80,18 @@ public:
 								{
 									return m_max.Z() - m_min.Z();
 								}
+
+								//! Get the spheres radius
+	const float					GetRadius()
+								{
+									return m_min.DistanceTo(m_max) * 0.5f;
+								}
+
+								//! 
+	void						CalculateHitPoint(
+									const CSpaghettiBoundsBox *box0, 
+									const CSpaghettiBoundsBox *box1,
+									SAM::TVector<float, 3> &hitNormal,
+									float &penetration
+								);
 };
