@@ -187,10 +187,16 @@ namespace SAM
 														return m_element[index];
 													}
 
+													//! Get the squared length of the vector
+		TYPE										LengthSquared() const
+													{
+														return (m_element[0] * m_element[0]) + (m_element[1] * m_element[1]) + (m_element[2] * m_element[2]);
+													}
+
 													//! Get the length of the vector
 		TYPE										Length() const
 													{
-														return sqrt((m_element[0] * m_element[0]) + (m_element[1] * m_element[1]) + (m_element[2] * m_element[2]));
+														return sqrt(LengthSquared());
 													}
 
 													//! The sum of all the elements
@@ -203,9 +209,16 @@ namespace SAM
 		TVector<TYPE, 3>							Unit() const
 													{
 														const TYPE len = Length();
+
 														TVector<TYPE, 3> value;
-														value.Set(m_element[0] / len, m_element[1] / len, m_element[2] / len);
+														if (len != 0.0f) value.Set(m_element[0] / len, m_element[1] / len, m_element[2] / len);
 														return value;
+													}
+
+													//! Get a unit vector of this vector
+		TVector<TYPE, 3>							Normalize() const
+													{
+														return Unit();
 													}
 
 													//! Cross product against another vector
@@ -390,5 +403,8 @@ namespace SAM
 														return result;
 													}
 	};
+
+
+	typedef		TVector<float, 3>		TVector3;
 
 }

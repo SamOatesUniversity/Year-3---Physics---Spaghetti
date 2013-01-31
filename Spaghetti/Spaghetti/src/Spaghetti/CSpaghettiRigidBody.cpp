@@ -16,7 +16,7 @@ CSpaghettiRigidBody::CSpaghettiRigidBody(
 	m_velocity.Set(0.0f, 0.0f, 0.0f);
 	m_torque.Set(0.0f, 0.0f, 0.0f);
 	
-	m_mass = 1.0f;
+	m_mass = 10000.0f;
 	m_flags.alllags = 0;
 	m_flags.isEnabled = true;
 
@@ -24,7 +24,7 @@ CSpaghettiRigidBody::CSpaghettiRigidBody(
 	
 	m_rotation.Identity();
 	m_angularVelocity.Set(0, 0, 0);
-	m_angularMomentum.Set(0.1f, 0, 0);
+	m_angularMomentum.Set(0.0f, 0.0f, 0.0f);
 }
 
 /*
@@ -45,7 +45,7 @@ void CSpaghettiRigidBody::SetPosition(
 	)
 {
 	m_position.Set(x, y, z);
-	if (m_bounds != nullptr) m_bounds->Transform(m_position);
+	if (m_bounds != nullptr) m_bounds->Transform(m_position, m_rotation);
 }
 
 /*
@@ -60,7 +60,7 @@ void CSpaghettiRigidBody::SetVelocity(
 
 	m_velocity = velocity;
 	const float vel = velocity.Length();
-	if (vel < 0.002f && vel > -0.002f)
+	if (vel < 0.0002f && vel > -0.0002f)
 	{
 		m_velocity.Set(0.0f, 0.0f, 0.0f);
 	}

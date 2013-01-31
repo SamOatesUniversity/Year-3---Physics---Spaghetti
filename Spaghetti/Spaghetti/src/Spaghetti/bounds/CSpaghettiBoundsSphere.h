@@ -39,7 +39,7 @@ public:
 								}
 
 								//! Get the spheres radius
-	const float					GetRadius() const
+	const float					GetRadius()
 								{
 									return (m_diameter * 0.5f);
 								}

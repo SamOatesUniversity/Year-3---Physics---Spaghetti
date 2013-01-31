@@ -1,0 +1,13 @@
+material texturedSphere
+ {
+    technique
+    {
+       pass
+        {
+          texture_unit
+          {
+            texture sphere.png
+          }
+       }   
+    }
+ }

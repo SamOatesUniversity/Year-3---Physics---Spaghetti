@@ -76,7 +76,7 @@ void CSpaghettiRigidBodySphere::Update(
 	m_quaternion.FromMatrix3x3(m_rotation);
 	m_quaternion.Normalize();
 
-	m_bounds->Transform(m_position);
+	m_bounds->Transform(m_position, m_rotation);
 }
 
 /*
@@ -107,10 +107,10 @@ void CSpaghettiRigidBodySphere::HandleCollision(
 		SAM::TVector<float, 3> v2y = v2 - v2x;
 		float m2 = otherRigidBody->GetMass();
 
-		SAM::TVector<float, 3> newVelocity = ((v1x * ((m1 - m2) / (m1 + m2))) + (v2x * ((2 * m2) / (m1 + m2))) + v1y) * SPEEDSCALER;
+		SAM::TVector<float, 3> newVelocity = ((v1x * ((m1 - m2) / (m1 + m2))) + (v2x * ((2 * m2) / (m1 + m2))) + v1y) * (SPEEDSCALER * 1.0f);
 		SetVelocity(newVelocity);
 
-		SAM::TVector<float, 3> otherNewVelocity = ((v1x * ((2 * m1) / (m1 + m2))) + (v2x * ((m2 - m1) / (m1 + m2))) + v2y) * SPEEDSCALER;
+		SAM::TVector<float, 3> otherNewVelocity = ((v1x * ((2 * m1) / (m1 + m2))) + (v2x * ((m2 - m1) / (m1 + m2))) + v2y) * (SPEEDSCALER * 1.0f);
 		otherRigidBody->SetVelocity(otherNewVelocity);
 	}
 }

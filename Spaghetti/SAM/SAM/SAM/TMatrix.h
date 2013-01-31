@@ -257,7 +257,8 @@ namespace SAM
 
 																	//! Change the matrix to an identity matrix
 		void														Identity()
-																	{																
+																	{		
+																		Zero();														
 																		unsigned int columnIndex = 0;
 																		for (int rowIndex = 0; rowIndex < 4; ++rowIndex)
 																			m_element[rowIndex][columnIndex++] = static_cast<TYPE>(1);
@@ -269,6 +270,49 @@ namespace SAM
 																		for (int rowIndex = 0; rowIndex < 4; ++rowIndex)
 																			for (int columnIndex = 0; columnIndex < 4; ++columnIndex)
 																				m_element[rowIndex][columnIndex] = static_cast<TYPE>(0);
+																	}
+
+																	//! 
+		TVector<TYPE, 3>											Transform(TVector<TYPE, 3> vector)
+																	{
+																		float norm = m_element[0][3] * vector.X() + m_element[1][3] * vector.Y() + m_element[2][3] * vector.Z() + m_element[3][3];
+
+																		TVector<TYPE, 3> result;
+
+																		result.SetX((m_element[0][0] * vector.X() + m_element[1][0] * vector.Y() + m_element[2][0] * vector.Z() + m_element[3][0]) / norm);
+																		result.SetY((m_element[0][1] * vector.X() + m_element[1][1] * vector.Y() + m_element[2][1] * vector.Z() + m_element[3][1]) / norm);
+																		result.SetZ((m_element[0][2] * vector.X() + m_element[1][2] * vector.Y() + m_element[2][2] * vector.Z() + m_element[3][2]) / norm);
+
+																		return result;
+																	}
+
+																	//! 
+		void														Translate(TYPE x, TYPE y, TYPE z)
+																	{
+																		Identity();
+																		m_element[3][0] = x;
+																		m_element[3][1] = y;
+																		m_element[3][2] = z;
+																	}
+
+																	//! Multiply a matrix by another matrix
+		TMatrix<TYPE, 4, 4>											operator*(TMatrix<TYPE, 4, 4> &other)
+																	{
+																		TMatrix<TYPE, 4, 4> result;
+																		
+																		for (int rowIndex = 0; rowIndex < 4; ++rowIndex)
+																		{
+																			for (int columnIndex = 0; columnIndex < 4; ++columnIndex)
+																			{
+																				result[rowIndex][columnIndex] = 0;
+																				for (int multiplyIndex = 0; multiplyIndex < 4; ++multiplyIndex)
+																				{
+																					result[rowIndex][columnIndex] = result[rowIndex][columnIndex] + (m_element[rowIndex][multiplyIndex] * other[multiplyIndex][columnIndex]);
+																				}
+																			}
+																		}
+
+																		return result;
 																	}
 	};
 

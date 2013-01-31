@@ -17,8 +17,8 @@ void RunOgreApplication()
 	// create a camera, setup viewport 
 	Ogre::String cameraName = "MainCamera";
 	Ogre::SceneNode *const cameraNode = application->CreateCamera(cameraName);
-	cameraNode->setPosition(Ogre::Vector3(0.0f, 250.0f, 750.0f));
-	static_cast<Ogre::Camera*>(cameraNode->getAttachedObject("MainCamera"))->lookAt(0.0f, 0.0f, 0.0f);
+	cameraNode->setPosition(Ogre::Vector3(1500.0f, 100.0f, 00.0f));
+	static_cast<Ogre::Camera*>(cameraNode->getAttachedObject("MainCamera"))->lookAt(0.0f, 0.4f, 0.0f);
 
 	//create O/I system for keyboard and mouse inputs
 	application->CreateIOS();
@@ -45,7 +45,7 @@ void RunOgreApplication()
 	CSpaghettiRigidBody *floorBody = nullptr;
 	if (Ogre::SceneNode *const floorNode = application->CreateEntityFromMesh("cube.mesh", "floorNode")) 
 	{
-		floorNode->setScale(5.0f, 0.01f, 5.0f);
+		floorNode->setScale(20.0f, 0.1f, 20.0f);
 
 		floorBody = spaghetti->CreateRigidBody(floorNode, world, RigidBodyType::Box);
 		floorBody->SetIsStatic(true);
@@ -73,34 +73,65 @@ void RunOgreApplication()
 	}
 
 	// create some things to bounce around
-	static const int noofBoxes = 5;
+	static const int noofBoxes = 4;
 	CSpaghettiRigidBody* box[noofBoxes];
 	for (int boxIndex = 0; boxIndex < noofBoxes; ++boxIndex)
 	{
 		std::stringstream nodeName;
-		nodeName << "SphereNode-" << boxIndex;
+		nodeName << "CubeNode-" << boxIndex;
 
-		if (Ogre::SceneNode *const cubeNode = application->CreateEntityFromMesh("sphere.mesh", nodeName.str())) 
+		if (Ogre::SceneNode *const cubeNode = application->CreateEntityFromMesh("cube.mesh", nodeName.str())) 
 		{
-			static const float meshScale = 0.125f;
+			static const float meshScale = 1.0f;
 			cubeNode->setScale(meshScale, meshScale, meshScale);
 
-			box[boxIndex] = spaghetti->CreateRigidBody(cubeNode, world, RigidBodyType::Sphere);
-			box[boxIndex]->SetPosition(boxIndex, (boxIndex + 1) * 50.0f, 0.0f);
+			box[boxIndex] = spaghetti->CreateRigidBody(cubeNode, world, RigidBodyType::Box);
+			box[boxIndex]->SetPosition(0.0f, (boxIndex + 1) * 100.0f, 0.0f);
 
-			Ogre::Entity *const meshEntity = application->GetSceneManager()->getEntity("sphere");
-			
-			const float diameter = (meshEntity->getBoundingRadius() * meshScale);
-			
-			CSpaghettiBoundsSphere *const boundingSphere = new CSpaghettiBoundsSphere();
-			boundingSphere->SetDiameter(diameter);
-			box[boxIndex]->SetBounds(boundingSphere);
+			Ogre::Entity *const meshEntity = application->GetSceneManager()->getEntity("cube");
+			Ogre::AxisAlignedBox meshBoundingBox = meshEntity->getBoundingBox();
 
-			SAM::TVector<float, 3> velocity;
-			velocity.Set((rand() % 100) * 0.0005f, (rand() % 100) * 0.0005f, (rand() % 100) * 0.0005f);
-			box[boxIndex]->SetVelocity(velocity);
+			SAM::TVector<float, 3> boundingBoxCorners[NOOF_BOUNDINGBOX_CORNERS];
+			const Ogre::Vector3 *const boundCorners = meshBoundingBox.getAllCorners();
+
+			for (int corner = 0; corner < NOOF_BOUNDINGBOX_CORNERS; ++corner)
+			{
+				const Ogre::Vector3 currenCorner = boundCorners[corner];
+				boundingBoxCorners[corner].Set(
+					currenCorner.x * meshScale, 
+					currenCorner.y * meshScale, 
+					currenCorner.z * meshScale
+					);
+			}
+
+			CSpaghettiBoundsBox *const boundingBox = new CSpaghettiBoundsBox();
+			boundingBox->SetCorners(boundingBoxCorners);
+			box[boxIndex]->SetBounds(boundingBox);
 		}
 	}
+	//for (int boxIndex = 0; boxIndex < noofBoxes; ++boxIndex)
+	//{
+	//	std::stringstream nodeName;
+	//	nodeName << "SphereNode-" << boxIndex;
+
+	//	if (Ogre::SceneNode *const cubeNode = application->CreateEntityFromMesh("sphere.mesh", nodeName.str())) 
+	//	{
+	//		static const float meshScale = 0.2f;
+	//		cubeNode->setScale(meshScale, meshScale, meshScale);
+
+	//		box[boxIndex] = spaghetti->CreateRigidBody(cubeNode, world, RigidBodyType::Sphere);
+	//		box[boxIndex]->SetPosition(0.0f, (boxIndex + 1) * 50.0f, 0.0f);
+
+	//		Ogre::Entity *const meshEntity = application->GetSceneManager()->getEntity("sphere");
+	//		meshEntity->setMaterialName("texturedSphere");
+
+	//		const float diameter = (meshEntity->getBoundingRadius() * meshScale);
+	//		
+	//		CSpaghettiBoundsSphere *const boundingSphere = new CSpaghettiBoundsSphere();
+	//		boundingSphere->SetDiameter(diameter);
+	//		box[boxIndex]->SetBounds(boundingSphere);
+	//	}
+	//}
 
 	Ogre::Vector3 cameraPosition = cameraNode->getPosition();
 

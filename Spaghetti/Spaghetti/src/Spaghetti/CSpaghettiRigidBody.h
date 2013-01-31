@@ -80,6 +80,12 @@ public:
 											//! Class destructor
 											~CSpaghettiRigidBody();
 
+											//! 
+	SAM::TMatrix<float, 3, 3>				GetInverseInertia()
+											{
+												return m_inertiaTensorInverse;
+											}
+
 											//! Set the absolute position of the rigid body
 	void									SetPosition(
 												const float x,										//!< The x coordinate 
@@ -92,7 +98,7 @@ public:
 												SAM::TVector<float, 3> position 
 											)
 											{
-												m_position = m_lastPosition;
+												m_position = position;
 											}
 
 											//! Get the rigid body position
@@ -123,6 +129,20 @@ public:
 											{
 												return m_velocity;
 											}
+
+											//!
+	void									SetAngularVelocity(
+												SAM::TVector<float, 3> angularVelocity
+											)
+											{
+												m_angularVelocity = angularVelocity;
+											}
+
+											//! Get the current angular velocity of the rigid body
+	SAM::TVector<float, 3>					GetAngularVelocity() const
+											{
+												return m_angularVelocity;
+											}
 	
 											//! Set the rigid bodies bounding box
 	void									SetBounds(
@@ -141,6 +161,12 @@ public:
 											)
 											{
 												m_flags.isStatic = isStatic;
+											}
+
+											// Set the static flag of the rigid body
+	const bool								IsStatic()
+											{
+												return m_flags.isStatic;
 											}
 
 											//! Get the rigid bodies mass

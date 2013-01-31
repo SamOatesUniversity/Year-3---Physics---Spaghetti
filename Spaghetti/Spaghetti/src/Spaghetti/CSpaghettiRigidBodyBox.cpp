@@ -77,7 +77,107 @@ void CSpaghettiRigidBodyBox::Update(
 	m_quaternion.FromMatrix3x3(m_rotation);
 	m_quaternion.Normalize();
 
-	m_bounds->Transform(m_position);
+	m_bounds->Transform(m_position, m_rotation);
+}
+
+void AddCollisionImpulse(
+		CSpaghettiRigidBody *c0, 
+		CSpaghettiRigidBody *c1, 
+		SAM::TVector<float, 3> &hitPoint, 
+		SAM::TVector<float, 3> &normal, 
+		float dt,
+		float penetration
+	)
+{
+
+	// Some simple check code.
+	if (dt <= 0.0) return;
+
+	float invMass0 = 1.0f / c0->GetMass();
+	float invMass1 = 1.0f / c1->GetMass();
+
+	invMass0 = c0->IsStatic() ? 0.0f : invMass0;
+	invMass1 = c1->IsStatic() ? 0.0f : invMass1;
+
+	// Both objects are non movable
+	if ( (invMass0+invMass1) == 0.0f ) return;
+	
+	SAM::TVector<float, 3> r0 = hitPoint - c0->GetPosition();
+	SAM::TVector<float, 3> r1 = hitPoint - c1->GetPosition();
+
+	SAM::TVector<float, 3> v0 = c0->GetVelocity() + c0->GetAngularVelocity().Cross(r0);
+	SAM::TVector<float, 3> v1 = c1->GetVelocity() + c1->GetAngularVelocity().Cross(r1);
+
+	// Relative Velocity
+	SAM::TVector<float, 3> dv = v0 - v1;
+
+	// NORMAL Impulse Code
+
+	// Compute Normal Impulse
+	float vn = dv.Dot(normal);
+
+	// Works out the bias to prevent Prevents sinking!
+	const float allowedPenetration = 0.1f;
+	const float biasFactor = 0.1f; // 0.1 to 0.3
+	float biasFactorValue = true ? biasFactor : 0.0f;
+
+	float inv_dt = dt > 0.0f ? 1.0f / dt : 0.0f;
+	float bias = biasFactorValue * inv_dt * max(0.0f, penetration - allowedPenetration);
+
+	SAM::TVector<float, 3> ac = c0->GetInverseInertia() * r0.Cross(normal);
+	SAM::TVector<float, 3> bc = c1->GetInverseInertia() * r1.Cross(normal);
+	SAM::TVector<float, 3> crossNormal = ac.Cross(r0) + bc.Cross(r1);
+
+	float kNormal = invMass0 + invMass1 + normal.Dot(crossNormal);
+
+	float massNormal = 1.0f / kNormal;
+
+	float dPn = massNormal * (-vn + bias);
+
+	dPn = max(dPn, 0.0f);
+
+	// Apply normal contact impulse
+	SAM::TVector<float, 3> P = normal * dPn;
+
+	c0->SetVelocity(c0->GetVelocity() + (P * invMass0));
+	c0->SetAngularVelocity(c0->GetAngularVelocity() + (c0->GetInverseInertia() * r0.Cross(P)));
+
+	c1->SetVelocity(c1->GetVelocity() + (P * invMass1));
+	c1->SetAngularVelocity(c1->GetAngularVelocity() + (c1->GetInverseInertia() * r1.Cross(P)));
+	// NORMAL
+	
+	// TANGENT Impulse Code
+	{
+		// Work out our tangent vector, with is perpendicular
+		// to our collision normal
+		SAM::TVector<float, 3> tangent;
+		tangent = dv - (normal * dv.Dot(normal));
+		tangent = tangent.Normalize();
+
+		SAM::TVector<float, 3> ac = c0->GetInverseInertia() * r0.Cross(tangent);
+		SAM::TVector<float, 3> bc = c1->GetInverseInertia() * r1.Cross(tangent);
+		SAM::TVector<float, 3> crossTangent = ac.Cross(r0) + bc.Cross(r1);
+
+		float kTangent = invMass0 + invMass1 + tangent.Dot(crossTangent);
+
+		float massTangent = 1.0f / kTangent;
+
+		float vt = dv.Dot(tangent);
+		float dPt = massTangent * (-vt);
+		
+		const static float FRICTION = 0.6f;
+		float maxPt = FRICTION * dPn;
+		dPt = SAM::Clamp(dPt, -maxPt, maxPt);
+		
+		// Apply contact impulse
+		SAM::TVector<float, 3> P = tangent * dPt;
+
+		c0->SetVelocity(c0->GetVelocity() + (P * invMass0));
+		c0->SetAngularVelocity(c0->GetAngularVelocity() + (c0->GetInverseInertia() * r0.Cross(P)));
+
+		c1->SetVelocity(c1->GetVelocity() + (P * invMass1));
+		c1->SetAngularVelocity(c1->GetAngularVelocity() + (c1->GetInverseInertia() * r1.Cross(P)));
+	}
 }
 
 /*
@@ -92,26 +192,16 @@ void CSpaghettiRigidBodyBox::HandleCollision(
 
 	if (m_bounds->Intersects(otherRigidBody->GetBounds()))
 	{
-		SAM::TVector<float, 3> direction = m_position - otherRigidBody->GetPosition();
-		direction = direction.Unit();
-		direction = direction * 0.5f;
+		int numPoints = m_bounds->GetHitPoints().size();
 
-		SAM::TVector<float, 3> thisVeloctiy;
-		thisVeloctiy.Set(
-			m_velocity.X() * direction.X(), 
-			m_velocity.Y() * direction.Y(),
-			m_velocity.Z() * direction.Z()
-		);
-		SetVelocity(thisVeloctiy);
-		m_position = m_lastPosition;
+		for (int k = 0; k < numPoints; ++k)
+		{
 
-		SAM::TVector<float, 3> otherVeloctiy;
-		otherVeloctiy.Set(
-			otherRigidBody->GetVelocity().X() * direction.X(), 
-			otherRigidBody->GetVelocity().Y() * direction.Y(),
-			otherRigidBody->GetVelocity().Z() * direction.Z()
-		);
-		otherRigidBody->SetVelocity(otherVeloctiy);
-		otherRigidBody->SetPosition(otherRigidBody->GetLastPosition());
+			SAM::TVector<float, 3> hitPoint	= m_bounds->GetHitPoints()[k];
+			SAM::TVector<float, 3> normal = m_bounds->GetHitNormal();
+			float penDepth		 = m_bounds->GetPenetration();
+
+			AddCollisionImpulse(this, otherRigidBody, hitPoint, normal, 3.0f, penDepth);
+		}
 	}
 }
