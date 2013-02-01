@@ -131,14 +131,14 @@ int GetNumHitPoints(
 	float z = box->m_e.Z();
 
 	SAM::TVector<float, 3> Vertex[8];
-	Vertex[0].Set(   x,    y,     z	);
-	Vertex[1].Set(  -x,    y,	  z	);
-	Vertex[2].Set(   x,   -y,	  z	);
-	Vertex[3].Set(  -x,   -y,	  z	);
-	Vertex[4].Set(   x,    y,	 -z	);
-	Vertex[5].Set(  -x,    y,	 -z	);
-	Vertex[6].Set(   x,   -y,	 -z	);
-	Vertex[7].Set(  -x,   -y,	 -z	);
+	Vertex[0].Set( -x,  -y,  -z	);
+	Vertex[1].Set(  x,  -y,	 -z	);
+	Vertex[2].Set(  x,  -y,	  z	);
+	Vertex[3].Set( -x,  -y,	  z	);
+	Vertex[4].Set( -x,   y,	 -z	);
+	Vertex[5].Set(  x,   y,	 -z	);
+	Vertex[6].Set(  x,   y,	  z	);
+	Vertex[7].Set( -x,   y,	  z	);
 
 	SAM::TMatrix<float, 4, 4> worldXform = box->GetWorldMatrix();
 	for (int vertIndex = 0; vertIndex < 8; ++vertIndex)
@@ -234,21 +234,21 @@ bool VertInsideFace(
 	)
 {
 	// Work out the normal for the face
-	SAM::TVector<float, 3> v0 = verts0[1] - verts0[0];
-	SAM::TVector<float, 3> v1 = verts0[2] - verts0[0];
-	SAM::TVector<float, 3> n  = v1.Cross(v0);
+	SAM::TVector3 v0 = verts0[1] - verts0[0];
+	SAM::TVector3 v1 = verts0[2] - verts0[0];
+	SAM::TVector3 n  = v1.Cross(v0);
 	n = n.Normalize();
 
 	for (int i=0; i<4; i++)
 	{
-		SAM::TVector<float, 3> s0 = verts0[i];
-		SAM::TVector<float, 3> s1 = verts0[(i+1)%4];
-		SAM::TVector<float, 3> sx = s0 + n * 10.0f;
+		SAM::TVector3 s0 = verts0[i];
+		SAM::TVector3 s1 = verts0[(i+1)%4];
+		SAM::TVector3 sx = s0 + n*10.0f;
 
 		// Work out the normal for the face
-		SAM::TVector<float, 3> sv0 = s1 - s0;
-		SAM::TVector<float, 3> sv1 = sx - s0;
-		SAM::TVector<float, 3> sn  = sv1.Cross(sv0);
+		SAM::TVector3 sv0 = s1 - s0;
+		SAM::TVector3 sv1 = sx - s0;
+		SAM::TVector3 sn  = sv1.Cross(sv0);
 		sn = sn.Normalize();
 
 		float d  = s0.Dot(sn);
@@ -256,7 +256,9 @@ bool VertInsideFace(
 
 		// Outside the plane
 		if (d0 > planeErr)
+		{
 			return false;
+		}
 	}
 
 	return true;
@@ -334,7 +336,7 @@ void ClipFaceFaceVerts(
 				{
 					SAM::TVector<float, 3> pX = p0 + ((p1 - p0) * (sn.Dot(s0-p0) / sn.Dot(p1-p0)));
 
-					if (VertInsideFace(vertA, pX, 0.1f))
+					if (VertInsideFace(vertA, pX, 0.5f))
 					{
 						temp[numVerts] = pX;
 						numVerts++;

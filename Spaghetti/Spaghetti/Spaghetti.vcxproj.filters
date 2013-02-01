@@ -88,6 +88,9 @@
     <ClInclude Include="src\Spaghetti\bounds\CSpaghettiBoundsSphere.h">
       <Filter>Header Files\Spaghetti\bounds</Filter>
     </ClInclude>
+    <ClInclude Include="src\Spaghetti\CCollision.h">
+      <Filter>Header Files\Spaghetti</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -122,6 +125,9 @@
     </ClCompile>
     <ClCompile Include="src\Spaghetti\bounds\CSpaghettiBoundsSphere.cpp">
       <Filter>Source Files\Spaghetti\bounds</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Spaghetti\CCollision.cpp">
+      <Filter>Source Files\Spaghetti</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

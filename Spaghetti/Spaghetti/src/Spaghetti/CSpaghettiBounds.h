@@ -57,12 +57,7 @@ public:
 									m_axis[1].Set(0, 1, 0);
 									m_axis[2].Set(0, 0, 1);
 
-									SAM::TMatrix<float, 4, 4> rotationMat;
-
-									rotationMat[0][0] = rotation[0][0]; rotationMat[0][1] = rotation[0][1]; rotationMat[0][2] = 0.0f; rotationMat[0][3] = 0.0f;
-									rotationMat[1][0] = rotation[1][0]; rotationMat[1][1] = rotation[1][1]; rotationMat[1][2] = 0.0f; rotationMat[1][3] = 0.0f;
-									rotationMat[2][0] = 0.0f;			rotationMat[2][1] = 0.0f;			rotationMat[2][2] = 1.0f; rotationMat[2][3] = 0.0f;
-									rotationMat[3][0] = rotation[2][0]; rotationMat[3][1] = rotation[2][1]; rotationMat[3][2] = 0.0f; rotationMat[3][3] = 1.0f;
+									SAM::TMatrix<float, 4, 4> rotationMat = rotation.ToMatrix4x4();
 
 									m_axis[0] = rotationMat.Transform(m_axis[0]);
 									m_axis[1] = rotationMat.Transform(m_axis[1]);

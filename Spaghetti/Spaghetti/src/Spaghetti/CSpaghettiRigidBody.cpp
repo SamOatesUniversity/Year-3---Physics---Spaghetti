@@ -16,7 +16,7 @@ CSpaghettiRigidBody::CSpaghettiRigidBody(
 	m_velocity.Set(0.0f, 0.0f, 0.0f);
 	m_torque.Set(0.0f, 0.0f, 0.0f);
 	
-	m_mass = 10000.0f;
+	m_mass = 5.0f;
 	m_flags.alllags = 0;
 	m_flags.isEnabled = true;
 
@@ -90,8 +90,56 @@ void CSpaghettiRigidBody::SetBounds(
 	)
 {
 	m_bounds = boundingBox;
+	if (m_bounds != nullptr) m_bounds->Transform(m_position, m_rotation);
 
 	CalculateInertiaBodyTensor();
 	UpdateInertiaTensor();
 	UpdateAngularVelocity();
+}
+
+//! 
+void CSpaghettiRigidBody::AddForce(
+		SAM::TVector3 position,
+		SAM::TVector3 force
+	)
+{
+	m_force = m_force + force;
+	m_torque = m_torque + (m_position - position).Cross(force);
+}
+
+//! 
+void CSpaghettiRigidBody::UpdateMatrix()
+{
+	SAM::TVector3 axis[3];
+	axis[0].Set(1,0,0);
+	axis[1].Set(0,1,0);
+	axis[2].Set(0,0,1);
+
+	SAM::TMatrix<float, 4, 4> matR = m_rotation.ToMatrix4x4();
+
+	axis[0] = matR.Transform(axis[0]);
+	axis[1] = matR.Transform(axis[1]);
+	axis[2] = matR.Transform(axis[2]);
+
+	SAM::TMatrix<float, 4, 4> matT;
+	matT.Translate(m_position.X(), m_position.Y(), m_position.Z());
+
+	m_matWorld = matR * matT;
+
+	UpdateInertiaTensor();
+
+	m_bounds->Transform(m_position, m_rotation);
+}
+
+//! 
+void CSpaghettiRigidBody::UpdatePosition(
+		const float deltaTime						//!< Delta time (The amount of time past since the last update)
+	)
+{
+	m_position = m_position + m_velocity;
+
+	m_force.Set(0.0f, 0.0f, 0.0f);
+	m_torque.Set(0.0f, 0.0f, 0.0f);
+
+	UpdateMatrix();
 }

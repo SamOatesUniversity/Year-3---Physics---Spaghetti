@@ -22,13 +22,13 @@ public:
 											~CSpaghettiRigidBodySphere();
 
 											//! Update the rigid body
-	virtual void							Update(
+	virtual void							UpdateVelocity(
 												const CSpaghettiWorld *world,
-												const unsigned long deltaTime						//!< Delta time (The amount of time past since the last update)
+												const float deltaTime							//!< Delta time (The amount of time past since the last update)
 											);
 
 											//! Handle collision against another rigid body
-	virtual void							HandleCollision(
+	virtual bool							CheckCollision(
 												CSpaghettiRigidBody *otherRigidBody					//!< The other rigid body to compare against
 											);
 
