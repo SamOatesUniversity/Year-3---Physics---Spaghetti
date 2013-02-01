@@ -2,6 +2,8 @@
 
 #include "../../../SAM/SAM/SAM.h"
 #include "CSpaghettiRigidBody.h"
+#include "CCollision.h"
+
 #include <vector>
 
 class CSpaghettiWorld {
@@ -13,6 +15,8 @@ private:
 	SAM::TVector<float, 3>					m_gravity;										//!< A constant force applied to all objects within this world
 
 	std::vector<CSpaghettiRigidBody*>		m_rigidBodies;									//!< A list of rigid bodies contained within this world
+
+	std::vector<CCollision>					m_collisions;									//!< 
 
 public:
 											//! Class constructor
@@ -31,7 +35,30 @@ public:
 
 											//! Update all simulation objects in the world
 	void									Update(
-												const unsigned long deltaTime				//!< Delta time (The amount of time past since the last update)
+												const float deltaTime				//!< Delta time (The amount of time past since the last update)
 											);
 
+											//! 
+	void									AddCollision(
+												CSpaghettiRigidBody *bodyOne,
+												CSpaghettiRigidBody *bodyTwo,
+												SAM::TVector3 &point,
+												SAM::TVector3 &normal,
+												const float penetration
+											);
+
+											//! 
+	void									ApplyImpulses(
+												float deltaTime
+											);
+
+											//! 
+	void									AddCollisionImpulse(
+												CSpaghettiRigidBody *bodyOne, 
+												CSpaghettiRigidBody *bodyTwo, 
+												SAM::TVector3& hitPoint, 
+												SAM::TVector3& normal, 
+												float deltaTime,
+												float penetration
+											);
 };

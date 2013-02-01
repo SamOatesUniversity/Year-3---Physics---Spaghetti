@@ -17,8 +17,8 @@ void RunOgreApplication()
 	// create a camera, setup viewport 
 	Ogre::String cameraName = "MainCamera";
 	Ogre::SceneNode *const cameraNode = application->CreateCamera(cameraName);
-	cameraNode->setPosition(Ogre::Vector3(1500.0f, 100.0f, 00.0f));
-	static_cast<Ogre::Camera*>(cameraNode->getAttachedObject("MainCamera"))->lookAt(0.0f, 0.4f, 0.0f);
+	cameraNode->setPosition(Ogre::Vector3(1500.0f, 500.0f, 00.0f));
+	static_cast<Ogre::Camera*>(cameraNode->getAttachedObject("MainCamera"))->lookAt(0.0f, 4.0f, 0.0f);
 
 	//create O/I system for keyboard and mouse inputs
 	application->CreateIOS();
@@ -29,7 +29,7 @@ void RunOgreApplication()
     timer->reset();
 
 	unsigned long lastTime = timer->getMilliseconds();
-    unsigned long deltatTime = 0;
+    float deltatTime = 0.0f;
 
 	// get the keyboard and mouse to capture their input information
 	OIS::Keyboard *const keyboard = application->GetKeyboard();
@@ -41,39 +41,8 @@ void RunOgreApplication()
 	CSpaghetti *const spaghetti = new CSpaghetti();
 	CSpaghettiWorld *const world = spaghetti->CreateWorld();
 
-	// create the static floor
-	CSpaghettiRigidBody *floorBody = nullptr;
-	if (Ogre::SceneNode *const floorNode = application->CreateEntityFromMesh("cube.mesh", "floorNode")) 
-	{
-		floorNode->setScale(20.0f, 0.1f, 20.0f);
-
-		floorBody = spaghetti->CreateRigidBody(floorNode, world, RigidBodyType::Box);
-		floorBody->SetIsStatic(true);
-
-		Ogre::Entity *const meshEntity = application->GetSceneManager()->getEntity("cube");
-		Ogre::AxisAlignedBox meshBoundingBox = meshEntity->getBoundingBox();
-
-		SAM::TVector<float, 3> boundingBoxCorners[NOOF_BOUNDINGBOX_CORNERS];
-		const Ogre::Vector3 *const boundCorners = meshBoundingBox.getAllCorners();
-
-		const Ogre::Vector3 entityScale = floorNode->getScale();
-		for (int corner = 0; corner < NOOF_BOUNDINGBOX_CORNERS; ++corner)
-		{
-			const Ogre::Vector3 currenCorner = boundCorners[corner];
-			boundingBoxCorners[corner].Set(
-				currenCorner.x * entityScale.x, 
-				currenCorner.y * entityScale.y, 
-				currenCorner.z * entityScale.z
-			);
-		}
-
-		CSpaghettiBoundsBox *const boundingBox = new CSpaghettiBoundsBox();
-		boundingBox->SetCorners(boundingBoxCorners);
-		floorBody->SetBounds(boundingBox);
-	}
-
 	// create some things to bounce around
-	static const int noofBoxes = 4;
+	static const int noofBoxes = 10;
 	CSpaghettiRigidBody* box[noofBoxes];
 	for (int boxIndex = 0; boxIndex < noofBoxes; ++boxIndex)
 	{
@@ -86,7 +55,7 @@ void RunOgreApplication()
 			cubeNode->setScale(meshScale, meshScale, meshScale);
 
 			box[boxIndex] = spaghetti->CreateRigidBody(cubeNode, world, RigidBodyType::Box);
-			box[boxIndex]->SetPosition(0.0f, (boxIndex + 1) * 100.0f, 0.0f);
+			box[boxIndex]->SetPosition(150.0f, (boxIndex + 1) * (150.0f + (boxIndex * 25.0f)), 150.0f);
 
 			Ogre::Entity *const meshEntity = application->GetSceneManager()->getEntity("cube");
 			Ogre::AxisAlignedBox meshBoundingBox = meshEntity->getBoundingBox();
@@ -109,29 +78,38 @@ void RunOgreApplication()
 			box[boxIndex]->SetBounds(boundingBox);
 		}
 	}
-	//for (int boxIndex = 0; boxIndex < noofBoxes; ++boxIndex)
-	//{
-	//	std::stringstream nodeName;
-	//	nodeName << "SphereNode-" << boxIndex;
+	
+	// create the static floor
+	CSpaghettiRigidBody *floorBody = nullptr;
+	if (Ogre::SceneNode *const floorNode = application->CreateEntityFromMesh("cube.mesh", "floorNode")) 
+	{
+		floorNode->setScale(20.0f, 0.1f, 20.0f);
 
-	//	if (Ogre::SceneNode *const cubeNode = application->CreateEntityFromMesh("sphere.mesh", nodeName.str())) 
-	//	{
-	//		static const float meshScale = 0.2f;
-	//		cubeNode->setScale(meshScale, meshScale, meshScale);
+		floorBody = spaghetti->CreateRigidBody(floorNode, world, RigidBodyType::Box);
+		floorBody->SetPosition(0.0f, -5.0f, 0.0f);
+		floorBody->SetIsStatic(true);
 
-	//		box[boxIndex] = spaghetti->CreateRigidBody(cubeNode, world, RigidBodyType::Sphere);
-	//		box[boxIndex]->SetPosition(0.0f, (boxIndex + 1) * 50.0f, 0.0f);
+		Ogre::Entity *const meshEntity = application->GetSceneManager()->getEntity("cube");
+		Ogre::AxisAlignedBox meshBoundingBox = meshEntity->getBoundingBox();
 
-	//		Ogre::Entity *const meshEntity = application->GetSceneManager()->getEntity("sphere");
-	//		meshEntity->setMaterialName("texturedSphere");
+		SAM::TVector<float, 3> boundingBoxCorners[NOOF_BOUNDINGBOX_CORNERS];
+		const Ogre::Vector3 *const boundCorners = meshBoundingBox.getAllCorners();
 
-	//		const float diameter = (meshEntity->getBoundingRadius() * meshScale);
-	//		
-	//		CSpaghettiBoundsSphere *const boundingSphere = new CSpaghettiBoundsSphere();
-	//		boundingSphere->SetDiameter(diameter);
-	//		box[boxIndex]->SetBounds(boundingSphere);
-	//	}
-	//}
+		const Ogre::Vector3 entityScale = floorNode->getScale();
+		for (int corner = 0; corner < NOOF_BOUNDINGBOX_CORNERS; ++corner)
+		{
+			const Ogre::Vector3 currenCorner = boundCorners[corner];
+			boundingBoxCorners[corner].Set(
+				currenCorner.x * entityScale.x, 
+				currenCorner.y * entityScale.y, 
+				currenCorner.z * entityScale.z
+				);
+		}
+
+		CSpaghettiBoundsBox *const boundingBox = new CSpaghettiBoundsBox();
+		boundingBox->SetCorners(boundingBoxCorners);
+		floorBody->SetBounds(boundingBox);
+	}
 
 	Ogre::Vector3 cameraPosition = cameraNode->getPosition();
 
@@ -140,11 +118,15 @@ void RunOgreApplication()
 	{
 		// calculate the delta time
 		const unsigned long currentTime = timer->getMicroseconds();
-		deltatTime = currentTime - lastTime;
+		if (lastTime == 0) lastTime = currentTime;
+
+		deltatTime = (currentTime - lastTime);
 		lastTime = currentTime;
 		if (deltatTime == 0)
 			continue;
 		
+		deltatTime = deltatTime / 1000000.0f;
+
 		// capture the mouse and keyboard
 		keyboard->capture();
 		mouse->capture();

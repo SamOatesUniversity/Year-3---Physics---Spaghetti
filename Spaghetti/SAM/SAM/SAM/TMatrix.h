@@ -168,6 +168,19 @@ namespace SAM
 																		return transpose;
 																	}
 
+																	//! 
+		TMatrix<TYPE, 4, 4>											ToMatrix4x4()
+																	{
+																		TMatrix<TYPE, 4, 4> rotationMat;
+
+																		rotationMat[0][0] = m_element[0][0]; rotationMat[0][1] = m_element[0][1]; rotationMat[0][2] = 0.0f; rotationMat[0][3] = 0.0f;
+																		rotationMat[1][0] = m_element[1][0]; rotationMat[1][1] = m_element[1][1]; rotationMat[1][2] = 0.0f; rotationMat[1][3] = 0.0f;
+																		rotationMat[2][0] = 0.0f;			 rotationMat[2][1] = 0.0f;			  rotationMat[2][2] = 1.0f; rotationMat[2][3] = 0.0f;
+																		rotationMat[3][0] = m_element[2][0]; rotationMat[3][1] = m_element[2][1]; rotationMat[3][2] = 0.0f; rotationMat[3][3] = 1.0f;
+
+																		return rotationMat;
+																	}
+
 																	//! Add a matrix by another matrix
 		TMatrix<TYPE, 3, 3>											operator+(TMatrix<TYPE, 3, 3> &other)
 																	{

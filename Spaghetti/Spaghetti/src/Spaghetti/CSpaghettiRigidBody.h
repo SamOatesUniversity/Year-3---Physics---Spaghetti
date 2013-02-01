@@ -40,6 +40,7 @@ protected:
 	SAM::TVector<float, 3>					m_position;												//!< 
 	SAM::TVector<float, 3>					m_lastPosition;											//!< 
 
+	SAM::TMatrix<float, 4, 4>				m_matWorld;												//!< 
 	SAM::TMatrix<float, 3, 3>				m_rotation;												//!< 
 	SAM::TQuaternion						m_quaternion;											//!< 
 
@@ -175,14 +176,28 @@ public:
 												return m_mass;
 											}
 
+											//! 
+	void									AddForce(
+												SAM::TVector3 position,
+												SAM::TVector3 force
+											);
+		
+											//! 
+	void									UpdateMatrix();
+
 											//! Update the rigid body
-	virtual void							Update(
-												const CSpaghettiWorld *world,
-												const unsigned long deltaTime						//!< Delta time (The amount of time past since the last update)
+	virtual void							UpdateVelocity(
+												const CSpaghettiWorld *world,						//!< The world the body belongs too
+												const float deltaTime							//!< Delta time (The amount of time past since the last update)
 											) = 0;
 
+											//! 
+	virtual void							UpdatePosition(
+												const float deltaTime						//!< Delta time (The amount of time past since the last update)
+											);
+
 											//! Handle collision against another rigid body
-	virtual void							HandleCollision(
+	virtual bool							CheckCollision(
 												CSpaghettiRigidBody *otherRigidBody					//!< The other rigid body to compare against
 											) = 0;
 };

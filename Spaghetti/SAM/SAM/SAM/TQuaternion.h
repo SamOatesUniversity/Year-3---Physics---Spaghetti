@@ -21,6 +21,13 @@ namespace SAM {
 															//! Class destructor
 															~TQuaternion();
 
+															//! Set the values of the quaternion
+		void												Set(float x, float y, float z, float w)
+															{
+																m_vector.Set(x, y, z);
+																m_w = w;
+															}
+
 															//! Normalize the quaternion
 		void												Normalize();
 
