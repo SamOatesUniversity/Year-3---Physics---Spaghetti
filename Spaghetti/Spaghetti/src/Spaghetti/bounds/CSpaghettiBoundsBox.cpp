@@ -99,8 +99,8 @@ bool SpanIntersect(
 	float lena = maxa - mina;
 	float lenb = maxb - minb;
 
-	float minv = min( mina, minb );
-	float maxv = max( maxa, maxb );
+	float minv = SAM::Min( mina, minb );
+	float maxv = SAM::Max( maxa, maxb );
 	float lenv = maxv - minv;
 
 	if ( lenv > (lena + lenb) )

@@ -17,7 +17,7 @@ void RunOgreApplication()
 	// create a camera, setup viewport 
 	Ogre::String cameraName = "MainCamera";
 	Ogre::SceneNode *const cameraNode = application->CreateCamera(cameraName);
-	cameraNode->setPosition(Ogre::Vector3(1500.0f, 500.0f, 00.0f));
+	cameraNode->setPosition(Ogre::Vector3(1000.0f, 200.0f, 1000.0f));
 	static_cast<Ogre::Camera*>(cameraNode->getAttachedObject("MainCamera"))->lookAt(0.0f, 4.0f, 0.0f);
 
 	//create O/I system for keyboard and mouse inputs
@@ -42,8 +42,10 @@ void RunOgreApplication()
 	CSpaghettiWorld *const world = spaghetti->CreateWorld();
 
 	// create some things to bounce around
-	static const int noofBoxes = 10;
+	static const int noofBoxes = 30;
 	CSpaghettiRigidBody* box[noofBoxes];
+
+	float yHeight = 200.0f;
 	for (int boxIndex = 0; boxIndex < noofBoxes; ++boxIndex)
 	{
 		std::stringstream nodeName;
@@ -54,8 +56,10 @@ void RunOgreApplication()
 			static const float meshScale = 1.0f;
 			cubeNode->setScale(meshScale, meshScale, meshScale);
 
+			if (boxIndex % 5 == 0) yHeight += 200.0f;
+
 			box[boxIndex] = spaghetti->CreateRigidBody(cubeNode, world, RigidBodyType::Box);
-			box[boxIndex]->SetPosition(150.0f, (boxIndex + 1) * (150.0f + (boxIndex * 25.0f)), 150.0f);
+			box[boxIndex]->SetPosition(0.0f + (150.0f * (boxIndex % 5)), yHeight, 150.0f);
 
 			Ogre::Entity *const meshEntity = application->GetSceneManager()->getEntity("cube");
 			Ogre::AxisAlignedBox meshBoundingBox = meshEntity->getBoundingBox();
@@ -70,7 +74,7 @@ void RunOgreApplication()
 					currenCorner.x * meshScale, 
 					currenCorner.y * meshScale, 
 					currenCorner.z * meshScale
-					);
+				);
 			}
 
 			CSpaghettiBoundsBox *const boundingBox = new CSpaghettiBoundsBox();
@@ -135,14 +139,15 @@ void RunOgreApplication()
 		cameraNode->setPosition(Ogre::Vector3(300.0f, 50.0f, 200.0f));
 		static_cast<Ogre::Camera*>(cameraNode->getAttachedObject("MainCamera"))->lookAt(0.0f, 0.0f, 0.0f);
 		
+		static const float cameraSpeed = 10.0f;
 		if (keyboard->isKeyDown(OIS::KeyCode::KC_A))
-			cameraPosition.x--;
+			cameraPosition.x-=cameraSpeed;
 		else if (keyboard->isKeyDown(OIS::KeyCode::KC_D))
-			cameraPosition.x++;
+			cameraPosition.x+=cameraSpeed;
 		else if (keyboard->isKeyDown(OIS::KeyCode::KC_W))
-			cameraPosition.z--;
+			cameraPosition.z-=cameraSpeed;
 		else if (keyboard->isKeyDown(OIS::KeyCode::KC_S))
-			cameraPosition.z++;
+			cameraPosition.z+=cameraSpeed;
 
 		cameraNode->setPosition(cameraPosition);
 		static_cast<Ogre::Camera*>(cameraNode->getAttachedObject("MainCamera"))->lookAt(0.0f, 0.0f, 0.0f);

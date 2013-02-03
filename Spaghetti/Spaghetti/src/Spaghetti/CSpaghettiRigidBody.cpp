@@ -136,6 +136,7 @@ void CSpaghettiRigidBody::UpdatePosition(
 		const float deltaTime						//!< Delta time (The amount of time past since the last update)
 	)
 {
+	m_lastPosition = m_position;
 	m_position = m_position + m_velocity;
 
 	m_force.Set(0.0f, 0.0f, 0.0f);

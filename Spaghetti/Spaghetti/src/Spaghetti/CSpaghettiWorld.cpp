@@ -134,7 +134,9 @@ void CSpaghettiWorld::AddCollision(
 	newCollisionPoints.penetration = penetration;
 	newCollisionPoints.positionOne = bodyOne->GetPosition();
 	newCollisionPoints.positionTwo = bodyTwo->GetPosition();	
+
 	cp->m_points.push_back(newCollisionPoints);
+	cp->m_noofPoints++;
 }
 
 void CSpaghettiWorld::ApplyImpulses( 
@@ -171,14 +173,44 @@ void CSpaghettiWorld::AddCollisionImpulse(
 		float penetration 
 	)
 {
+	
+	static const float e = 0.0f;
 
-	// Sanity test
-	if (deltaTime <= 0.0)
-		return;
+	// Va = Va – (1+e)*N*((Vb-Va) • N)*(Mb / (Ma+Mb))
+	{
+		if (!bodyOne->IsStatic())
+		{
+			const float vBvAN = (bodyTwo->GetVelocity() - bodyOne->GetVelocity()).Dot(normal);
+			const float MbMaMb = bodyTwo->GetMass() / (bodyOne->GetMass() + bodyTwo->GetMass());
+			SAM::TVector3 va = (normal * ((1.0f + e) * (vBvAN * MbMaMb)));
+			bodyOne->SetVelocity(va);
 
+			SAM::TVector3 r1 = bodyOne->GetPosition() - hitPoint;
+			SAM::TVector3 r2 = bodyTwo->GetPosition() - hitPoint;
 
-	SAM::TVector3 zero;
-	bodyOne->SetVelocity(zero);
-	bodyTwo->SetVelocity(zero);
+			// collisionNormal dot ( (r1 cross collisionNormal) * I_inv1 cross r1)
+			float acd = normal.Dot((bodyOne->GetInverseInertia() * r1.Cross(normal)).Cross(r1));
+
+			// collisionNormal dot ((r2 cross collisionNormal) * I_inv2 cross r2)]
+			float bcd = normal.Dot((bodyTwo->GetInverseInertia() * r2.Cross(normal)).Cross(r2));
+
+			float moo = (bodyOne->GetVelocity() - bodyTwo->GetVelocity()).Dot(normal) * (acd + bcd);
+
+			SAM::TVector3 baa = (normal * (moo * (1.0f + e))); 
+			bodyOne->SetAngularVelocity(baa);
+		}
+	}
+
+	// Vb = Vb – (1+e)*-N*((Vb-Va) • -N)*(Ma / (Ma+Mb))
+	{
+		if (!bodyTwo->IsStatic())
+		{
+			normal = normal * -1.0f;
+			const float vBvAN = (bodyTwo->GetVelocity() - bodyOne->GetVelocity()).Dot(normal);
+			const float MaMaMb = bodyOne->GetMass() / (bodyOne->GetMass() + bodyTwo->GetMass());
+			SAM::TVector3 vb = (normal * ((1.0f + e) * (vBvAN * MaMaMb)));
+			bodyTwo->SetVelocity(vb);
+		}
+	}
 
 }
