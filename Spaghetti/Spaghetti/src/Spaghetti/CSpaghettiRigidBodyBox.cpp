@@ -57,10 +57,6 @@ void CSpaghettiRigidBodyBox::UpdateVelocity(
 	// Update Linear
 	m_velocity = m_velocity + ((m_force / m_mass) * deltaTime);
 
-	// Bit Damping
-	const float damping = 0.1f;
-	m_velocity = m_velocity * powf(damping, deltaTime);
-
 	UpdateMatrix();
 }
 

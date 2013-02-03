@@ -100,6 +100,7 @@ public:
 											)
 											{
 												m_position = position;
+												m_lastPosition = position;
 											}
 
 											//! Get the rigid body position
