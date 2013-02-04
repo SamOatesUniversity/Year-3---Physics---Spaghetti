@@ -184,20 +184,6 @@ void CSpaghettiWorld::AddCollisionImpulse(
 			const float MbMaMb = bodyTwo->GetMass() / (bodyOne->GetMass() + bodyTwo->GetMass());
 			SAM::TVector3 va = (normal * ((1.0f + e) * (vBvAN * MbMaMb)));
 			bodyOne->SetVelocity(va);
-
-			SAM::TVector3 r1 = bodyOne->GetPosition() - hitPoint;
-			SAM::TVector3 r2 = bodyTwo->GetPosition() - hitPoint;
-
-			// collisionNormal dot ( (r1 cross collisionNormal) * I_inv1 cross r1)
-			float acd = normal.Dot((bodyOne->GetInverseInertia() * r1.Cross(normal)).Cross(r1));
-
-			// collisionNormal dot ((r2 cross collisionNormal) * I_inv2 cross r2)]
-			float bcd = normal.Dot((bodyTwo->GetInverseInertia() * r2.Cross(normal)).Cross(r2));
-
-			float moo = (bodyOne->GetVelocity() - bodyTwo->GetVelocity()).Dot(normal) * (acd + bcd);
-
-			SAM::TVector3 baa = (normal * (moo * (1.0f + e))); 
-			bodyOne->SetAngularVelocity(baa);
 		}
 	}
 
