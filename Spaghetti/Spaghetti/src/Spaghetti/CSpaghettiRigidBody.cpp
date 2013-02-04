@@ -16,7 +16,7 @@ CSpaghettiRigidBody::CSpaghettiRigidBody(
 	m_velocity.Set(0.0f, 0.0f, 0.0f);
 	m_torque.Set(0.0f, 0.0f, 0.0f);
 	
-	m_mass = 5.0f;
+	m_mass = 1.0f;
 	m_flags.alllags = 0;
 	m_flags.isEnabled = true;
 
