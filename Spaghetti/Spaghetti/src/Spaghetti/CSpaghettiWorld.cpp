@@ -186,9 +186,8 @@ void CSpaghettiWorld::AddCollisionImpulse(
 	// Relative Velocity
 	SAM::TVector3 dv = v0 - v1;
 
+	// normal collision
 	{
-		normal = normal * -1.0f;
-
 		// Compute Normal Impulse
 		float vn = dv.Dot(normal);
 
@@ -215,6 +214,33 @@ void CSpaghettiWorld::AddCollisionImpulse(
 		
 		bodyTwo->SetVelocity(bodyTwo->GetVelocity() - (P * invMass1)); // c1.m_linVelocity -= invMass1 * P;
 		//bodyTwo->SetAngularVelocity(bodyTwo->GetAngularVelocity() - (bodyTwo->GetInverseInertia() * r1.Cross(P))); // c1.m_angVelocity -= Cross(r1, P) * c1.m_invInertia;
+	}
+
+	// Tangent collision
+	{
+		SAM::TVector3 tangent = dv - (normal * dv.Dot(normal));
+		tangent = tangent.Normalize();
+
+		SAM::TVector3 ac = (bodyOne->GetInverseInertia() * r0.Cross(tangent)).Cross(r0);
+		SAM::TVector3 bc = (bodyTwo->GetInverseInertia() * r1.Cross(tangent)).Cross(r1);
+		float kTangent = invMass0 + invMass1 + tangent.Dot(ac + bc);
+
+		float massTangent = 1.0f / kTangent;
+		float vt = dv.Dot(tangent);
+		float dPt = massTangent * (-vt);
+
+		static const float FRICTION = 1.0f;
+		float maxPt = FRICTION * dPt;
+		dPt = SAM::Clamp(dPt, -maxPt, maxPt);
+
+		// Apply contact impulse
+		SAM::TVector3 P = tangent * dPt;
+		
+		bodyOne->SetVelocity(bodyOne->GetVelocity() + (P * invMass0)); //c0.m_linVelocity += invMass0 * P;
+		//c0.m_angVelocity += Cross(r0, P) * c0.m_invInertia;
+
+		bodyTwo->SetVelocity(bodyTwo->GetVelocity() - (P * invMass1)); //c1.m_linVelocity -= invMass1 * P;
+		//c1.m_angVelocity -= Cross(r1, P) * c1.m_invInertia;
 	}
 
 }
