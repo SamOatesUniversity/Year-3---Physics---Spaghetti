@@ -111,7 +111,8 @@ bool SpanIntersect(
 	{
 		penetration = p;
 		hitNormal = axis;
-		if (minb < mina) hitNormal = hitNormal * -1.0f;
+		if (mina < minb) 
+			hitNormal = hitNormal * -1.0f;
 	}
 
 	return true;
