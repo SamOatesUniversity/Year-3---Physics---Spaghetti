@@ -17,7 +17,7 @@ void RunOgreApplication()
 	// create a camera, setup viewport 
 	Ogre::String cameraName = "MainCamera";
 	Ogre::SceneNode *const cameraNode = application->CreateCamera(cameraName);
-	cameraNode->setPosition(Ogre::Vector3(1000.0f, 200.0f, 1000.0f));
+	cameraNode->setPosition(Ogre::Vector3(1200.0f, 200.0f, 100.0f));
 	static_cast<Ogre::Camera*>(cameraNode->getAttachedObject("MainCamera"))->lookAt(0.0f, 4.0f, 0.0f);
 
 	//create O/I system for keyboard and mouse inputs
@@ -42,7 +42,7 @@ void RunOgreApplication()
 	CSpaghettiWorld *const world = spaghetti->CreateWorld();
 
 	// create some things to bounce around
-	static const int noofBoxes = 30;
+	static const int noofBoxes = 18;
 	CSpaghettiRigidBody* box[noofBoxes];
 
 	float yHeight = 200.0f;
@@ -56,10 +56,10 @@ void RunOgreApplication()
 			static const float meshScale = 1.0f;
 			cubeNode->setScale(meshScale, meshScale, meshScale);
 
-			if (boxIndex % 5 == 0) yHeight += 200.0f;
+			if (boxIndex % 9 == 0) yHeight += 200.0f;
 
 			box[boxIndex] = spaghetti->CreateRigidBody(cubeNode, world, RigidBodyType::Box);
-			box[boxIndex]->SetPosition(0.0f + (150.0f * (boxIndex % 5)), yHeight, 150.0f);
+			box[boxIndex]->SetPosition(600.0f - (150.0f * (boxIndex % 9)), yHeight, (yHeight / 4.0f));
 
 			Ogre::Entity *const meshEntity = application->GetSceneManager()->getEntity("cube");
 			Ogre::AxisAlignedBox meshBoundingBox = meshEntity->getBoundingBox();
@@ -124,7 +124,7 @@ void RunOgreApplication()
 		const unsigned long currentTime = timer->getMicroseconds();
 		if (lastTime == 0) lastTime = currentTime;
 
-		deltatTime = (currentTime - lastTime);
+		deltatTime = static_cast<float>(currentTime - lastTime);
 		lastTime = currentTime;
 		if (deltatTime == 0)
 			continue;
@@ -140,13 +140,13 @@ void RunOgreApplication()
 		static_cast<Ogre::Camera*>(cameraNode->getAttachedObject("MainCamera"))->lookAt(0.0f, 0.0f, 0.0f);
 		
 		static const float cameraSpeed = 10.0f;
-		if (keyboard->isKeyDown(OIS::KeyCode::KC_A))
+		if (keyboard->isKeyDown(OIS::KC_A))
 			cameraPosition.x-=cameraSpeed;
-		else if (keyboard->isKeyDown(OIS::KeyCode::KC_D))
+		else if (keyboard->isKeyDown(OIS::KC_D))
 			cameraPosition.x+=cameraSpeed;
-		else if (keyboard->isKeyDown(OIS::KeyCode::KC_W))
+		else if (keyboard->isKeyDown(OIS::KC_W))
 			cameraPosition.z-=cameraSpeed;
-		else if (keyboard->isKeyDown(OIS::KeyCode::KC_S))
+		else if (keyboard->isKeyDown(OIS::KC_S))
 			cameraPosition.z+=cameraSpeed;
 
 		cameraNode->setPosition(cameraPosition);

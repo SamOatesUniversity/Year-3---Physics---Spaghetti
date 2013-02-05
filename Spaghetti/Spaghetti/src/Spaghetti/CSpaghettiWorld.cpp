@@ -153,14 +153,29 @@ void CSpaghettiWorld::ApplyImpulses(
 		CSpaghettiRigidBody *bodyTwo = cp->m_bodyTwo;
 		int numPoints = cp->m_noofPoints;
 
+		SAM::TVector3 bodyOneVel, bodyTwoVel;
+
 		for (int collisionPointIndex = 0; collisionPointIndex < numPoints; ++collisionPointIndex)
 		{
 			SAM::TVector3 hitPoint = cp->m_points[collisionPointIndex].point;
 			SAM::TVector3 normal = cp->m_points[collisionPointIndex].normal;
 			float penDepth = cp->m_points[collisionPointIndex].penetration;
 
-			AddCollisionImpulse(bodyOne, bodyTwo, hitPoint, normal, deltaTime, penDepth);
+			AddCollisionImpulse(bodyOne, bodyTwo, hitPoint, normal, deltaTime, bodyOneVel, bodyTwoVel);
 		}
+
+		bodyOneVel = bodyOneVel / static_cast<float>(numPoints);
+		bodyTwoVel = bodyTwoVel / static_cast<float>(numPoints);
+
+		static const float minSquaredVelocitySquared = 10.0f;
+		if (bodyOneVel.LengthSquared() < minSquaredVelocitySquared) bodyOneVel.Set(0, 0, 0);
+		if (bodyTwoVel.LengthSquared() < minSquaredVelocitySquared) bodyTwoVel.Set(0, 0, 0);
+
+		bodyOne->SetPosition(bodyOne->GetLastPosition());
+		bodyOne->SetVelocity(bodyOneVel);
+		
+		bodyTwo->SetPosition(bodyTwo->GetLastPosition());
+		bodyTwo->SetVelocity(bodyTwoVel);
 	}
 }
 
@@ -170,77 +185,20 @@ void CSpaghettiWorld::AddCollisionImpulse(
 		SAM::TVector3& hitPoint, 
 		SAM::TVector3& normal, 
 		float deltaTime, 
-		float penetration 
+		SAM::TVector3 &velBodyOne,
+		SAM::TVector3 &velBodyTwo
 	)
 {
 	
-	float invMass0 = bodyOne->IsStatic() ? 0.0f : (1.0f / bodyOne->GetMass());
-	float invMass1 = bodyTwo->IsStatic() ? 0.0f : (1.0f / bodyTwo->GetMass());
+	static const float e = -0.5f;
 
-	SAM::TVector3 r0 = hitPoint - bodyOne->GetPosition();
-	SAM::TVector3 r1 = hitPoint - bodyTwo->GetPosition();
+	SAM::TVector3 relativeVelocity = bodyOne->GetVelocity() - bodyTwo->GetVelocity();
 
-	SAM::TVector3 v0 = bodyOne->GetVelocity() + bodyOne->GetAngularVelocity().Cross(r0);
-	SAM::TVector3 v1 = bodyTwo->GetVelocity() + bodyTwo->GetAngularVelocity().Cross(r1);
+	const float inverseMassBodyOne = 1.0f / bodyOne->GetMass();
+	const float inverseMassBodyTwo = 1.0f / bodyTwo->GetMass();
+	const float sumOfInverseMass = inverseMassBodyOne + inverseMassBodyTwo;
 
-	// Relative Velocity
-	SAM::TVector3 dv = v0 - v1;
-
-	// normal collision
-	{
-		// Compute Normal Impulse
-		float vn = dv.Dot(normal);
-
-		// Works out the bias to prevent Prevents sinking!
-		const float allowedPenetration = 0.0f;
-		const float biasFactor = 0.1f;
-
-		float inv_dt = 1.0f / deltaTime;
-		float bias = biasFactor * inv_dt * SAM::Max(0.0f, penetration - allowedPenetration);
-		
-		SAM::TVector3 ac = (bodyOne->GetInverseInertia() * r0.Cross(normal)).Cross(r0);
-		SAM::TVector3 bc = (bodyTwo->GetInverseInertia() * r1.Cross(normal)).Cross(r1);
-		float kNormal = invMass0 + invMass1 + normal.Dot(ac + bc);
-
-		float massNormal = 1.0f / kNormal;
-		float dPn = massNormal * ((-vn) + bias);
-		dPn = SAM::Max(dPn, 0.0f);
-		
-		// Apply normal contact impulse
-		SAM::TVector3 P = normal * dPn;
-
-		bodyOne->SetVelocity(bodyOne->GetVelocity() + (P * invMass0)); // c0.m_linVelocity += invMass0 * P;
-		//bodyOne->SetAngularVelocity(bodyOne->GetAngularVelocity() + (bodyOne->GetInverseInertia() * r0.Cross(P))); // c0.m_angVelocity += Cross(r0, P) * c0.m_invInertia;
-		
-		bodyTwo->SetVelocity(bodyTwo->GetVelocity() - (P * invMass1)); // c1.m_linVelocity -= invMass1 * P;
-		//bodyTwo->SetAngularVelocity(bodyTwo->GetAngularVelocity() - (bodyTwo->GetInverseInertia() * r1.Cross(P))); // c1.m_angVelocity -= Cross(r1, P) * c1.m_invInertia;
-	}
-
-	// Tangent collision
-	{
-		SAM::TVector3 tangent = dv - (normal * dv.Dot(normal));
-		tangent = tangent.Normalize();
-
-		SAM::TVector3 ac = (bodyOne->GetInverseInertia() * r0.Cross(tangent)).Cross(r0);
-		SAM::TVector3 bc = (bodyTwo->GetInverseInertia() * r1.Cross(tangent)).Cross(r1);
-		float kTangent = invMass0 + invMass1 + tangent.Dot(ac + bc);
-
-		float massTangent = 1.0f / kTangent;
-		float vt = dv.Dot(tangent);
-		float dPt = massTangent * (-vt);
-
-		static const float FRICTION = 1.0f;
-		float maxPt = FRICTION * dPt;
-		dPt = SAM::Clamp(dPt, -maxPt, maxPt);
-
-		// Apply contact impulse
-		SAM::TVector3 P = tangent * dPt;
-		
-		bodyOne->SetVelocity(bodyOne->GetVelocity() + (P * invMass0)); //c0.m_linVelocity += invMass0 * P;
-		//c0.m_angVelocity += Cross(r0, P) * c0.m_invInertia;
-
-		bodyTwo->SetVelocity(bodyTwo->GetVelocity() - (P * invMass1)); //c1.m_linVelocity -= invMass1 * P;
-		//c1.m_angVelocity -= Cross(r1, P) * c1.m_invInertia;
-	}
-
+	const float jLinear = (-((1.0f + e) * relativeVelocity.Dot(normal))) / sumOfInverseMass;
+	velBodyOne = velBodyOne + ((normal * jLinear) * inverseMassBodyOne);
+	velBodyTwo = velBodyTwo + ((normal * -jLinear) * inverseMassBodyTwo);
 }

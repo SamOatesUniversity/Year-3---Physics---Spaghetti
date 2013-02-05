@@ -59,6 +59,7 @@ public:
 												SAM::TVector3& hitPoint, 
 												SAM::TVector3& normal, 
 												float deltaTime,
-												float penetration
+												SAM::TVector3 &velBodyOne,
+												SAM::TVector3 &velBodyTwo
 											);
 };
