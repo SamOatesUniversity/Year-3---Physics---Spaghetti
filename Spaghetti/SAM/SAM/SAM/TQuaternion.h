@@ -66,6 +66,51 @@ namespace SAM {
 																return m_vector.Z();
 															}
 
+															//! Add two quaternions together
+		TQuaternion											operator+(const TQuaternion &other) const
+															{
+																TQuaternion result;
+																
+																const float w = other.W() + W();
+																const float x = other.X() + X();
+																const float y = other.Y() + Y();
+																const float z = other.Z() + Z();
+
+																result.Set(x, y, z, w);
+
+																return result;
+															}
+
+															//! multiply a quaternion by a quaternion
+		TQuaternion											operator*(const TQuaternion &other) const
+															{
+																TQuaternion result;
+																
+																float w = m_w * other.W() - X() * other.X() - Y() * other.Y() - Z() * other.Z();
+																float x = m_w * other.X() + X() * other.W() + Y() * other.Z() -Z() * other.Y();
+																float y = m_w * other.Y() + Y() * other.W() + Z() * other.X() - X() * other.Z();
+																float z = m_w * other.Z() + Z() * other.W() + X() * other.Y() - Y() * other.X();
+
+																result.Set(x, y, z, w);
+
+																return result;
+															}
+
+															//! multiply a quaternion by a scaler
+		TQuaternion											operator*(const float &other) const
+															{
+																TQuaternion result;
+																
+																const float w = m_w * other;
+																const float x = m_vector.X() * other;
+																const float y = m_vector.Y() * other;
+																const float z = m_vector.Z() * other;
+
+																result.Set(x, y, z, w);
+
+																return result;
+															}
+
 	};
 
 }

@@ -48,12 +48,16 @@ void CSpaghettiRigidBodyBox::UpdateVelocity(
 		return;
 
 	if (m_velocity.Length() < 0.001f) m_velocity.Set(0.0f, 0.0f, 0.0f);
+	if (m_angularVelocity.Length() < 0.001f) m_angularVelocity.Set(0.0f, 0.0f, 0.0f);
 
 	// Add Gravity
 	SAM::TVector3 gravity = world->GetGravity();
 	gravity.SetY(gravity.Y() * m_mass);
 	AddForce(m_position, gravity);
 	
+	// update angular
+	m_angularVelocity = m_angularVelocity + ((m_inertiaTensorInverse * m_torque) * deltaTime);
+
 	// Update Linear
 	m_velocity = m_velocity + ((m_force / m_mass) * deltaTime);
 
