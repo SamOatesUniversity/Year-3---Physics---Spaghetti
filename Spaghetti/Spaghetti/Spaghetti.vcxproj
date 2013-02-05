@@ -42,7 +42,7 @@
     <LinkIncremental>false</LinkIncremental>
     <LibraryPath>$(SolutionDir)$(Configuration)\;G:\OGRE\OgreSDK_vc10_v1-8-0\lib\debug;G:\OGRE\OgreSDK_vc10_v1-8-0\boost\lib;C:\Ogre\OgreSDK_vc10_v1-8-1\lib\debug;C:\Ogre\OgreSDK_vc10_v1-8-1\boost\lib;$(LibraryPath)</LibraryPath>
     <IncludePath>G:\OGRE\OgreSDK_vc10_v1-8-0\include;G:\OGRE\OgreSDK_vc10_v1-8-0\boost;C:\Ogre\OgreSDK_vc10_v1-8-1\include;C:\Ogre\OgreSDK_vc10_v1-8-1\boost;$(IncludePath)</IncludePath>
-    <OutDir>.\bin\Debug</OutDir>
+    <OutDir>.\bin\Debug\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IntDir>.\bin\obj\$(ProjectName)$(Configuration)\</IntDir>
