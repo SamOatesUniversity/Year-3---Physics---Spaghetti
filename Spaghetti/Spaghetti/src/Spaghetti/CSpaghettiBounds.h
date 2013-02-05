@@ -44,7 +44,7 @@ public:
 								//! Set the position of the bounding box
 	void						Transform(
 									SAM::TVector<float, 3> &position,					//!< 
-									SAM::TMatrix<float, 3, 3> &rotation					//!< 
+									SAM::TQuaternion &rotation							//!< 
 								)
 								{
 									m_position = position;
@@ -53,7 +53,7 @@ public:
 									m_axis[1].Set(0, 1, 0);
 									m_axis[2].Set(0, 0, 1);
 
-									SAM::TMatrix<float, 4, 4> rotationMat = rotation.ToMatrix4x4();
+									SAM::TMatrix<float, 4, 4> rotationMat = rotation.ToMatrix3x3().ToMatrix4x4();
 
 									m_axis[0] = rotationMat.Transform(m_axis[0]);
 									m_axis[1] = rotationMat.Transform(m_axis[1]);
@@ -118,5 +118,4 @@ public:
 								{
 									return m_penetration;
 								}
-
 };

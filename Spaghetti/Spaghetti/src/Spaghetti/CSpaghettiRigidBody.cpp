@@ -20,9 +20,6 @@ CSpaghettiRigidBody::CSpaghettiRigidBody(
 	m_flags.alllags = 0;
 	m_flags.isEnabled = true;
 
-	m_centerOfMass.Set(0, 0, 0);
-	
-	m_rotation.Identity();
 	m_angularVelocity.Set(0, 0, 0);
 	m_angularMomentum.Set(0.0f, 0.0f, 0.0f);
 }
@@ -45,7 +42,7 @@ void CSpaghettiRigidBody::SetPosition(
 	)
 {
 	m_position.Set(x, y, z);
-	if (m_bounds != nullptr) m_bounds->Transform(m_position, m_rotation);
+	if (m_bounds != nullptr) m_bounds->Transform(m_position, m_quaternion);
 }
 
 /*
@@ -59,11 +56,6 @@ void CSpaghettiRigidBody::SetVelocity(
 		return;
 
 	m_velocity = velocity;
-	const float vel = velocity.Length();
-	if (vel < 0.0002f && vel > -0.0002f)
-	{
-		m_velocity.Set(0.0f, 0.0f, 0.0f);
-	}
 }
 
 /*
@@ -90,7 +82,7 @@ void CSpaghettiRigidBody::SetBounds(
 	)
 {
 	m_bounds = boundingBox;
-	if (m_bounds != nullptr) m_bounds->Transform(m_position, m_rotation);
+	if (m_bounds != nullptr) m_bounds->Transform(m_position, m_quaternion);
 
 	CalculateInertiaBodyTensor();
 	UpdateInertiaTensor();
@@ -110,25 +102,8 @@ void CSpaghettiRigidBody::AddForce(
 //! 
 void CSpaghettiRigidBody::UpdateMatrix()
 {
-	SAM::TVector3 axis[3];
-	axis[0].Set(1,0,0);
-	axis[1].Set(0,1,0);
-	axis[2].Set(0,0,1);
-
-	SAM::TMatrix<float, 4, 4> matR = m_quaternion.ToMatrix3x3().ToMatrix4x4();
-
-	axis[0] = matR.Transform(axis[0]);
-	axis[1] = matR.Transform(axis[1]);
-	axis[2] = matR.Transform(axis[2]);
-
-	SAM::TMatrix<float, 4, 4> matT;
-	matT.Translate(m_position.X(), m_position.Y(), m_position.Z());
-
-	m_matWorld = matR * matT;
-
 	UpdateInertiaTensor();
-
-	m_bounds->Transform(m_position, m_rotation);
+	m_bounds->Transform(m_position, m_quaternion);
 }
 
 //! 

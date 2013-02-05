@@ -40,11 +40,8 @@ protected:
 	SAM::TVector<float, 3>					m_position;												//!< 
 	SAM::TVector<float, 3>					m_lastPosition;											//!< 
 
-	SAM::TMatrix<float, 4, 4>				m_matWorld;												//!< 
 	SAM::TMatrix<float, 3, 3>				m_rotation;												//!< 
 	SAM::TQuaternion						m_quaternion;											//!< 
-
-	SAM::TVector<float, 3>					m_centerOfMass;											//!< 
 
 	SAM::TVector<float, 3>					m_velocity;												//!< 
 	SAM::TVector<float, 3>					m_angularMomentum;										//!< 
