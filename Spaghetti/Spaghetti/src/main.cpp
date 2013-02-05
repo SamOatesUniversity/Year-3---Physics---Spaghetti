@@ -17,7 +17,7 @@ void RunOgreApplication()
 	// create a camera, setup viewport 
 	Ogre::String cameraName = "MainCamera";
 	Ogre::SceneNode *const cameraNode = application->CreateCamera(cameraName);
-	cameraNode->setPosition(Ogre::Vector3(1200.0f, 200.0f, 100.0f));
+	cameraNode->setPosition(Ogre::Vector3(0.0f, 200.0f, 1800.0f));
 	static_cast<Ogre::Camera*>(cameraNode->getAttachedObject("MainCamera"))->lookAt(0.0f, 4.0f, 0.0f);
 
 	//create O/I system for keyboard and mouse inputs
@@ -42,7 +42,7 @@ void RunOgreApplication()
 	CSpaghettiWorld *const world = spaghetti->CreateWorld();
 
 	// create some things to bounce around
-	static const int noofBoxes = 18;
+	static const int noofBoxes = 45;
 	CSpaghettiRigidBody* box[noofBoxes];
 
 	float yHeight = 200.0f;
@@ -59,7 +59,7 @@ void RunOgreApplication()
 			if (boxIndex % 9 == 0) yHeight += 200.0f;
 
 			box[boxIndex] = spaghetti->CreateRigidBody(cubeNode, world, RigidBodyType::Box);
-			box[boxIndex]->SetPosition(600.0f - (150.0f * (boxIndex % 9)), yHeight, (yHeight / 4.0f));
+			box[boxIndex]->SetPosition(600.0f - (150.0f * (boxIndex % 9)), yHeight, 0.0f);
 
 			Ogre::Entity *const meshEntity = application->GetSceneManager()->getEntity("cube");
 			Ogre::AxisAlignedBox meshBoundingBox = meshEntity->getBoundingBox();

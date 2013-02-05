@@ -60,6 +60,8 @@ public:
 												SAM::TVector3& normal, 
 												float deltaTime,
 												SAM::TVector3 &velBodyOne,
-												SAM::TVector3 &velBodyTwo
+												SAM::TVector3 &velBodyTwo,
+												SAM::TVector3 &angularVelBodyOne,
+												SAM::TVector3 &angularVelBodyTwo
 											);
 };

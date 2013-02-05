@@ -115,7 +115,7 @@ void CSpaghettiRigidBody::UpdateMatrix()
 	axis[1].Set(0,1,0);
 	axis[2].Set(0,0,1);
 
-	SAM::TMatrix<float, 4, 4> matR = m_rotation.ToMatrix4x4();
+	SAM::TMatrix<float, 4, 4> matR = m_quaternion.ToMatrix3x3().ToMatrix4x4();
 
 	axis[0] = matR.Transform(axis[0]);
 	axis[1] = matR.Transform(axis[1]);
@@ -138,6 +138,15 @@ void CSpaghettiRigidBody::UpdatePosition(
 {
 	m_lastPosition = m_position;
 	m_position = m_position + m_velocity;
+
+	SAM::TVector3 angVel = m_angularVelocity;
+
+	SAM::TQuaternion tempQuat;
+	tempQuat.Set(angVel.X(), angVel.Y(), angVel.Z(), 0.0f);
+	tempQuat = (tempQuat * m_quaternion) * 0.5f;
+
+	m_quaternion = m_quaternion + (tempQuat * deltaTime);
+	m_quaternion.Normalize();
 
 	m_force.Set(0.0f, 0.0f, 0.0f);
 	m_torque.Set(0.0f, 0.0f, 0.0f);
