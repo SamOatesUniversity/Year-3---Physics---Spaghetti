@@ -7,7 +7,7 @@ class CSpaghettiBoundsSphere : public CSpaghettiBounds {
 
 private:
 
-	float						m_diameter;
+	float						m_diameter;												// The diameter of the bounding sphere
 
 public:
 
@@ -39,7 +39,7 @@ public:
 								}
 
 								//! Get the spheres radius
-	const float					GetRadius()
+	const float					GetRadius() const
 								{
 									return (m_diameter * 0.5f);
 								}

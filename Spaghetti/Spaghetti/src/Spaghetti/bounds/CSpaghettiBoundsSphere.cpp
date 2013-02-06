@@ -27,19 +27,19 @@ const bool CSpaghettiBoundsSphere::Intersects(
 	{
 		CSpaghettiBoundsBox *const otherBox = static_cast<CSpaghettiBoundsBox*>(other);
 
-		if (otherBox->GetTransform().X() + otherBox->GetMax().X() < m_position.X() - GetRadius()) return false;
-		if (otherBox->GetTransform().X() + otherBox->GetMin().X() > m_position.X() + GetRadius()) return false;
-		if (otherBox->GetTransform().Y() + otherBox->GetMax().Y() < m_position.Y() - GetRadius()) return false;
-		if (otherBox->GetTransform().Y() + otherBox->GetMin().Y() > m_position.Y() + GetRadius()) return false;
-		if (otherBox->GetTransform().Z() + otherBox->GetMax().Z() < m_position.Z() - GetRadius()) return false;
-		if (otherBox->GetTransform().Z() + otherBox->GetMin().Z() > m_position.Z() + GetRadius()) return false;
+		if (otherBox->GetPosition().X() + otherBox->GetMax().X() < m_position.X() - GetRadius()) return false;
+		if (otherBox->GetPosition().X() + otherBox->GetMin().X() > m_position.X() + GetRadius()) return false;
+		if (otherBox->GetPosition().Y() + otherBox->GetMax().Y() < m_position.Y() - GetRadius()) return false;
+		if (otherBox->GetPosition().Y() + otherBox->GetMin().Y() > m_position.Y() + GetRadius()) return false;
+		if (otherBox->GetPosition().Z() + otherBox->GetMax().Z() < m_position.Z() - GetRadius()) return false;
+		if (otherBox->GetPosition().Z() + otherBox->GetMin().Z() > m_position.Z() + GetRadius()) return false;
 
 		return true;
 	}
 	else if (other->GetType() == BoundsType::Sphere)
 	{
 		CSpaghettiBoundsSphere *const otherSphere = static_cast<CSpaghettiBoundsSphere*>(other);
-		const float distance = m_position.DistanceTo(otherSphere->GetTransform());
+		const float distance = m_position.DistanceTo(otherSphere->GetPosition());
 		const float radius = GetRadius() + otherSphere->GetRadius();
 
 		if (distance < radius)

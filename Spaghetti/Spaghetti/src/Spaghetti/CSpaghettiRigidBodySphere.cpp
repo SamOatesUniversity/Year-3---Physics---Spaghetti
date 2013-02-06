@@ -46,14 +46,23 @@ void CSpaghettiRigidBodySphere::UpdateVelocity(
 	if (m_flags.isStatic || !m_flags.isEnabled)
 		return;
 
-	m_lastPosition = m_position;
-
-	m_velocity = m_velocity + world->GetGravity() * (static_cast<float>(deltaTime) * SPEEDSCALER);
-	m_position = m_position + (m_velocity * (static_cast<float>(deltaTime) * SPEEDSCALER));
+	m_velocity = m_velocity + (world->GetGravity() * deltaTime);
 	m_angularMomentum = m_angularMomentum;
 
 	UpdateInertiaTensor();
 	UpdateAngularVelocity();
+}
+
+/*
+*	\brief	Update the rigid bodies position
+*/
+void CSpaghettiRigidBodySphere::UpdatePosition(
+		CSpaghettiWorld	*world,										//!< The world we are moving in
+		const float deltaTime										//!< Delta time (The amount of time past since the last update)
+	)
+{
+	m_lastPosition = m_position;
+	m_position = m_position + (m_velocity * deltaTime);
 
 	// update skew matrix
 	SAM::TMatrix<float, 3, 3> skewMatrix;
@@ -70,7 +79,7 @@ void CSpaghettiRigidBodySphere::UpdateVelocity(
 	skewMatrix[2][2] = 0.0f;
 
 	// update rotation matrix
-	m_rotation = m_rotation + ((skewMatrix * m_rotation) * (static_cast<float>(deltaTime) * SPEEDSCALER));
+	m_rotation = m_rotation + ((skewMatrix * m_rotation) * deltaTime);
 
 	// update and normalize the quaternion
 	m_quaternion.FromMatrix3x3(m_rotation);
@@ -82,39 +91,10 @@ void CSpaghettiRigidBodySphere::UpdateVelocity(
 /*
 *	\brief	Handle collision against another rigid body
 */
-bool CSpaghettiRigidBodySphere::CheckCollision(
+void CSpaghettiRigidBodySphere::HandleCollision(
+	CSpaghettiWorld	*world,											//!< The world we are moving in
 	CSpaghettiRigidBody *otherRigidBody								//!< The other rigid body to compare against
 	)
 {
-	if (!m_flags.isEnabled)
-		return false;
 
-	if (m_bounds->Intersects(otherRigidBody->GetBounds()))
-	{
-		return true;
-
-		//SAM::TVector<float, 3> x = m_position - otherRigidBody->GetPosition();
-		//x.Unit();
-
-		//SAM::TVector<float, 3> v1 = m_velocity;
-		//float x1 = x.Dot(v1);
-		//SAM::TVector<float, 3> v1x = x * x1;
-		//SAM::TVector<float, 3> v1y = v1 - v1x;
-		//float m1 = m_mass;
-
-		//x = x * -1.0f;
-		//SAM::TVector<float, 3> v2 = otherRigidBody->GetVelocity();
-		//float x2 = x.Dot(v2);
-		//SAM::TVector<float, 3> v2x = x * x2;
-		//SAM::TVector<float, 3> v2y = v2 - v2x;
-		//float m2 = otherRigidBody->GetMass();
-
-		//SAM::TVector<float, 3> newVelocity = ((v1x * ((m1 - m2) / (m1 + m2))) + (v2x * ((2 * m2) / (m1 + m2))) + v1y) * (SPEEDSCALER * 1.0f);
-		//SetVelocity(newVelocity);
-
-		//SAM::TVector<float, 3> otherNewVelocity = ((v1x * ((2 * m1) / (m1 + m2))) + (v2x * ((m2 - m1) / (m1 + m2))) + v2y) * (SPEEDSCALER * 1.0f);
-		//otherRigidBody->SetVelocity(otherNewVelocity);
-	}
-
-	return false;
 }

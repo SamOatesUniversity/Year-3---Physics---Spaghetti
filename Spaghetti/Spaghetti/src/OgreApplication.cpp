@@ -47,7 +47,7 @@ const bool OgreApplication::Initialize()
 	Ogre::RenderWindow *const window = m_ogreWrapper.GetWindow();
 	m_scene = root->createSceneManager(Ogre::ST_GENERIC, "SceneManager");
 	m_rootSceneNode = m_scene->getRootSceneNode();
-	
+
 	return true;
 }
 

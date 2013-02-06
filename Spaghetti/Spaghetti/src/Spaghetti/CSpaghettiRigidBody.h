@@ -18,7 +18,7 @@ typedef union {
 		bool isStatic				:	1;
 		bool isEnabled				:	1;
 	};
-	int alllags;
+	int allflags;
 } RigidBodyFlags;
 
 class CSpaghettiRigidBody {
@@ -69,7 +69,6 @@ public:
 												return m_renderObject;
 											}
 
-public:
 											//! Class constructor
 											CSpaghettiRigidBody(
 												void *renderObject									//!< A pointer to an object this rigid body will represent
@@ -174,30 +173,21 @@ public:
 												return m_mass;
 											}
 
-											//! 
-	void									AddForce(
-												SAM::TVector3 position,
-												SAM::TVector3 force
-											);
-		
-											//! 
-	void									UpdateMatrix();
-
 											//! Update the rigid body
 	virtual void							UpdateVelocity(
 												const CSpaghettiWorld *world,						//!< The world the body belongs too
-												const float deltaTime							//!< Delta time (The amount of time past since the last update)
+												const float deltaTime								//!< Delta time (The amount of time past since the last update)
 											) = 0;
 
-											//! 
+											//! Update the rigid bodies position
 	virtual void							UpdatePosition(
-												const float deltaTime						//!< Delta time (The amount of time past since the last update)
-											);
+												CSpaghettiWorld	*world,								//!< The world we are moving in
+												const float deltaTime								//!< Delta time (The amount of time past since the last update)
+											) = 0;
 
 											//! Handle collision against another rigid body
-	virtual bool							CheckCollision(
+	virtual void							HandleCollision(
+												CSpaghettiWorld	*world,								//!< The world we are moving in
 												CSpaghettiRigidBody *otherRigidBody					//!< The other rigid body to compare against
 											) = 0;
 };
-
-static const float SPEEDSCALER = 0.0025f;
