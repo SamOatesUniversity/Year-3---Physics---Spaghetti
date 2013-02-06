@@ -40,7 +40,7 @@ void RunOgreApplication()
 	CSpaghettiWorld *const world = spaghetti->CreateWorld();
 
 	// create some things to bounce around
-	static const int noofBoxes = 2;
+	static const int noofBoxes = 27;
 	CSpaghettiRigidBody *box[noofBoxes];
 
 	float yHeight = 200.0f;
@@ -54,10 +54,10 @@ void RunOgreApplication()
 			static const float meshScale = 1.0f;
 			cubeNode->setScale(meshScale, meshScale, meshScale);
 
-			if (boxIndex % 1 == 0) yHeight += 200.0f;
+			if (boxIndex % 9 == 0) yHeight += 200.0f;
 
 			box[boxIndex] = spaghetti->CreateRigidBody(cubeNode, world, RigidBodyType::Box);
-			box[boxIndex]->SetPosition(800.0f - (90.0f * (boxIndex % 2)), yHeight, 0.0f);
+			box[boxIndex]->SetPosition(800.0f - (200.0f * (boxIndex % 9)), yHeight, 0.0f);
 
 			Ogre::Entity *const meshEntity = application->GetSceneManager()->getEntity("cube");
 			Ogre::AxisAlignedBox meshBoundingBox = meshEntity->getBoundingBox();

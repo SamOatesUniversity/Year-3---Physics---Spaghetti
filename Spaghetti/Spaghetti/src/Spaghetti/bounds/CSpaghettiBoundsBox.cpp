@@ -169,6 +169,34 @@ const bool CSpaghettiBoundsBox::Intersects(
 			{
 				contactNormal = contactNormal * -1.0f;
 			}
+
+			static float mults[8][3] = {{1,1,1},{-1,1,1},{1,-1,1},{-1,-1,1},{1,1,-1},{-1,1,-1},{1,-1,-1},{-1,-1,-1}};
+			for (unsigned i = 0; i < 8; i++) {
+
+				// Calculate the position of each vertex
+				SAM::TVector3 vertexPos;
+				vertexPos.Set(mults[i][0], mults[i][1], mults[i][2]);
+
+				SAM::TVector3 halfSize = (otherBox->GetMax() - otherBox->GetMin()) * 0.5f;
+
+				vertexPos = vertexPos.Mul(halfSize);
+				vertexPos = m_xform.Transform(vertexPos);
+
+				// Calculate the distance from the plane
+				float vertexDistance = vertexPos * contactNormal;
+
+				// Compare this to the plane's distance
+				if (vertexDistance <= 1.0f)
+				{
+					// Create the contact data.
+					CCollision newCollision;
+					newCollision.bodyOne = other->GetBody();
+					newCollision.bodyTwo = GetBody();
+					newCollision.collisionNormal = contactNormal;
+					newCollision.collisionPoint = vertexPos;
+					collision.push_back(newCollision);
+				}
+			}
 		}
 
 		return true;
