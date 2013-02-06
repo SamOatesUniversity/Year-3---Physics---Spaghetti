@@ -56,6 +56,8 @@ void CSpaghettiRigidBody::SetVelocity(
 		return;
 
 	m_velocity = velocity;
+
+	if (m_velocity.LengthSquared() < 1.0f) m_velocity.Zero();
 }
 
 /*
