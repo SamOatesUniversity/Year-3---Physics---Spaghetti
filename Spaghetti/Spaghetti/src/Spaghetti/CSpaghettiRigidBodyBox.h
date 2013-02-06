@@ -39,4 +39,8 @@ public:
 												CSpaghettiRigidBody *otherRigidBody					//!< The other rigid body to compare against
 											);
 
+	SAM::TVector3							CalculateCollisionPoint(
+												CSpaghettiRigidBody *otherRigidBody					//!< The other rigid body to compare against
+											);
+
 };

@@ -19,6 +19,7 @@ protected:
 	BoundsType::Enum			m_type;													//!< The type of bounds
 	SAM::TVector<float, 3>		m_position;												//!< The position of the bounds in world space
 	SAM::TQuaternion			m_rotation;												//!< The rotation of the bounds
+	SAM::TVector3				m_axis[3];
 
 public:
 								//! Class constructor
@@ -65,4 +66,12 @@ public:
 
 								//! Get a sphere bound representation of the bounds
 	virtual const float			GetRadius() const = 0;
+
+								//! 
+	SAM::TVector3				&GetAxis(
+										const int axisIndex								//!< 
+									)
+								{
+									return m_axis[axisIndex];
+								}
 };

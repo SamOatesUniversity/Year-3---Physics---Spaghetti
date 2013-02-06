@@ -39,6 +39,41 @@ void CSpaghettiBoundsBox::SetCorners(
 }
 
 /*
+*	\brief	
+*/
+float TransformToAxis(
+		CSpaghettiBoundsBox *box,
+		const SAM::TVector3 &axis
+	)
+{
+	return
+		(box->Width() * 0.5f) * fabsf(axis * box->GetAxis(0)) +
+		(box->Height() * 0.5f) * fabsf(axis * box->GetAxis(1)) +
+		(box->Depth() * 0.5f) * fabsf(axis * box->GetAxis(2));
+}
+
+/*
+*	\brief 
+*/
+const bool CheckForAxisOverlap(
+		CSpaghettiBoundsBox *one,
+		CSpaghettiBoundsBox *two,
+		SAM::TVector3 &axis,
+		SAM::TVector3 &toCenter
+	)
+{
+	// Project the half-size of one onto axis
+	const float oneProject = TransformToAxis(one, axis);
+	const float twoProject = TransformToAxis(two, axis);
+
+	// Project this onto the axis
+	const float distance = fabsf(toCenter * axis);
+
+	// Check for overlap
+	return (distance <= oneProject + twoProject);
+}
+
+/*
 *	\brief	Does this bounding box intersect with another
 */
 const bool CSpaghettiBoundsBox::Intersects( 
@@ -49,12 +84,25 @@ const bool CSpaghettiBoundsBox::Intersects(
 	{
 		CSpaghettiBoundsBox *const otherBox = static_cast<CSpaghettiBoundsBox*>(other);
 
-		if (otherBox->GetPosition().X() + otherBox->GetMax().X() < GetPosition().X() - GetMax().X()) return false;
-		if (otherBox->GetPosition().X() + otherBox->GetMin().X() > GetPosition().X() + GetMax().X()) return false;
-		if (otherBox->GetPosition().Y() + otherBox->GetMax().Y() < GetPosition().Y() - GetMax().Y()) return false;
-		if (otherBox->GetPosition().Y() + otherBox->GetMin().Y() > GetPosition().Y() + GetMax().Y()) return false;
-		if (otherBox->GetPosition().Z() + otherBox->GetMax().Z() < GetPosition().Z() - GetMax().Z()) return false;
-		if (otherBox->GetPosition().Z() + otherBox->GetMin().Z() > GetPosition().Z() + GetMax().Z()) return false;
+		SAM::TVector3 toCenter = other->GetPosition() - GetPosition();
+
+		if (!CheckForAxisOverlap(this, otherBox, GetAxis(0), toCenter)) return false;
+		if (!CheckForAxisOverlap(this, otherBox, GetAxis(1), toCenter)) return false;
+		if (!CheckForAxisOverlap(this, otherBox, GetAxis(2), toCenter)) return false;
+
+		if (!CheckForAxisOverlap(this, otherBox, otherBox->GetAxis(0), toCenter)) return false;
+		if (!CheckForAxisOverlap(this, otherBox, otherBox->GetAxis(1), toCenter)) return false;
+		if (!CheckForAxisOverlap(this, otherBox, otherBox->GetAxis(2), toCenter)) return false;
+
+		if (!CheckForAxisOverlap(this, otherBox, GetAxis(0).Cross(otherBox->GetAxis(0)), toCenter)) return false;
+		if (!CheckForAxisOverlap(this, otherBox, GetAxis(0).Cross(otherBox->GetAxis(1)), toCenter)) return false;
+		if (!CheckForAxisOverlap(this, otherBox, GetAxis(0).Cross(otherBox->GetAxis(2)), toCenter)) return false;
+		if (!CheckForAxisOverlap(this, otherBox, GetAxis(1).Cross(otherBox->GetAxis(0)), toCenter)) return false;
+		if (!CheckForAxisOverlap(this, otherBox, GetAxis(1).Cross(otherBox->GetAxis(1)), toCenter)) return false;
+		if (!CheckForAxisOverlap(this, otherBox, GetAxis(1).Cross(otherBox->GetAxis(2)), toCenter)) return false;
+		if (!CheckForAxisOverlap(this, otherBox, GetAxis(2).Cross(otherBox->GetAxis(0)), toCenter)) return false;
+		if (!CheckForAxisOverlap(this, otherBox, GetAxis(2).Cross(otherBox->GetAxis(1)), toCenter)) return false;
+		if (!CheckForAxisOverlap(this, otherBox, GetAxis(2).Cross(otherBox->GetAxis(2)), toCenter)) return false;
 
 		return true;
 	}
