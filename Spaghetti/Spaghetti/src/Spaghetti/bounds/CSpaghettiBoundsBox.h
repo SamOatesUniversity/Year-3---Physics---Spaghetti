@@ -10,6 +10,7 @@ class CSpaghettiBoundsBox : public CSpaghettiBounds {
 private:
 
 	SAM::TVector<float, 3>		m_corner[NOOF_BOUNDINGBOX_CORNERS];						//!< The local positions of the bounding boxes corners
+	SAM::TVector<float, 3>		m_aaCorner[NOOF_BOUNDINGBOX_CORNERS];					//!< The axis aligned positions of the bounding boxes corners
 	SAM::TVector<float, 3>		m_min;													//!< The minimum corner
 	SAM::TVector<float, 3>		m_max;													//!< The maximum corner
 
@@ -37,6 +38,12 @@ public:
 	void						SetCorners(
 									SAM::TVector<float, 3> *corners						//!< A pointer to the positions of the corners
 								);
+
+								//! Set the position of the bounding box
+	virtual void				Transform(
+									SAM::TVector<float, 3> &position,					//!< The position of the bounds in world space
+									SAM::TQuaternion &rotation							//!< The rotation of the bounds in local space
+								);								
 
 								//! Get the minimum bound
 	SAM::TVector<float, 3>		GetMin() const

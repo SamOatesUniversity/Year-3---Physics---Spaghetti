@@ -82,7 +82,8 @@ void CSpaghettiRigidBody::SetBounds(
 	)
 {
 	m_bounds = boundingBox;
-	if (m_bounds != nullptr) m_bounds->Transform(m_position, m_quaternion);
+	if (m_bounds != nullptr) 
+		m_bounds->Transform(m_position, m_quaternion);
 
 	CalculateInertiaBodyTensor();
 	UpdateInertiaTensor();
