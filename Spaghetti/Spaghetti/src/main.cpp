@@ -40,7 +40,7 @@ void RunOgreApplication()
 	CSpaghettiWorld *const world = spaghetti->CreateWorld();
 
 	// create some things to bounce around
-	static const int noofBoxes = 27;
+	static const int noofBoxes = 90;
 	CSpaghettiRigidBody *box[noofBoxes];
 
 	float yHeight = 200.0f;

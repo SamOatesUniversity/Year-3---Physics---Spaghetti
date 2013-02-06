@@ -114,12 +114,9 @@ void CSpaghettiRigidBodyBox::HandleCollision(
 		const float inverseMassBodyOne = 1.0f / GetMass();
 		const float inverseMassBodyTwo = 1.0f / otherRigidBody->GetMass();
 		const float sumOfInverseMass = inverseMassBodyOne + inverseMassBodyTwo;
-	
 		const float jLinear = (-((1.0f + e) * relativeVelocity.Dot(normal))) / sumOfInverseMass;
-		SAM::TVector3 newVelocity = ((normal * jLinear) * inverseMassBodyOne);
-		SAM::TVector3 otherNewVelocity = ((normal * -jLinear) * inverseMassBodyTwo);
 
-		SetVelocity(newVelocity);
-		otherRigidBody->SetVelocity(otherNewVelocity);
+		SetVelocity(((normal * jLinear) * inverseMassBodyOne));
+		otherRigidBody->SetVelocity(((normal * -jLinear) * inverseMassBodyTwo));
 	}	
 }
