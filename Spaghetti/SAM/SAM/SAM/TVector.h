@@ -255,6 +255,14 @@ namespace SAM
 														return distanceVector.Length();
 													}
 
+													//! Get the distance from this vector to another
+		TVector<TYPE, 3>							Mul(const TVector<TYPE, 3> &otherVector) const
+													{
+														TVector<TYPE, 3> result;
+														result.Set(m_element[0] * otherVector.X(), m_element[1] * otherVector.Y(), m_element[2] * otherVector.Z());
+														return result;
+													}
+
 													//! Add another vector to this vector and return the result as a new vector
 		TVector<TYPE, 3>							operator+(const TVector<TYPE, 3> &otherVector) const
 													{

@@ -117,6 +117,18 @@ public:
 												return m_quaternion;
 											}
 
+											//! 
+	SAM::TMatrix<float, 3, 3>				&GetRotation()
+											{
+												return m_rotation;
+											}
+
+											//! 
+	void									AddForceAtPoint(
+												SAM::TVector3 &force,
+												SAM::TVector3 &point
+											);
+
 											//! Set the velocity of the rigid body
 	void									SetVelocity(
 												SAM::TVector<float, 3> velocity
@@ -176,12 +188,6 @@ public:
 											//! Update the rigid body
 	virtual void							UpdateVelocity(
 												const CSpaghettiWorld *world,						//!< The world the body belongs too
-												const float deltaTime								//!< Delta time (The amount of time past since the last update)
-											) = 0;
-
-											//! Update the rigid bodies position
-	virtual void							UpdatePosition(
-												CSpaghettiWorld	*world,								//!< The world we are moving in
 												const float deltaTime								//!< Delta time (The amount of time past since the last update)
 											) = 0;
 
