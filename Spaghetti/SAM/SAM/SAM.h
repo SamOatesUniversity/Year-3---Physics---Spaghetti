@@ -1,5 +1,7 @@
 #pragma once
 
+#include <math.h>
+
 #include "SAM/TVector.h"
 #include "SAM/TMatrix.h"
 #include "SAM/TQuaternion.h"

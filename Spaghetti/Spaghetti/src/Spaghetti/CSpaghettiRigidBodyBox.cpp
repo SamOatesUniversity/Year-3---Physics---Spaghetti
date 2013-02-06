@@ -82,6 +82,10 @@ void CSpaghettiRigidBodyBox::UpdatePosition(
 	// update rotation matrix
 	m_rotation = m_rotation + ((skewMatrix * m_rotation) * deltaTime);
 
+	//m_rotation[0][0] = -0.43727091; m_rotation[0][1] = 0.80610365; m_rotation[0][2] = 0.63116711;
+	//m_rotation[1][0] = 0.63116711; m_rotation[1][1] = -0.43727091; m_rotation[1][2] = 0.80610365;
+	//m_rotation[2][0] = 0.80610365; m_rotation[2][1] = 0.63116711; m_rotation[2][2] = -0.43727091;
+
 	// update and normalize the quaternion
 	m_quaternion.FromMatrix3x3(m_rotation);
 	m_quaternion.Normalize();
@@ -100,6 +104,8 @@ void CSpaghettiRigidBodyBox::HandleCollision(
 	if (!m_bounds->Intersects(otherRigidBody->GetBounds()))
 		return;
 
+	SAM::TVector3 collisionPoint = CalculateCollisionPoint(otherRigidBody);
+
 	SetPosition(GetLastPosition());
 	otherRigidBody->SetPosition(otherRigidBody->GetLastPosition());
 
@@ -108,8 +114,8 @@ void CSpaghettiRigidBodyBox::HandleCollision(
 	
 	// linear
 	{
-		SAM::TVector3 normal;
-		normal.SetY(1.0f);
+		SAM::TVector3 normal = GetPosition() - otherRigidBody->GetPosition();
+		normal.Normalize();
 
 		const float inverseMassBodyOne = 1.0f / GetMass();
 		const float inverseMassBodyTwo = 1.0f / otherRigidBody->GetMass();
@@ -119,4 +125,18 @@ void CSpaghettiRigidBodyBox::HandleCollision(
 		SetVelocity(((normal * jLinear) * inverseMassBodyOne));
 		otherRigidBody->SetVelocity(((normal * -jLinear) * inverseMassBodyTwo));
 	}	
+}
+
+/*
+*	\brief	Calculate the exact point of collision
+*/
+SAM::TVector3 CSpaghettiRigidBodyBox::CalculateCollisionPoint(
+		CSpaghettiRigidBody *otherRigidBody						//!< The other rigid body to compare against
+	)
+{
+	SAM::TVector3 result;
+
+
+
+	return result;
 }

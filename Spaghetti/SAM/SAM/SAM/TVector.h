@@ -222,9 +222,9 @@ namespace SAM
 													}
 
 													//! Get a unit vector of this vector
-		TVector<TYPE, 3>							Normalize() const
+		void										Normalize()
 													{
-														return Unit();
+														*this = Unit();
 													}
 
 													//! Cross product against another vector
@@ -277,6 +277,12 @@ namespace SAM
 														TVector<TYPE, 3> result;
 														result.Set(m_element[0] * other, m_element[1] * other, m_element[2] * other);
 														return result;
+													}
+
+													//! 
+		TYPE										operator*(const TVector<TYPE, 3> &other) const
+													{
+														return X() * other.X() + Y() * other.Y() + Z() * other.Z();
 													}
 
 													//! Set this vector to the values of another
