@@ -1,6 +1,8 @@
 #pragma once
 
 #include "../../../SAM/SAM/SAM.h"
+#include "CCollision.h"
+
 #include <vector>
 #include <iostream>
 
@@ -12,13 +14,17 @@ struct BoundsType {
 	};
 };
 
+class CSpaghettiRigidBody;
+
 class CSpaghettiBounds {
 
 protected:
 
 	BoundsType::Enum			m_type;													//!< The type of bounds
 	SAM::TVector<float, 3>		m_position;												//!< The position of the bounds in world space
-	SAM::TQuaternion			m_rotation;												//!< The rotation of the bounds
+	SAM::TMatrix<float, 4, 4>	m_xform;												//!< The matrix representing the world xform of the bounds
+	CSpaghettiRigidBody			*m_body;												//!< The rigidbody these bounds belong too
+
 	SAM::TVector3				m_axis[3];
 
 public:
@@ -30,17 +36,22 @@ public:
 
 								//! Does this bounding box intersect with another
 	virtual const bool			Intersects(
-									CSpaghettiBounds  *other							//!< The bounding box to test against
+									CSpaghettiBounds  *other,							//!< The bounding box to test against
+									std::vector<CCollision> &collision
 								) = 0;
 
 								//! Set the position of the bounding box
 	virtual void				Transform(
 									SAM::TVector<float, 3> &position,					//!< The position of the bounds in world space
-									SAM::TQuaternion &rotation							//!< The rotation of the bounds in local space
+									SAM::TMatrix<float, 3, 3> &rotation					//!< The rotation of the bounds in local space
 								)
 								{
 									m_position = position;
-									m_rotation = rotation;
+								}
+
+	SAM::TMatrix<float, 4, 4>	GetTransform()
+								{ 
+									return m_xform; 
 								}
 
 								//! Get the position of the bounding box
@@ -73,5 +84,19 @@ public:
 									)
 								{
 									return m_axis[axisIndex];
+								}
+
+								//! 
+	void						SetBody(
+										CSpaghettiRigidBody *body
+									)
+								{
+									m_body = body;
+								}
+
+								//! 
+	CSpaghettiRigidBody			*GetBody()
+								{
+									return m_body;
 								}
 };

@@ -85,7 +85,7 @@ void CSpaghettiRigidBodySphere::UpdatePosition(
 	m_quaternion.FromMatrix3x3(m_rotation);
 	m_quaternion.Normalize();
 
-	m_bounds->Transform(m_position, m_quaternion);
+	m_bounds->Transform(m_position, m_rotation);
 }
 
 /*

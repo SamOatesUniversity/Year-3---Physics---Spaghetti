@@ -42,7 +42,7 @@ void CSpaghettiRigidBody::SetPosition(
 	)
 {
 	m_position.Set(x, y, z);
-	if (m_bounds != nullptr) m_bounds->Transform(m_position, m_quaternion);
+	if (m_bounds != nullptr) m_bounds->Transform(m_position, m_rotation);
 }
 
 /*
@@ -85,9 +85,25 @@ void CSpaghettiRigidBody::SetBounds(
 {
 	m_bounds = boundingBox;
 	if (m_bounds != nullptr) 
-		m_bounds->Transform(m_position, m_quaternion);
+	{
+		m_bounds->SetBody(this);
+		m_bounds->Transform(m_position, m_rotation);
+	}
 
 	CalculateInertiaBodyTensor();
 	UpdateInertiaTensor();
 	UpdateAngularVelocity();
+}
+
+void CSpaghettiRigidBody::AddForceAtPoint( 
+		SAM::TVector3 &force, 
+		SAM::TVector3 &point 
+	)
+{
+	// Convert to coordinates relative to center of mass.
+	SAM::TVector3 pt = point;
+	pt = pt - m_position;
+
+	m_force = m_force + force;
+	m_torque = m_torque + (pt.Cross(force));
 }

@@ -47,25 +47,23 @@ void CSpaghettiRigidBodyBox::UpdateVelocity(
 	if (m_flags.isStatic || !m_flags.isEnabled)
 		return;
 
-	m_velocity = m_velocity + world->GetGravity();
-	m_angularMomentum = m_angularMomentum;
+	// add gravity
+	AddForceAtPoint(world->GetGravity(), m_position);
+
+	// update velocity
+	m_velocity = m_velocity + ((m_force / m_mass) * deltaTime);
+
+	// update the position of the body
+	m_lastPosition = m_position;
+	m_position = m_position + m_velocity;
+
+	// update angular momentum
+	m_angularMomentum = m_angularMomentum + (m_torque * deltaTime);
 
 	UpdateInertiaTensor();
 	UpdateAngularVelocity();
-}
 
-/*
-*	\brief	Update the rigid bodies position
-*/
-void CSpaghettiRigidBodyBox::UpdatePosition(
-		CSpaghettiWorld	*world,										//!< The world we are moving in
-		const float deltaTime										//!< Delta time (The amount of time past since the last update)
-	)
-{
-	m_lastPosition = m_position;
-	m_position = m_position + (m_velocity * deltaTime);
-
-	// update skew matrix
+	// construct the skew matrix
 	SAM::TMatrix<float, 3, 3> skewMatrix;
 	skewMatrix[0][0] = 0.0f;
 	skewMatrix[0][1] = -m_angularVelocity.Z();
@@ -80,17 +78,20 @@ void CSpaghettiRigidBodyBox::UpdatePosition(
 	skewMatrix[2][2] = 0.0f;
 
 	// update rotation matrix
-	m_rotation = m_rotation + ((skewMatrix * m_rotation) * deltaTime);
-
-	//m_rotation[0][0] = -0.43727091; m_rotation[0][1] = 0.80610365; m_rotation[0][2] = 0.63116711;
-	//m_rotation[1][0] = 0.63116711; m_rotation[1][1] = -0.43727091; m_rotation[1][2] = 0.80610365;
-	//m_rotation[2][0] = 0.80610365; m_rotation[2][1] = 0.63116711; m_rotation[2][2] = -0.43727091;
+	m_rotation = m_rotation + (skewMatrix * m_rotation);
 
 	// update and normalize the quaternion
 	m_quaternion.FromMatrix3x3(m_rotation);
 	m_quaternion.Normalize();
 
-	m_bounds->Transform(m_position, m_quaternion);
+	SAM::TMatrix<float, 3, 3> temp = m_quaternion.ToMatrix3x3();
+
+	// transform the bounding box data
+	m_bounds->Transform(m_position, m_rotation);
+
+	// Zero out force and torque
+	m_force.Zero();
+	m_torque.Zero();
 }
 
 /*
@@ -101,42 +102,61 @@ void CSpaghettiRigidBodyBox::HandleCollision(
 		CSpaghettiRigidBody *otherRigidBody								//!< The other rigid body to compare against
 	)
 {
-	if (!m_bounds->Intersects(otherRigidBody->GetBounds()))
+	std::vector<CCollision> collisions;
+	if (!m_bounds->Intersects(otherRigidBody->GetBounds(), collisions))
 		return;
-
-	SAM::TVector3 collisionPoint = CalculateCollisionPoint(otherRigidBody);
 
 	SetPosition(GetLastPosition());
 	otherRigidBody->SetPosition(otherRigidBody->GetLastPosition());
 
-	static const float e = -0.5f;
+	static const float e = 10.0f;
 	SAM::TVector3 relativeVelocity = GetVelocity() - otherRigidBody->GetVelocity();
-	
+
+	SAM::TVector3 zero;
+	SetVelocity(zero);
+	otherRigidBody->SetVelocity(zero);
+
 	// linear
 	{
-		SAM::TVector3 normal = GetPosition() - otherRigidBody->GetPosition();
-		normal.Normalize();
+		unsigned int noofCollisions = collisions.size();
+		for (unsigned int collisionIndex = 0; collisionIndex < noofCollisions; ++collisionIndex)
+		{
+			SAM::TVector3 collisionNormal = collisions[collisionIndex].collisionNormal;
+			SAM::TVector3 collisionPoint = collisions[collisionIndex].collisionPoint;
+			collisionNormal.Normalize();
 
-		const float inverseMassBodyOne = 1.0f / GetMass();
-		const float inverseMassBodyTwo = 1.0f / otherRigidBody->GetMass();
-		const float sumOfInverseMass = inverseMassBodyOne + inverseMassBodyTwo;
-		const float jLinear = (-((1.0f + e) * relativeVelocity.Dot(normal))) / sumOfInverseMass;
+			const float inverseMassBodyOne = 1.0f / GetMass();
+			const float inverseMassBodyTwo = 1.0f / otherRigidBody->GetMass();
+			const float sumOfInverseMass = inverseMassBodyOne + inverseMassBodyTwo;
+			const float jLinear = (-(1.0f + e) * relativeVelocity.Dot(collisionNormal)) / sumOfInverseMass;
 
-		SetVelocity(((normal * jLinear) * inverseMassBodyOne));
-		otherRigidBody->SetVelocity(((normal * -jLinear) * inverseMassBodyTwo));
+			AddForceAtPoint((collisionNormal * jLinear) / static_cast<float>(noofCollisions), collisionPoint);
+			otherRigidBody->AddForceAtPoint((collisionNormal * -jLinear) / static_cast<float>(noofCollisions), collisionPoint);
+		}		
 	}	
-}
 
-/*
-*	\brief	Calculate the exact point of collision
-*/
-SAM::TVector3 CSpaghettiRigidBodyBox::CalculateCollisionPoint(
-		CSpaghettiRigidBody *otherRigidBody						//!< The other rigid body to compare against
-	)
-{
-	SAM::TVector3 result;
+	// angular
+	{
+		//unsigned int noofCollisions = collisions.size();
+		//for (unsigned int collisionIndex = 0; collisionIndex < noofCollisions; ++collisionIndex)
+		//{
+		//	SAM::TVector3 collisionNormal = collisions[collisionIndex].collisionNormal;
+		//	SAM::TVector3 collisionPoint = collisions[collisionIndex].collisionPoint;
+		//	collisionNormal.Normalize();
 
+		//	SAM::TVector3 r1 = collisionPoint - GetPosition();
+		//	SAM::TVector3 r2 = collisionPoint - otherRigidBody->GetPosition();
 
+		//	SAM::TVector3 ac = (GetInverseInertia() * r1.Cross(collisionNormal)).Cross(r1);
+		//	SAM::TVector3 bc = (otherRigidBody->GetInverseInertia() * r2.Cross(collisionNormal)).Cross(r2);
+		//	const float nDc = collisionNormal.Dot(ac) + collisionNormal.Dot(bc);
+		//	const float jAngular = -(((1.0f + e) * relativeVelocity.Dot(collisionNormal)) * nDc);
 
-	return result;
+		//	SAM::TVector3 thisAngVel = (GetInverseInertia() * r1.Cross(collisionNormal * jAngular)) / static_cast<float>(noofCollisions);
+		//	SAM::TVector3 otherAngVel = (otherRigidBody->GetInverseInertia() * r2.Cross(collisionNormal * -jAngular)) / static_cast<float>(noofCollisions);
+
+		//	AddForceAtPoint(thisAngVel, collisionPoint);
+		//	otherRigidBody->AddForceAtPoint(otherAngVel, collisionPoint);
+		//}
+	}
 }

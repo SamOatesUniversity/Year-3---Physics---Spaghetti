@@ -327,6 +327,18 @@ namespace SAM
 
 																		return result;
 																	}
+
+																	//! Multiply a matrix by a vector
+		TVector<TYPE, 3>											operator*(TVector<TYPE, 3> &other)
+																	{
+																		TVector<TYPE, 3> result;
+
+																		result[0] = other.X() * m_element[0][0] + other.Y() * m_element[0][1] + other.Z() * m_element[0][2] + m_element[0][3];
+																		result[1] = other.X() * m_element[1][0] + other.Y() * m_element[1][1] + other.Z() * m_element[1][2] + m_element[1][3];
+																		result[2] = other.X() * m_element[2][0] + other.Y() * m_element[2][1] + other.Z() * m_element[2][2] + m_element[2][3];
+
+																		return result;
+																	}
 	};
 
 }

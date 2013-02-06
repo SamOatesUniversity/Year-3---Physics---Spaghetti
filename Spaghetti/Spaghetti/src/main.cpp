@@ -40,7 +40,7 @@ void RunOgreApplication()
 	CSpaghettiWorld *const world = spaghetti->CreateWorld();
 
 	// create some things to bounce around
-	static const int noofBoxes = 45;
+	static const int noofBoxes = 2;
 	CSpaghettiRigidBody *box[noofBoxes];
 
 	float yHeight = 200.0f;
@@ -54,10 +54,10 @@ void RunOgreApplication()
 			static const float meshScale = 1.0f;
 			cubeNode->setScale(meshScale, meshScale, meshScale);
 
-			if (boxIndex % 9 == 0) yHeight += 200.0f;
+			if (boxIndex % 1 == 0) yHeight += 200.0f;
 
 			box[boxIndex] = spaghetti->CreateRigidBody(cubeNode, world, RigidBodyType::Box);
-			box[boxIndex]->SetPosition(600.0f - (150.0f * (boxIndex % 9)), yHeight, 0.0f);
+			box[boxIndex]->SetPosition(800.0f - (90.0f * (boxIndex % 2)), yHeight, 0.0f);
 
 			Ogre::Entity *const meshEntity = application->GetSceneManager()->getEntity("cube");
 			Ogre::AxisAlignedBox meshBoundingBox = meshEntity->getBoundingBox();
@@ -185,16 +185,19 @@ void RunOgreApplication()
 		{
 			Ogre::SceneNode *const node = static_cast<Ogre::SceneNode*>(box[boxIndex]->GetRenderObject());
 			SAM::TVector<float, 3> position = box[boxIndex]->GetPosition();
-			SAM::TQuaternion orientation = box[boxIndex]->GetOrientation();
+			SAM::TMatrix<float, 3, 3> rotation = box[boxIndex]->GetRotation();
+
+			Ogre::Matrix3 ogreRotation(rotation[0][0], rotation[0][1], rotation[0][2], rotation[1][0], rotation[1][1], rotation[1][2], rotation[2][0], rotation[2][1], rotation[2][2]);
+			Ogre::Quaternion orientation(ogreRotation);
 
 			node->setPosition(position.X(), position.Y(), position.Z());
-			node->setOrientation(orientation.W(), orientation.X(), orientation.Y(), orientation.Z());
+			node->setOrientation(orientation);
 
 			for (int boundingCornerIndex = 0; boundingCornerIndex < NOOF_BOUNDINGBOX_CORNERS; ++boundingCornerIndex)
 			{
 				if (boundingBox[boxIndex][boundingCornerIndex]) 
 				{			
-					CSpaghettiBoundsBox *boxBounds = static_cast<CSpaghettiBoundsBox*>(box[0]->GetBounds());
+					CSpaghettiBoundsBox *boxBounds = static_cast<CSpaghettiBoundsBox*>(box[boxIndex]->GetBounds());
 					SAM::TVector3 position = box[boxIndex]->GetPosition() + boxBounds->GetCorner(boundingCornerIndex);
 					boundingBox[boxIndex][boundingCornerIndex]->setPosition(position.X(), position.Y(), position.Z());
 				}

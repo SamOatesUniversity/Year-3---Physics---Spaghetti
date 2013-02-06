@@ -42,7 +42,7 @@ public:
 								//! Set the position of the bounding box
 	virtual void				Transform(
 									SAM::TVector<float, 3> &position,					//!< The position of the bounds in world space
-									SAM::TQuaternion &rotation							//!< The rotation of the bounds in local space
+									SAM::TMatrix<float, 3, 3> &rotation					//!< The rotation of the bounds in local space
 								);								
 
 								//! Get the minimum bound
@@ -67,7 +67,8 @@ public:
 
 								//! Does this bounding box intersect with another
 	const bool					Intersects(
-									CSpaghettiBounds *other							//!< The bounding box to test against
+									CSpaghettiBounds *other,							//!< The bounding box to test against
+									std::vector<CCollision> &collision
 								);
 
 								//! Get the height of the bounding box
