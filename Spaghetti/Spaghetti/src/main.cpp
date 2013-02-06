@@ -40,7 +40,7 @@ void RunOgreApplication()
 	CSpaghettiWorld *const world = spaghetti->CreateWorld();
 
 	// create some things to bounce around
-	static const int noofBoxes = 1;
+	static const int noofBoxes = 27;
 	CSpaghettiRigidBody *box[noofBoxes];
 
 	float yHeight = 200.0f;
@@ -81,17 +81,20 @@ void RunOgreApplication()
 		}
 	}
 
-	Ogre::SceneNode *boundingBox[8];
-	for (int boundingCornerIndex = 0; boundingCornerIndex < NOOF_BOUNDINGBOX_CORNERS; ++boundingCornerIndex)
+	Ogre::SceneNode *boundingBox[noofBoxes][8];
+	for (int boxIndex = 0; boxIndex < noofBoxes; ++boxIndex)
 	{
-		std::stringstream nodeName;
-		nodeName << "CubeNodeBoundingCorner-" << boundingCornerIndex;
-		if (boundingBox[boundingCornerIndex] = application->CreateEntityFromMesh("sphere.mesh", nodeName.str())) 
-		{			
-			boundingBox[boundingCornerIndex]->setScale(0.1, 0.1, 0.1);
-			CSpaghettiBoundsBox *boxBounds = static_cast<CSpaghettiBoundsBox*>(box[0]->GetBounds());
-			SAM::TVector3 position = box[0]->GetPosition() + boxBounds->GetCorner(boundingCornerIndex);
-			boundingBox[boundingCornerIndex]->setPosition(position.X(), position.Y(), position.Z());
+		for (int boundingCornerIndex = 0; boundingCornerIndex < NOOF_BOUNDINGBOX_CORNERS; ++boundingCornerIndex)
+		{
+			std::stringstream nodeName;
+			nodeName << "CubeNode-" << boxIndex << "-BoundingCorner-" << boundingCornerIndex;
+			if (boundingBox[boxIndex][boundingCornerIndex] = application->CreateEntityFromMesh("sphere.mesh", nodeName.str())) 
+			{			
+				boundingBox[boxIndex][boundingCornerIndex]->setScale(0.1, 0.1, 0.1);
+				CSpaghettiBoundsBox *boxBounds = static_cast<CSpaghettiBoundsBox*>(box[0]->GetBounds());
+				SAM::TVector3 position = box[boxIndex]->GetPosition() + boxBounds->GetCorner(boundingCornerIndex);
+				boundingBox[boxIndex][boundingCornerIndex]->setPosition(position.X(), position.Y(), position.Z());
+			}
 		}
 	}
 	
@@ -186,17 +189,19 @@ void RunOgreApplication()
 
 			node->setPosition(position.X(), position.Y(), position.Z());
 			node->setOrientation(orientation.W(), orientation.X(), orientation.Y(), orientation.Z());
-		}
 
-		for (int boundingCornerIndex = 0; boundingCornerIndex < NOOF_BOUNDINGBOX_CORNERS; ++boundingCornerIndex)
-		{
-			if (boundingBox[boundingCornerIndex]) 
-			{			
-				CSpaghettiBoundsBox *boxBounds = static_cast<CSpaghettiBoundsBox*>(box[0]->GetBounds());
-				SAM::TVector3 position = box[0]->GetPosition() + boxBounds->GetCorner(boundingCornerIndex);
-				boundingBox[boundingCornerIndex]->setPosition(position.X(), position.Y(), position.Z());
+			for (int boundingCornerIndex = 0; boundingCornerIndex < NOOF_BOUNDINGBOX_CORNERS; ++boundingCornerIndex)
+			{
+				if (boundingBox[boxIndex][boundingCornerIndex]) 
+				{			
+					CSpaghettiBoundsBox *boxBounds = static_cast<CSpaghettiBoundsBox*>(box[0]->GetBounds());
+					SAM::TVector3 position = box[boxIndex]->GetPosition() + boxBounds->GetCorner(boundingCornerIndex);
+					boundingBox[boxIndex][boundingCornerIndex]->setPosition(position.X(), position.Y(), position.Z());
+				}
 			}
 		}
+
+
 
 		// update the application
 		Ogre::WindowEventUtilities::messagePump();
