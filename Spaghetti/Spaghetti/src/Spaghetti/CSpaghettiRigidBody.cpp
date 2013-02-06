@@ -17,7 +17,7 @@ CSpaghettiRigidBody::CSpaghettiRigidBody(
 	m_torque.Set(0.0f, 0.0f, 0.0f);
 	
 	m_mass = 1.0f;
-	m_flags.alllags = 0;
+	m_flags.allflags = 0;
 	m_flags.isEnabled = true;
 
 	m_angularVelocity.Set(0, 0, 0);
@@ -87,44 +87,4 @@ void CSpaghettiRigidBody::SetBounds(
 	CalculateInertiaBodyTensor();
 	UpdateInertiaTensor();
 	UpdateAngularVelocity();
-}
-
-//! 
-void CSpaghettiRigidBody::AddForce(
-		SAM::TVector3 position,
-		SAM::TVector3 force
-	)
-{
-	m_force = m_force + force;
-	m_torque = m_torque + (m_position - position).Cross(force);
-}
-
-//! 
-void CSpaghettiRigidBody::UpdateMatrix()
-{
-	UpdateInertiaTensor();
-	m_bounds->Transform(m_position, m_quaternion);
-}
-
-//! 
-void CSpaghettiRigidBody::UpdatePosition(
-		const float deltaTime						//!< Delta time (The amount of time past since the last update)
-	)
-{
-	m_lastPosition = m_position;
-	m_position = m_position + m_velocity;
-
-	SAM::TVector3 angVel = m_angularVelocity;
-
-	SAM::TQuaternion tempQuat;
-	tempQuat.Set(angVel.X(), angVel.Y(), angVel.Z(), 0.0f);
-	tempQuat = (tempQuat * m_quaternion) * 0.5f;
-
-	m_quaternion = m_quaternion + (tempQuat * deltaTime);
-	m_quaternion.Normalize();
-
-	m_force.Set(0.0f, 0.0f, 0.0f);
-	m_torque.Set(0.0f, 0.0f, 0.0f);
-
-	UpdateMatrix();
 }

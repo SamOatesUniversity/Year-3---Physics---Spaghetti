@@ -40,42 +40,86 @@ void CSpaghettiRigidBodyBox::CalculateInertiaBodyTensor()
 */
 void CSpaghettiRigidBodyBox::UpdateVelocity( 
 		const CSpaghettiWorld *world,
-		const float deltaTime							//!< Delta time (The amount of time past since the last update)
+		const float deltaTime									//!< Delta time (The amount of time past since the last update)
 	)
 {
 	// Nothing to update if he rigid body is static or disabled
 	if (m_flags.isStatic || !m_flags.isEnabled)
 		return;
 
-	if (m_velocity.Length() < 0.001f) m_velocity.Set(0.0f, 0.0f, 0.0f);
-	if (m_angularVelocity.Length() < 0.001f) m_angularVelocity.Set(0.0f, 0.0f, 0.0f);
+	m_velocity = m_velocity + world->GetGravity();
+	m_angularMomentum = m_angularMomentum;
 
-	// Add Gravity
-	SAM::TVector3 gravity = world->GetGravity();
-	gravity.SetY(gravity.Y() * m_mass);
-	AddForce(m_position, gravity);
-	
-	// update angular
-	m_angularVelocity = m_angularVelocity + ((m_inertiaTensorInverse * m_torque) * deltaTime);
+	UpdateInertiaTensor();
+	UpdateAngularVelocity();
+}
 
-	// Update Linear
-	m_velocity = m_velocity + ((m_force / m_mass) * deltaTime);
+/*
+*	\brief	Update the rigid bodies position
+*/
+void CSpaghettiRigidBodyBox::UpdatePosition(
+		CSpaghettiWorld	*world,										//!< The world we are moving in
+		const float deltaTime										//!< Delta time (The amount of time past since the last update)
+	)
+{
+	m_lastPosition = m_position;
+	m_position = m_position + (m_velocity * deltaTime);
 
-	UpdateMatrix();
+	// update skew matrix
+	SAM::TMatrix<float, 3, 3> skewMatrix;
+	skewMatrix[0][0] = 0.0f;
+	skewMatrix[0][1] = -m_angularVelocity.Z();
+	skewMatrix[0][2] = m_angularVelocity.Y();
+
+	skewMatrix[1][0] = m_angularVelocity.Z();
+	skewMatrix[1][1] = 0.0f;
+	skewMatrix[1][2] = -m_angularVelocity.X();
+
+	skewMatrix[2][0] = -m_angularVelocity.Y();
+	skewMatrix[2][1] = m_angularVelocity.X();
+	skewMatrix[2][2] = 0.0f;
+
+	// update rotation matrix
+	m_rotation = m_rotation + ((skewMatrix * m_rotation) * deltaTime);
+
+	// update and normalize the quaternion
+	m_quaternion.FromMatrix3x3(m_rotation);
+	m_quaternion.Normalize();
+
+	m_bounds->Transform(m_position, m_quaternion);
 }
 
 /*
 *	\brief	Handle collision against another rigid body
 */
-bool CSpaghettiRigidBodyBox::CheckCollision(
+void CSpaghettiRigidBodyBox::HandleCollision(
+		CSpaghettiWorld	*world,											//!< The world we are moving in
 		CSpaghettiRigidBody *otherRigidBody								//!< The other rigid body to compare against
 	)
 {
-	if (!m_flags.isEnabled)
-		return false;
+	if (!m_bounds->Intersects(otherRigidBody->GetBounds()))
+		return;
 
-	if (m_bounds->Intersects(otherRigidBody->GetBounds()))
-		return true;
+	SetPosition(GetLastPosition());
+	otherRigidBody->SetPosition(otherRigidBody->GetLastPosition());
 
-	return false;
+	static const float e = -0.5f;
+	SAM::TVector3 relativeVelocity = GetVelocity() - otherRigidBody->GetVelocity();
+	
+	// linear
+	{
+		SAM::TVector3 normal;
+		normal.SetY(1.0f);
+
+		const float inverseMassBodyOne = 1.0f / GetMass();
+		const float inverseMassBodyTwo = 1.0f / otherRigidBody->GetMass();
+		const float sumOfInverseMass = inverseMassBodyOne + inverseMassBodyTwo;
+	
+		const float jLinear = (-((1.0f + e) * relativeVelocity.Dot(normal))) / sumOfInverseMass;
+		SAM::TVector3 newVelocity = ((normal * jLinear) * inverseMassBodyOne);
+		SAM::TVector3 otherNewVelocity = ((normal * -jLinear) * inverseMassBodyTwo);
+
+		SetVelocity(newVelocity);
+		otherRigidBody->SetVelocity(otherNewVelocity);
+	}	
 }

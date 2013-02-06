@@ -124,4 +124,6 @@ public:
 											);
 };
 
+static OgreApplication *const application = new OgreApplication;
+
 #endif

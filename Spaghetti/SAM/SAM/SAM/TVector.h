@@ -243,7 +243,7 @@ namespace SAM
 													}
 		
 													//! Get the distance from this vector to another
-		TYPE										DistanceTo(const TVector<TYPE, 3> &otherVector)
+		TYPE										DistanceTo(const TVector<TYPE, 3> &otherVector) const
 													{
 														TVector<TYPE, 3> distanceVector = (*this) - otherVector;
 														return distanceVector.Length();

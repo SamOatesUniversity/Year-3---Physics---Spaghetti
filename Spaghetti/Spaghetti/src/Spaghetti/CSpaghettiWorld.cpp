@@ -6,6 +6,7 @@
 CSpaghettiWorld::CSpaghettiWorld()
 {
 	m_gravity.Set(0.0f, -9.81f, 0.0f);
+	m_flags.allflags = 0;
 }
 
 /*
@@ -48,182 +49,91 @@ void CSpaghettiWorld::Update(
 		const float deltaTime						//!< Delta time (The amount of time past since the last update)
 	)
 {
-	// collision detection
-	m_collisions.clear();
+	if (m_flags.isPaused)
+		return;
 
-	std::vector<CSpaghettiRigidBody*>::const_iterator begin = m_rigidBodies.begin();
-	std::vector<CSpaghettiRigidBody*>::const_iterator end = m_rigidBodies.end();
+	RigidBodyList::const_iterator begin = m_rigidBodies.begin();
+	RigidBodyList::const_iterator end = m_rigidBodies.end();
 
-	for (std::vector<CSpaghettiRigidBody*>::const_iterator bodyIt = begin; bodyIt != end; bodyIt++)
+	// Update the positions
+	RigidBodyList::const_iterator bodyIt = begin;
+	for (bodyIt; bodyIt != end; bodyIt++)
 	{
-		for (std::vector<CSpaghettiRigidBody*>::const_iterator otherBodyIt = bodyIt; otherBodyIt != end; otherBodyIt++)
+		CSpaghettiRigidBody *const body = (*bodyIt);
+		if (body->IsStatic())
+			continue;
+
+		body->UpdatePosition(this, deltaTime);
+	}
+
+	// check for collisions and apply impulses
+	bodyIt = begin;
+	for (bodyIt; bodyIt != end; bodyIt++)
+	{
+		CSpaghettiRigidBody *const body = (*bodyIt);
+		for (RigidBodyList::const_iterator otherBodyIt = bodyIt; otherBodyIt != end; otherBodyIt++)
 		{
-			if (otherBodyIt == bodyIt)
+			CSpaghettiRigidBody *const otherBody = (*otherBodyIt);
+			if (body == otherBody)
 				continue;
 
-			 const bool collision = (*bodyIt)->CheckCollision(*otherBodyIt);
-			 if (collision)
-			 {
-				 std::vector<SAM::TVector3> hitPoints = (*bodyIt)->GetBounds()->GetHitPoints();
-				 const int noofCollisionPoints = hitPoints.size();
-
-				 for (int collisionPointIndex = 0; collisionPointIndex < noofCollisionPoints; ++collisionPointIndex)
-					AddCollision(*bodyIt, *otherBodyIt, hitPoints[collisionPointIndex], (*bodyIt)->GetBounds()->GetHitNormal(), (*bodyIt)->GetBounds()->GetPenetration());
-			 }
+			body->HandleCollision(this, otherBody);
 		}
 	}
 
-	// Update forces
-	for (std::vector<CSpaghettiRigidBody*>::const_iterator bodyIt = begin; bodyIt != end; bodyIt++)
+	// update the velocities
+	bodyIt = begin;
+	for (bodyIt; bodyIt != end; bodyIt++)
 	{
-		(*bodyIt)->UpdateVelocity(this, deltaTime);
-	}
+		CSpaghettiRigidBody *const body = (*bodyIt);
+		if (body->IsStatic())
+			continue;
 
-	ApplyImpulses(deltaTime);
-
-	// Update positions
-	for (std::vector<CSpaghettiRigidBody*>::const_iterator bodyIt = begin; bodyIt != end; bodyIt++)
-	{
-		(*bodyIt)->UpdatePosition(deltaTime);
-	}
-
-
-}
-
-void CSpaghettiWorld::AddCollision( 
-		CSpaghettiRigidBody *bodyOne, 
-		CSpaghettiRigidBody *bodyTwo, 
-		SAM::TVector3 &point, 
-		SAM::TVector3 &normal, 
-		const float penetration 
-	)
-{
-	CCollision *cp = nullptr;
-
-	for (unsigned int collisionIndex = 0; collisionIndex < m_collisions.size(); ++collisionIndex)
-	{
-		if (m_collisions[collisionIndex].m_bodyOne == bodyOne && m_collisions[collisionIndex].m_bodyTwo == bodyTwo)
-		{
-			cp = &m_collisions[collisionIndex];
-			break;
-		}
-	}
-
-	if (cp == nullptr)
-	{
-		CCollision newCollision;
-		newCollision.m_bodyOne = bodyOne;
-		newCollision.m_bodyTwo = bodyTwo;
-		newCollision.m_noofPoints = 1;
-		
-		CCollision::CollisionPoints newCollisionPoints;
-		newCollisionPoints.normal = normal;
-		newCollisionPoints.point = point;
-		newCollisionPoints.penetration = penetration;
-		newCollisionPoints.positionOne = bodyOne->GetPosition();
-		newCollisionPoints.positionTwo = bodyTwo->GetPosition();
-		
-		newCollision.m_points.push_back(newCollisionPoints);
-		m_collisions.push_back(newCollision);				
-		return;
-	}
-
-	CCollision::CollisionPoints newCollisionPoints;
-	newCollisionPoints.normal = normal;
-	newCollisionPoints.point = point;
-	newCollisionPoints.penetration = penetration;
-	newCollisionPoints.positionOne = bodyOne->GetPosition();
-	newCollisionPoints.positionTwo = bodyTwo->GetPosition();	
-
-	cp->m_points.push_back(newCollisionPoints);
-	cp->m_noofPoints++;
-}
-
-void CSpaghettiWorld::ApplyImpulses( 
-		float deltaTime 
-	)
-{
-	const unsigned int noofColisions = m_collisions.size();
-
-	for (unsigned int collisionIndex = 0; collisionIndex < noofColisions; ++collisionIndex)
-	{
-		CCollision *cp = &m_collisions[collisionIndex];
-
-		CSpaghettiRigidBody *bodyOne = cp->m_bodyOne;
-		CSpaghettiRigidBody *bodyTwo = cp->m_bodyTwo;
-		int numPoints = cp->m_noofPoints;
-
-		SAM::TVector3 bodyOneVel, bodyTwoVel, bodyOneAngVel, bodyTwoAngVel;
-
-		for (int collisionPointIndex = 0; collisionPointIndex < numPoints; ++collisionPointIndex)
-		{
-			SAM::TVector3 hitPoint = cp->m_points[collisionPointIndex].point;
-			SAM::TVector3 normal = cp->m_points[collisionPointIndex].normal;
-			float penDepth = cp->m_points[collisionPointIndex].penetration;
-
-			AddCollisionImpulse(bodyOne, bodyTwo, hitPoint, normal, deltaTime, bodyOneVel, bodyTwoVel, bodyOneAngVel, bodyTwoAngVel);
-		}
-
-		bodyOneVel = bodyOneVel / static_cast<float>(numPoints);
-		bodyTwoVel = bodyTwoVel / static_cast<float>(numPoints);
-
-		bodyOneAngVel = bodyOneAngVel / static_cast<float>(numPoints);
-		bodyTwoAngVel = bodyTwoAngVel / static_cast<float>(numPoints);
-
-		static const float minSquaredVelocitySquared = 1.0f;
-		if (bodyOneVel.LengthSquared() < minSquaredVelocitySquared) bodyOneVel.Set(0, 0, 0);
-		if (bodyTwoVel.LengthSquared() < minSquaredVelocitySquared) bodyTwoVel.Set(0, 0, 0);
-
-		bodyOne->SetPosition(bodyOne->GetLastPosition());
-		bodyOne->SetVelocity(bodyOneVel);
-		bodyOne->SetAngularVelocity(bodyOneAngVel);
-		
-		bodyTwo->SetPosition(bodyTwo->GetLastPosition());
-		bodyTwo->SetVelocity(bodyTwoVel);
-		bodyTwo->SetAngularVelocity(bodyTwoAngVel);
-	}
-}
-
-void CSpaghettiWorld::AddCollisionImpulse( 
-		CSpaghettiRigidBody *bodyOne, 
-		CSpaghettiRigidBody *bodyTwo, 
-		SAM::TVector3& hitPoint, 
-		SAM::TVector3& normal, 
-		float deltaTime, 
-		SAM::TVector3 &velBodyOne,
-		SAM::TVector3 &velBodyTwo,
-		SAM::TVector3 &angularVelBodyOne,
-		SAM::TVector3 &angularVelBodyTwo
-	)
-{
-	
-	static const float e = -0.5f;
-
-	SAM::TVector3 relativeVelocity = bodyOne->GetVelocity() - bodyTwo->GetVelocity();
-
-	// linear
-	{
-		const float inverseMassBodyOne = 1.0f / bodyOne->GetMass();
-		const float inverseMassBodyTwo = 1.0f / bodyTwo->GetMass();
-		const float sumOfInverseMass = inverseMassBodyOne + inverseMassBodyTwo;
-
-		const float jLinear = (-((1.0f + e) * relativeVelocity.Dot(normal))) / sumOfInverseMass;
-		velBodyOne = velBodyOne + ((normal * jLinear) * inverseMassBodyOne);
-		velBodyTwo = velBodyTwo + ((normal * -jLinear) * inverseMassBodyTwo);
-	}
-
-	// angular
-	{
-		SAM::TVector3 r1 = hitPoint - bodyOne->GetPosition();
-		SAM::TVector3 r2 = hitPoint - bodyTwo->GetPosition();
-
-		SAM::TVector3 ac = (bodyOne->GetInverseInertia() * r1.Cross(normal)).Cross(r1);
-		SAM::TVector3 bc = (bodyTwo->GetInverseInertia() * r2.Cross(normal)).Cross(r2);
-		const float nDc = normal.Dot(ac) + normal.Dot(bc);
-		const float jAngular = -(((1.0f + e) * relativeVelocity.Dot(normal)) * nDc);
-
-		angularVelBodyOne = angularVelBodyOne + (bodyOne->GetInverseInertia() * r1.Cross(normal * jAngular));
-		angularVelBodyTwo = angularVelBodyTwo + (bodyTwo->GetInverseInertia() * r2.Cross(normal * -jAngular));
+		body->UpdateVelocity(this, deltaTime);
 	}
 
 }
+
+//void CSpaghettiWorld::AddCollisionImpulse( 
+//		CSpaghettiRigidBody *bodyOne, 
+//		CSpaghettiRigidBody *bodyTwo, 
+//		SAM::TVector3& hitPoint, 
+//		SAM::TVector3& normal, 
+//		float deltaTime, 
+//		SAM::TVector3 &velBodyOne,
+//		SAM::TVector3 &velBodyTwo,
+//		SAM::TVector3 &angularVelBodyOne,
+//		SAM::TVector3 &angularVelBodyTwo
+//	)
+//{
+//	
+//	static const float e = -0.5f;
+//
+//	SAM::TVector3 relativeVelocity = bodyOne->GetVelocity() - bodyTwo->GetVelocity();
+//
+//	// linear
+//	{
+//		const float inverseMassBodyOne = 1.0f / bodyOne->GetMass();
+//		const float inverseMassBodyTwo = 1.0f / bodyTwo->GetMass();
+//		const float sumOfInverseMass = inverseMassBodyOne + inverseMassBodyTwo;
+//
+//		const float jLinear = (-((1.0f + e) * relativeVelocity.Dot(normal))) / sumOfInverseMass;
+//		velBodyOne = velBodyOne + ((normal * jLinear) * inverseMassBodyOne);
+//		velBodyTwo = velBodyTwo + ((normal * -jLinear) * inverseMassBodyTwo);
+//	}
+//
+//	// angular
+//	{
+//		SAM::TVector3 r1 = hitPoint - bodyOne->GetPosition();
+//		SAM::TVector3 r2 = hitPoint - bodyTwo->GetPosition();
+//
+//		SAM::TVector3 ac = (bodyOne->GetInverseInertia() * r1.Cross(normal)).Cross(r1);
+//		SAM::TVector3 bc = (bodyTwo->GetInverseInertia() * r2.Cross(normal)).Cross(r2);
+//		const float nDc = normal.Dot(ac) + normal.Dot(bc);
+//		const float jAngular = -(((1.0f + e) * relativeVelocity.Dot(normal)) * nDc);
+//
+//		angularVelBodyOne = angularVelBodyOne + (bodyOne->GetInverseInertia() * r1.Cross(normal * jAngular));
+//		angularVelBodyTwo = angularVelBodyTwo + (bodyTwo->GetInverseInertia() * r2.Cross(normal * -jAngular));
+//	}
+//
+//}

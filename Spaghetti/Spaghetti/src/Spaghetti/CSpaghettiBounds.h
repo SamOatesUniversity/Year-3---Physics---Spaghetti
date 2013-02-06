@@ -15,21 +15,11 @@ class CSpaghettiBounds {
 
 protected:
 
-	BoundsType::Enum			m_type;
-
-	SAM::TVector<float, 3>		m_position;
-
-	SAM::TVector<float, 3>		m_axis[3];			// Local x-y-z Axes
-	SAM::TMatrix<float, 4, 4>	m_matWorld;
-
-	std::vector<SAM::TVector3>	m_hitPoint;
-	SAM::TVector<float, 3>		m_hitNormal;
-	float						m_penetration;
+	BoundsType::Enum			m_type;													//!< The type of bounds
+	SAM::TVector<float, 3>		m_position;												//!< The position of the bounds in world space
+	SAM::TQuaternion			m_rotation;												//!< The rotation of the bounds
 
 public:
-
-	SAM::TVector<float, 3>		m_e;				// Positive halfwidths along each axis
-
 								//! Class constructor
 								CSpaghettiBounds();
 
@@ -43,48 +33,22 @@ public:
 
 								//! Set the position of the bounding box
 	void						Transform(
-									SAM::TVector<float, 3> &position,					//!< 
-									SAM::TQuaternion &rotation							//!< 
+									SAM::TVector<float, 3> &position,					//!< The position of the bounds in world space
+									SAM::TQuaternion &rotation							//!< The rotation of the bounds in local space
 								)
 								{
 									m_position = position;
-
-									m_axis[0].Set(1, 0, 0);
-									m_axis[1].Set(0, 1, 0);
-									m_axis[2].Set(0, 0, 1);
-
-									SAM::TMatrix<float, 4, 4> rotationMat = rotation.ToMatrix3x3().ToMatrix4x4();
-
-									m_axis[0] = rotationMat.Transform(m_axis[0]);
-									m_axis[1] = rotationMat.Transform(m_axis[1]);
-									m_axis[2] = rotationMat.Transform(m_axis[2]);
-
-									SAM::TMatrix<float, 4, 4> xformMat;
-									xformMat.Translate(m_position.X(), m_position.Y(), m_position.Z());
-
-									m_matWorld = rotationMat * xformMat;
+									m_rotation = rotation;
 								}
 
 								//! Get the position of the bounding box
-	SAM::TVector<float, 3>		GetTransform() const
+	SAM::TVector<float, 3>		GetPosition() const
 								{
 									return m_position;
 								}
 
-								//! Get local axis
-	SAM::TVector<float, 3>		GetAxis(const int index) const 
-								{
-									return m_axis[index];
-								}
-
-								//! 
-	SAM::TMatrix<float, 4, 4>	GetWorldMatrix() const
-								{
-									return m_matWorld;
-								}
-
 								//! Get the type of bounds
-	BoundsType::Enum			GetType() 
+	BoundsType::Enum			GetType() const
 								{
 									return m_type;
 								}
@@ -98,24 +62,6 @@ public:
 								//! Get the depth of the bounding box
 	virtual float				Depth() const = 0;
 
-								//! Get the sphere radius
-	virtual const float			GetRadius() = 0;
-
-								//! 
-	std::vector<SAM::TVector3>	&GetHitPoints()
-								{
-									return m_hitPoint;
-								}
-
-								//!
-	SAM::TVector<float, 3>		GetHitNormal()
-								{
-									return m_hitNormal;
-								}
-
-								//! 
-	float						GetPenetration()
-								{
-									return m_penetration;
-								}
+								//! Get a sphere bound representation of the bounds
+	virtual const float			GetRadius() const = 0;
 };

@@ -6,6 +6,15 @@
 
 #include <vector>
 
+typedef union {
+	struct {
+		bool isPaused				:	1;
+	};
+	int allflags;
+} WorldFlags;
+
+typedef	std::vector<CSpaghettiRigidBody*>	RigidBodyList;
+
 class CSpaghettiWorld {
 
 friend class CSpaghettiRigidBody;
@@ -13,10 +22,8 @@ friend class CSpaghettiRigidBody;
 private:
 
 	SAM::TVector<float, 3>					m_gravity;										//!< A constant force applied to all objects within this world
-
-	std::vector<CSpaghettiRigidBody*>		m_rigidBodies;									//!< A list of rigid bodies contained within this world
-
-	std::vector<CCollision>					m_collisions;									//!< 
+	RigidBodyList							m_rigidBodies;									//!< A list of rigid bodies contained within this world
+	WorldFlags								m_flags;										//!< World related flags
 
 public:
 											//! Class constructor
@@ -27,41 +34,37 @@ public:
 
 											//! Add a rigid body to the world
 	void									AddRigidBody(
-												CSpaghettiRigidBody *rigidBody				//!< The rigid body to add to the scene
+												CSpaghettiRigidBody *rigidBody						//!< The rigid body to add to the scene
 											);
 
 											//! Gets the worlds gravity vector
 	SAM::TVector<float, 3>					GetGravity() const;
 
+											//! Set gravity of the world
+	void									SetGravity(
+												SAM::TVector<float, 3> gravity						//!< The gravity to set the worlds gravity too
+											)
+											{
+												m_gravity = gravity;
+											}
+
+											//! Get whether the world is paused or not
+	const bool								IsPaused() const
+											{
+												return m_flags.isPaused;
+											}
+
+											//! Set whether the world is paused or not
+	void									SetPaused(
+												const bool pause									//!< True to pause the world, false otherwise
+											)
+											{
+												m_flags.isPaused = pause;
+											}
+
 											//! Update all simulation objects in the world
 	void									Update(
-												const float deltaTime				//!< Delta time (The amount of time past since the last update)
+												const float deltaTime								//!< Delta time (The amount of time past since the last update)
 											);
 
-											//! 
-	void									AddCollision(
-												CSpaghettiRigidBody *bodyOne,
-												CSpaghettiRigidBody *bodyTwo,
-												SAM::TVector3 &point,
-												SAM::TVector3 &normal,
-												const float penetration
-											);
-
-											//! 
-	void									ApplyImpulses(
-												float deltaTime
-											);
-
-											//! 
-	void									AddCollisionImpulse(
-												CSpaghettiRigidBody *bodyOne, 
-												CSpaghettiRigidBody *bodyTwo, 
-												SAM::TVector3& hitPoint, 
-												SAM::TVector3& normal, 
-												float deltaTime,
-												SAM::TVector3 &velBodyOne,
-												SAM::TVector3 &velBodyTwo,
-												SAM::TVector3 &angularVelBodyOne,
-												SAM::TVector3 &angularVelBodyTwo
-											);
 };

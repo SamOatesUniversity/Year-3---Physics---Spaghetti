@@ -5,9 +5,7 @@
 */
 void RunOgreApplication()
 {
-	// Create and initialise the application
-	OgreApplication *const application = new OgreApplication;
-	
+	// Create and initialise the application	
 	if (application == nullptr || !application->Initialize())
 	{
 		std::cout << __FILE__ << " (" << __LINE__ << ") - " << "Failed to initialise the application" << std::endl; 
@@ -17,7 +15,7 @@ void RunOgreApplication()
 	// create a camera, setup viewport 
 	Ogre::String cameraName = "MainCamera";
 	Ogre::SceneNode *const cameraNode = application->CreateCamera(cameraName);
-	cameraNode->setPosition(Ogre::Vector3(0.0f, 200.0f, 1800.0f));
+	cameraNode->setPosition(Ogre::Vector3(0.0f, 200.0f, -2500.0f));
 	static_cast<Ogre::Camera*>(cameraNode->getAttachedObject("MainCamera"))->lookAt(0.0f, 4.0f, 0.0f);
 
 	//create O/I system for keyboard and mouse inputs
@@ -42,8 +40,8 @@ void RunOgreApplication()
 	CSpaghettiWorld *const world = spaghetti->CreateWorld();
 
 	// create some things to bounce around
-	static const int noofBoxes = 3;
-	CSpaghettiRigidBody* box[noofBoxes];
+	static const int noofBoxes = 27;
+	CSpaghettiRigidBody *box[noofBoxes];
 
 	float yHeight = 200.0f;
 	for (int boxIndex = 0; boxIndex < noofBoxes; ++boxIndex)
@@ -56,10 +54,10 @@ void RunOgreApplication()
 			static const float meshScale = 1.0f;
 			cubeNode->setScale(meshScale, meshScale, meshScale);
 
-			if (boxIndex % 1 == 0) yHeight += 200.0f;
+			if (boxIndex % 9 == 0) yHeight += 200.0f;
 
 			box[boxIndex] = spaghetti->CreateRigidBody(cubeNode, world, RigidBodyType::Box);
-			box[boxIndex]->SetPosition(600.0f - (150.0f * (boxIndex % 1)), yHeight, 0.0f);
+			box[boxIndex]->SetPosition(600.0f - (150.0f * (boxIndex % 9)), yHeight, 0.0f);
 
 			Ogre::Entity *const meshEntity = application->GetSceneManager()->getEntity("cube");
 			Ogre::AxisAlignedBox meshBoundingBox = meshEntity->getBoundingBox();
@@ -116,6 +114,7 @@ void RunOgreApplication()
 	}
 
 	Ogre::Vector3 cameraPosition = cameraNode->getPosition();
+	world->SetPaused(true);
 
 	// Main game loop
 	while (!application->GetOgreWrapper().GetWindow()->isClosed())
@@ -151,6 +150,12 @@ void RunOgreApplication()
 
 		cameraNode->setPosition(cameraPosition);
 		static_cast<Ogre::Camera*>(cameraNode->getAttachedObject("MainCamera"))->lookAt(0.0f, 0.0f, 0.0f);
+
+		if (keyboard->isKeyDown(OIS::KC_RETURN))
+		{
+			world->SetPaused(!world->IsPaused());
+			while (keyboard->isKeyDown(OIS::KC_RETURN)) keyboard->capture();
+		}
 
 		// update all our physics
 		world->Update(deltatTime);
