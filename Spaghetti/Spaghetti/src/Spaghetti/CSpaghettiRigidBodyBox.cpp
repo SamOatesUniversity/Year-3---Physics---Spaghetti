@@ -63,6 +63,8 @@ void CSpaghettiRigidBodyBox::UpdateVelocity(
 	UpdateInertiaTensor();
 	UpdateAngularVelocity();
 
+	m_angularVelocity.Set(0.01f, 0.01f, 0.01f);
+
 	// construct the skew matrix
 	SAM::TMatrix<float, 3, 3> skewMatrix;
 	skewMatrix[0][0] = 0.0f;
@@ -87,7 +89,7 @@ void CSpaghettiRigidBodyBox::UpdateVelocity(
 	SAM::TMatrix<float, 3, 3> temp = m_quaternion.ToMatrix3x3();
 
 	// transform the bounding box data
-	m_bounds->Transform(m_position, m_rotation);
+	m_bounds->Transform(m_position, temp);
 
 	// Zero out force and torque
 	m_force.Zero();
@@ -109,7 +111,7 @@ void CSpaghettiRigidBodyBox::HandleCollision(
 	SetPosition(GetLastPosition());
 	otherRigidBody->SetPosition(otherRigidBody->GetLastPosition());
 
-	static const float e = 10.0f;
+	static const float e = 0.5f;
 	SAM::TVector3 relativeVelocity = GetVelocity() - otherRigidBody->GetVelocity();
 
 	SAM::TVector3 zero;
