@@ -157,6 +157,12 @@ namespace SAM
 														m_element[2] = z;
 													}
 
+													//! Zero all elements of the vector
+		void										Zero()
+													{
+														Set(0.0f, 0.0f, 0.0f);
+													}
+
 													//! Set the x element of the vector
 		void										SetX(
 														TYPE x
