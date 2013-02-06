@@ -103,7 +103,7 @@ void CSpaghettiRigidBodyBox::HandleCollision(
 	SetPosition(GetLastPosition());
 	otherRigidBody->SetPosition(otherRigidBody->GetLastPosition());
 
-	static const float e = -0.5f;
+	static const float e = -0.0f;
 	SAM::TVector3 relativeVelocity = GetVelocity() - otherRigidBody->GetVelocity();
 	
 	// linear

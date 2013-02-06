@@ -2,6 +2,7 @@
 
 #include "../../../SAM/SAM/SAM.h"
 #include <vector>
+#include <iostream>
 
 struct BoundsType {
 	enum Enum {
@@ -32,7 +33,7 @@ public:
 								) = 0;
 
 								//! Set the position of the bounding box
-	void						Transform(
+	virtual void				Transform(
 									SAM::TVector<float, 3> &position,					//!< The position of the bounds in world space
 									SAM::TQuaternion &rotation							//!< The rotation of the bounds in local space
 								)

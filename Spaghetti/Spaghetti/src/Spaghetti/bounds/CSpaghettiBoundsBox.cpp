@@ -26,12 +26,15 @@ void CSpaghettiBoundsBox::SetCorners(
 	for (int cornerIndex = 0; cornerIndex < NOOF_BOUNDINGBOX_CORNERS; ++cornerIndex)
 	{
 		m_corner[cornerIndex] = corners[cornerIndex];
+		m_aaCorner[cornerIndex] = corners[cornerIndex];
 
-		if (m_corner[cornerIndex].SumOf() < m_min.SumOf())
-			m_min = m_corner[cornerIndex];
+		if (m_corner[cornerIndex].X() < m_min.X()) m_min.SetX(m_corner[cornerIndex].X());
+		if (m_corner[cornerIndex].Y() < m_min.Y()) m_min.SetY(m_corner[cornerIndex].Y());
+		if (m_corner[cornerIndex].Z() < m_min.Z()) m_min.SetZ(m_corner[cornerIndex].Z());
 
-		if (m_corner[cornerIndex].SumOf() > m_max.SumOf())
-			m_max = m_corner[cornerIndex];
+		if (m_corner[cornerIndex].X() > m_max.X()) m_max.SetX(m_corner[cornerIndex].X());
+		if (m_corner[cornerIndex].Y() > m_max.Y()) m_max.SetY(m_corner[cornerIndex].Y());
+		if (m_corner[cornerIndex].Z() > m_max.Z()) m_max.SetZ(m_corner[cornerIndex].Z());
 	}
 }
 
@@ -70,4 +73,29 @@ const bool CSpaghettiBoundsBox::Intersects(
 	}
 	
 	return false;
+}
+
+void CSpaghettiBoundsBox::Transform( 
+		SAM::TVector<float, 3> &position,						//!< The position of the bounds in world space 
+		SAM::TQuaternion &rotation								//!< The rotation of the bounds in local space 
+	)
+{
+	m_position = position;
+	
+	m_min.Zero();
+	m_max.Zero();
+
+	SAM::TMatrix<float, 3, 3> rotationMatrix = rotation.ToMatrix3x3();
+	for (int cornerIndex = 0; cornerIndex < NOOF_BOUNDINGBOX_CORNERS; ++cornerIndex)
+	{
+		m_corner[cornerIndex] = rotationMatrix * m_aaCorner[cornerIndex];
+
+		if (m_corner[cornerIndex].X() < m_min.X()) m_min.SetX(m_corner[cornerIndex].X());
+		if (m_corner[cornerIndex].Y() < m_min.Y()) m_min.SetY(m_corner[cornerIndex].Y());
+		if (m_corner[cornerIndex].Z() < m_min.Z()) m_min.SetZ(m_corner[cornerIndex].Z());
+
+		if (m_corner[cornerIndex].X() > m_max.X()) m_max.SetX(m_corner[cornerIndex].X());
+		if (m_corner[cornerIndex].Y() > m_max.Y()) m_max.SetY(m_corner[cornerIndex].Y());
+		if (m_corner[cornerIndex].Z() > m_max.Z()) m_max.SetZ(m_corner[cornerIndex].Z());
+	}
 }
