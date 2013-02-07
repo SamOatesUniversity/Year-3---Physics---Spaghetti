@@ -32,9 +32,4 @@ public:
 												CSpaghettiWorld	*world,								//!< The world we are moving in
 												CSpaghettiRigidBody *otherRigidBody					//!< The other rigid body to compare against
 											);
-
-	SAM::TVector3							CalculateCollisionPoint(
-												CSpaghettiRigidBody *otherRigidBody					//!< The other rigid body to compare against
-											);
-
 };
