@@ -100,31 +100,37 @@ public:
 											}
 
 											//! Get the rigid body position
-	SAM::TVector<float, 3>					&GetPosition() 
+	SAM::TVector<float, 3>					GetPosition() const
 											{
 												return m_position;
 											}
 
 											//! Get the last position of the body
-	SAM::TVector<float, 3>					&GetLastPosition()
+	SAM::TVector<float, 3>					GetLastPosition() const
 											{
 												return m_lastPosition;
 											}
 
 											//! Get the orientation of the rigid body
-	SAM::TQuaternion						&GetOrientation()
+	SAM::TQuaternion						GetOrientation() const
 											{
 												return m_quaternion;
 											}
 
 											//! 
-	SAM::TMatrix<float, 3, 3>				&GetRotation()
+	SAM::TMatrix<float, 3, 3>				GetRotation() const
 											{
 												return m_rotation;
 											}
 
 											//! 
 	void									AddForceAtPoint(
+												SAM::TVector3 &force,
+												SAM::TVector3 &point
+											);
+
+											//! 
+	void									AddTorqueAtPoint(
 												SAM::TVector3 &force,
 												SAM::TVector3 &point
 											);

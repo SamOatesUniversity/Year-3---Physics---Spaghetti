@@ -41,8 +41,8 @@ public:
 
 								//! Set the position of the bounding box
 	virtual void				Transform(
-									SAM::TVector<float, 3> &position,					//!< The position of the bounds in world space
-									SAM::TMatrix<float, 3, 3> &rotation					//!< The rotation of the bounds in local space
+									SAM::TVector<float, 3> position,					//!< The position of the bounds in world space
+									SAM::TMatrix<float, 3, 3> rotation					//!< The rotation of the bounds in local space
 								);								
 
 								//! Get the minimum bound

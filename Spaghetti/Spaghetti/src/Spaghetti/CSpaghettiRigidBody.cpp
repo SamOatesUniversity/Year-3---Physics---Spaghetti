@@ -100,10 +100,18 @@ void CSpaghettiRigidBody::AddForceAtPoint(
 		SAM::TVector3 &point 
 	)
 {
+	m_force = m_force + force;
+	AddTorqueAtPoint(force, point);	
+}
+
+void CSpaghettiRigidBody::AddTorqueAtPoint(
+		SAM::TVector3 &force,
+		SAM::TVector3 &point
+	)
+{
 	// Convert to coordinates relative to center of mass.
 	SAM::TVector3 pt = point;
 	pt = pt - m_position;
 
-	m_force = m_force + force;
 	m_torque = m_torque + (pt.Cross(force));
 }
