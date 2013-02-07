@@ -40,7 +40,7 @@ void RunOgreApplication()
 	CSpaghettiWorld *const world = spaghetti->CreateWorld();
 
 	// create some things to bounce around
-	static const int noofBoxes = 5;
+	static const int noofBoxes = 90;
 	CSpaghettiRigidBody *box[noofBoxes];
 
 	float yHeight = 200.0f;
@@ -56,25 +56,25 @@ void RunOgreApplication()
 			static const float meshScale = 1.0f;
 			cubeNode->setScale(meshScale, meshScale, meshScale);
 
-			if (boxIndex % 1 == 0)
+			if (boxIndex % 9 == 0)
 			{
-				depthOffset += 90.0f;
+				//depthOffset += 90.0f;
 				yHeight += 200.0f;
 			}
 
 			box[boxIndex] = spaghetti->CreateRigidBody(cubeNode, world, RigidBodyType::Box);
-			box[boxIndex]->SetPosition(800.0f - (200.0f * (boxIndex % 1)), yHeight, depthOffset);
+			box[boxIndex]->SetPosition(800.0f - (200.0f * (boxIndex % 9)), yHeight, depthOffset);
 
 			Ogre::Entity *const meshEntity = application->GetSceneManager()->getEntity("cube");
 			Ogre::AxisAlignedBox meshBoundingBox = meshEntity->getBoundingBox();
 
-			SAM::TVector<float, 3> boundingBoxCorners[NOOF_BOUNDINGBOX_CORNERS];
+			Ogre::Vector3 boundingBoxCorners[NOOF_BOUNDINGBOX_CORNERS];
 			const Ogre::Vector3 *const boundCorners = meshBoundingBox.getAllCorners();
 
 			for (int corner = 0; corner < NOOF_BOUNDINGBOX_CORNERS; ++corner)
 			{
 				const Ogre::Vector3 currenCorner = boundCorners[corner];
-				boundingBoxCorners[corner].Set(
+				boundingBoxCorners[corner] = Ogre::Vector3(
 					currenCorner.x * meshScale, 
 					currenCorner.y * meshScale, 
 					currenCorner.z * meshScale
@@ -87,7 +87,7 @@ void RunOgreApplication()
 		}
 	}
 
-	Ogre::SceneNode *boundingBox[noofBoxes][8];
+	Ogre::SceneNode *boundingBox[noofBoxes][NOOF_BOUNDINGBOX_CORNERS];
 	for (int boxIndex = 0; boxIndex < noofBoxes; ++boxIndex)
 	{
 		for (int boundingCornerIndex = 0; boundingCornerIndex < NOOF_BOUNDINGBOX_CORNERS; ++boundingCornerIndex)
@@ -98,8 +98,8 @@ void RunOgreApplication()
 			{			
 				boundingBox[boxIndex][boundingCornerIndex]->setScale(0.1, 0.1, 0.1);
 				CSpaghettiBoundsBox *boxBounds = static_cast<CSpaghettiBoundsBox*>(box[0]->GetBounds());
-				SAM::TVector3 position = box[boxIndex]->GetPosition() + boxBounds->GetCorner(boundingCornerIndex);
-				boundingBox[boxIndex][boundingCornerIndex]->setPosition(position.X(), position.Y(), position.Z());
+				Ogre::Vector3 position = box[boxIndex]->GetPosition() + boxBounds->GetCorner(boundingCornerIndex);
+				boundingBox[boxIndex][boundingCornerIndex]->setPosition(position);
 			}
 		}
 	}
@@ -117,14 +117,14 @@ void RunOgreApplication()
 		Ogre::Entity *const meshEntity = application->GetSceneManager()->getEntity("cube");
 		Ogre::AxisAlignedBox meshBoundingBox = meshEntity->getBoundingBox();
 
-		SAM::TVector<float, 3> boundingBoxCorners[NOOF_BOUNDINGBOX_CORNERS];
+		Ogre::Vector3 boundingBoxCorners[NOOF_BOUNDINGBOX_CORNERS];
 		const Ogre::Vector3 *const boundCorners = meshBoundingBox.getAllCorners();
 
 		const Ogre::Vector3 entityScale = floorNode->getScale();
 		for (int corner = 0; corner < NOOF_BOUNDINGBOX_CORNERS; ++corner)
 		{
 			const Ogre::Vector3 currenCorner = boundCorners[corner];
-			boundingBoxCorners[corner].Set(
+			boundingBoxCorners[corner] = Ogre::Vector3(
 				currenCorner.x * entityScale.x, 
 				currenCorner.y * entityScale.y, 
 				currenCorner.z * entityScale.z
@@ -183,20 +183,17 @@ void RunOgreApplication()
 		// update all our physics
 		world->Update(deltatTime);
 
-		SAM::TVector<float, 3> floorPosition = floorBody->GetPosition();
-		static_cast<Ogre::SceneNode*>(floorBody->GetRenderObject())->setPosition(floorPosition.X(), floorPosition.Y(), floorPosition.Z());
+		Ogre::Vector3 floorPosition = floorBody->GetPosition();
+		static_cast<Ogre::SceneNode*>(floorBody->GetRenderObject())->setPosition(floorPosition);
 
 		// update the graphical representations of the physics
 		for (int boxIndex = 0; boxIndex < noofBoxes; ++boxIndex)
 		{
 			Ogre::SceneNode *const node = static_cast<Ogre::SceneNode*>(box[boxIndex]->GetRenderObject());
-			SAM::TVector<float, 3> position = box[boxIndex]->GetPosition();
-			SAM::TMatrix<float, 3, 3> rotation = box[boxIndex]->GetRotation();
+			Ogre::Vector3 position = box[boxIndex]->GetPosition();
+			Ogre::Quaternion orientation = box[boxIndex]->GetOrientation();
 
-			Ogre::Matrix3 ogreRotation(rotation[0][0], rotation[0][1], rotation[0][2], rotation[1][0], rotation[1][1], rotation[1][2], rotation[2][0], rotation[2][1], rotation[2][2]);
-			Ogre::Quaternion orientation(ogreRotation);
-
-			node->setPosition(position.X(), position.Y(), position.Z());
+			node->setPosition(position);
 			node->setOrientation(orientation);
 
 			for (int boundingCornerIndex = 0; boundingCornerIndex < NOOF_BOUNDINGBOX_CORNERS; ++boundingCornerIndex)
@@ -204,8 +201,8 @@ void RunOgreApplication()
 				if (boundingBox[boxIndex][boundingCornerIndex]) 
 				{			
 					CSpaghettiBoundsBox *boxBounds = static_cast<CSpaghettiBoundsBox*>(box[boxIndex]->GetBounds());
-					SAM::TVector3 position = box[boxIndex]->GetPosition() + boxBounds->GetCorner(boundingCornerIndex);
-					boundingBox[boxIndex][boundingCornerIndex]->setPosition(position.X(), position.Y(), position.Z());
+					Ogre::Vector3 position = box[boxIndex]->GetPosition() + boxBounds->GetCorner(boundingCornerIndex);
+					boundingBox[boxIndex][boundingCornerIndex]->setPosition(position.x, position.y, position.z);
 				}
 			}
 		}

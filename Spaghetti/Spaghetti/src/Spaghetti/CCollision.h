@@ -1,8 +1,7 @@
 #pragma once
 
-#include "../../../SAM/SAM/SAM.h"
+#include <Ogre/Ogre.h>
 
-#include <vector>
 class CSpaghettiRigidBody;
 
 class CCollision {
@@ -10,6 +9,6 @@ class CCollision {
 public:
 	CSpaghettiRigidBody	*bodyOne;
 	CSpaghettiRigidBody	*bodyTwo;
-	SAM::TVector3 collisionPoint;
-	SAM::TVector3 collisionNormal;
+	Ogre::Vector3 collisionPoint;
+	Ogre::Vector3 collisionNormal;
 };

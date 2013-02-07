@@ -64,32 +64,32 @@ void CSpaghettiRigidBodyBox::UpdateVelocity(
 	UpdateAngularVelocity();
 
 	// construct the skew matrix
-	SAM::TMatrix<float, 3, 3> skewMatrix;
+	Ogre::Matrix3 skewMatrix;
 	skewMatrix[0][0] = 0.0f;
-	skewMatrix[0][1] = -m_angularVelocity.Z();
-	skewMatrix[0][2] = m_angularVelocity.Y();
+	skewMatrix[0][1] = -m_angularVelocity.z;
+	skewMatrix[0][2] = m_angularVelocity.y;
 
-	skewMatrix[1][0] = m_angularVelocity.Z();
+	skewMatrix[1][0] = m_angularVelocity.z;
 	skewMatrix[1][1] = 0.0f;
-	skewMatrix[1][2] = -m_angularVelocity.X();
+	skewMatrix[1][2] = -m_angularVelocity.x;
 
-	skewMatrix[2][0] = -m_angularVelocity.Y();
-	skewMatrix[2][1] = m_angularVelocity.X();
+	skewMatrix[2][0] = -m_angularVelocity.y;
+	skewMatrix[2][1] = m_angularVelocity.x;
 	skewMatrix[2][2] = 0.0f;
 
 	// update rotation matrix
 	m_rotation = m_rotation + (skewMatrix * m_rotation);
 
 	// update and normalize the quaternion
-	m_quaternion.FromMatrix3x3(m_rotation);
-	m_quaternion.Normalize();
+	m_quaternion.FromRotationMatrix(m_rotation);
+	m_quaternion.normalise();
 
 	// transform the bounding box data
-	m_bounds->Transform(m_position, m_rotation);
+	m_bounds->Transform(m_position, m_quaternion);
 
 	// Zero out force and torque
-	m_force.Zero();
-	m_torque.Zero();
+	m_force = Ogre::Vector3::ZERO;
+	m_torque = Ogre::Vector3::ZERO;
 }
 
 /*
@@ -108,23 +108,24 @@ void CSpaghettiRigidBodyBox::HandleCollision(
 	otherRigidBody->SetPosition(otherRigidBody->GetLastPosition());
 
 	static const float e = -0.0f;
-	SAM::TVector3 relativeVelocity = GetVelocity() - otherRigidBody->GetVelocity();
+	Ogre::Vector3 relativeVelocity = GetVelocity() - otherRigidBody->GetVelocity();
 
 	// linear
 	{
-		SAM::TVector3 thisVelocity, otherVelocity;
+		Ogre::Vector3 thisVelocity = Ogre::Vector3::ZERO;
+		Ogre::Vector3 otherVelocity = Ogre::Vector3::ZERO;
 
 		unsigned int noofCollisions = collisions.size();
 		for (unsigned int collisionIndex = 0; collisionIndex < noofCollisions; ++collisionIndex)
 		{
-			SAM::TVector3 collisionNormal = collisions[collisionIndex].collisionNormal;
-			SAM::TVector3 collisionPoint = collisions[collisionIndex].collisionPoint;
-			collisionNormal.Normalize();
+			Ogre::Vector3 collisionNormal = collisions[collisionIndex].collisionNormal;
+			Ogre::Vector3 collisionPoint = collisions[collisionIndex].collisionPoint;
+			collisionNormal.normalise();
 
 			const float inverseMassBodyOne = 1.0f / GetMass();
 			const float inverseMassBodyTwo = 1.0f / otherRigidBody->GetMass();
 			const float sumOfInverseMass = inverseMassBodyOne + inverseMassBodyTwo;
-			const float jLinear = (-(1.0f + e) * relativeVelocity.Dot(collisionNormal)) / sumOfInverseMass;
+			const float jLinear = (-(1.0f + e) * relativeVelocity.dotProduct(collisionNormal)) / sumOfInverseMass;
 
 			thisVelocity = thisVelocity + (collisionNormal * jLinear);
 			otherVelocity = otherVelocity + (collisionNormal * -jLinear);

@@ -33,23 +33,22 @@ protected:
 	RigidBodyFlags							m_flags;												//!<
 
 	float									m_mass;													//!<
-	SAM::TMatrix<float, 3, 3>				m_inertiaTensor;										//!< 
-	SAM::TMatrix<float, 3, 3>				m_inertiaTensorBodyInverse;								//!< 
-	SAM::TMatrix<float, 3, 3>				m_inertiaTensorInverse;									//!< 
+	Ogre::Matrix3							m_inertiaTensor;										//!< 
+	Ogre::Matrix3							m_inertiaTensorBodyInverse;								//!< 
+	Ogre::Matrix3							m_inertiaTensorInverse;									//!< 
 
-	SAM::TVector<float, 3>					m_position;												//!< 
-	SAM::TVector<float, 3>					m_lastPosition;											//!< 
+	Ogre::Vector3							m_position;												//!< 
+	Ogre::Vector3							m_lastPosition;											//!< 
 
-	SAM::TMatrix<float, 3, 3>				m_rotation;												//!< 
-	SAM::TQuaternion						m_quaternion;											//!< 
+	Ogre::Matrix3							m_rotation;												//!< 
+	Ogre::Quaternion						m_quaternion;											//!< 
 
-	SAM::TVector<float, 3>					m_velocity;												//!< 
-	SAM::TVector<float, 3>					m_angularMomentum;										//!< 
+	Ogre::Vector3							m_velocity;												//!< 
+	Ogre::Vector3							m_angularMomentum;										//!< 
+	Ogre::Vector3							m_angularVelocity;										//!< The direction gives the direction of the axis about which the body is spinning. The magnitude tells how fast the body is spinning
 
-	SAM::TVector<float, 3>					m_angularVelocity;										//!< The direction gives the direction of the axis about which the body is spinning. The magnitude tells how fast the body is spinning
-
-	SAM::TVector<float, 3>					m_torque;												//!< 
-	SAM::TVector<float, 3>					m_force;												//!< 
+	Ogre::Vector3							m_torque;												//!< 
+	Ogre::Vector3							m_force;												//!< 
 
 protected:
 											//! Calculate the inertia tensor based upon the bounding box
@@ -78,7 +77,7 @@ public:
 											~CSpaghettiRigidBody();
 
 											//! 
-	SAM::TMatrix<float, 3, 3>				GetInverseInertia()
+	Ogre::Matrix3							GetInverseInertia()
 											{
 												return m_inertiaTensorInverse;
 											}
@@ -92,7 +91,7 @@ public:
 
 											//! Set the absolute position of the rigid body
 	void									SetPosition(
-												SAM::TVector<float, 3> position 
+												Ogre::Vector3 position 
 											)
 											{
 												m_position = position;
@@ -100,62 +99,62 @@ public:
 											}
 
 											//! Get the rigid body position
-	SAM::TVector<float, 3>					GetPosition() const
+	Ogre::Vector3							GetPosition() const
 											{
 												return m_position;
 											}
 
 											//! Get the last position of the body
-	SAM::TVector<float, 3>					GetLastPosition() const
+	Ogre::Vector3							GetLastPosition() const
 											{
 												return m_lastPosition;
 											}
 
 											//! Get the orientation of the rigid body
-	SAM::TQuaternion						GetOrientation() const
+	Ogre::Quaternion						GetOrientation() const
 											{
 												return m_quaternion;
 											}
 
 											//! 
-	SAM::TMatrix<float, 3, 3>				GetRotation() const
+	Ogre::Matrix3							GetRotation() const
 											{
 												return m_rotation;
 											}
 
 											//! 
 	void									AddForceAtPoint(
-												SAM::TVector3 &force,
-												SAM::TVector3 &point
+												Ogre::Vector3 &force,
+												Ogre::Vector3 &point
 											);
 
 											//! 
 	void									AddTorqueAtPoint(
-												SAM::TVector3 &force,
-												SAM::TVector3 &point
+												Ogre::Vector3 &force,
+												Ogre::Vector3 &point
 											);
 
 											//! Set the velocity of the rigid body
 	void									SetVelocity(
-												SAM::TVector<float, 3> velocity
+												Ogre::Vector3 velocity
 											);
 
 											//! Get the current velocity of the rigid body
-	SAM::TVector<float, 3>					GetVelocity() const
+	Ogre::Vector3							GetVelocity() const
 											{
 												return m_velocity;
 											}
 
 											//!
 	void									SetAngularVelocity(
-												SAM::TVector<float, 3> angularVelocity
+												Ogre::Vector3 angularVelocity
 											)
 											{
 												m_angularVelocity = angularVelocity;
 											}
 
 											//! Get the current angular velocity of the rigid body
-	SAM::TVector<float, 3>					GetAngularVelocity() const
+	Ogre::Vector3							GetAngularVelocity() const
 											{
 												return m_angularVelocity;
 											}

@@ -5,7 +5,7 @@
 */
 CSpaghettiWorld::CSpaghettiWorld()
 {
-	m_gravity.Set(0.0f, -9.81f, 0.0f);
+	m_gravity = Ogre::Vector3(0.0f, -9.81f, 0.0f);
 	m_flags.allflags = 0;
 }
 
@@ -37,7 +37,7 @@ void CSpaghettiWorld::AddRigidBody(
 /*
 *	\brief Get the worlds gravity vector
 */
-SAM::TVector<float, 3> CSpaghettiWorld::GetGravity() const
+Ogre::Vector3 CSpaghettiWorld::GetGravity() const
 {
 	return m_gravity;
 }

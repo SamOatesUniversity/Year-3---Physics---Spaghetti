@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../../SAM/SAM/SAM.h"
+#include "Ogre/Ogre.h"
 #include "CSpaghettiRigidBody.h"
 #include "CCollision.h"
 
@@ -21,7 +21,7 @@ friend class CSpaghettiRigidBody;
 
 private:
 
-	SAM::TVector<float, 3>					m_gravity;										//!< A constant force applied to all objects within this world
+	Ogre::Vector3							m_gravity;										//!< A constant force applied to all objects within this world
 	RigidBodyList							m_rigidBodies;									//!< A list of rigid bodies contained within this world
 	WorldFlags								m_flags;										//!< World related flags
 
@@ -38,11 +38,11 @@ public:
 											);
 
 											//! Gets the worlds gravity vector
-	SAM::TVector<float, 3>					GetGravity() const;
+	Ogre::Vector3							GetGravity() const;
 
 											//! Set gravity of the world
 	void									SetGravity(
-												SAM::TVector<float, 3> gravity						//!< The gravity to set the worlds gravity too
+												Ogre::Vector3 gravity								//!< The gravity to set the worlds gravity too
 											)
 											{
 												m_gravity = gravity;
