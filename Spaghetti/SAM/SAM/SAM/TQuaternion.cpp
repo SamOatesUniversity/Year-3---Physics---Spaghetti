@@ -32,10 +32,20 @@ float TQuaternion::Length() const
 */
 void TQuaternion::Normalize()
 {
-	const float len = Length();
+	float d = m_w*m_w + m_vector[0]*m_vector[0] + m_vector[1]*m_vector[1] + m_vector[2]*m_vector[2];
 
-	m_w /= len;
-	m_vector.Set(m_vector.X() / len, m_vector.Y() / len, m_vector.Z() / len);
+	// Check for zero length quaternion, and use the no-rotation
+	// quaternion in that case.
+	if (d == 0) {
+		m_w = 1;
+		return;
+	}
+
+	d = 1.0f / sqrt(d);
+	m_w *= d;
+	m_vector[0] *= d;
+	m_vector[1] *= d;
+	m_vector[2] *= d;
 }
 
 /*
@@ -44,18 +54,29 @@ void TQuaternion::Normalize()
 TMatrix<float, 3, 3> TQuaternion::ToMatrix3x3()
 {
 	TMatrix<float, 3, 3> matrix;
+	
+	float fTx  = m_vector[0]+m_vector[0];
+	float fTy  = m_vector[1]+m_vector[1];
+	float fTz  = m_vector[2]+m_vector[2];
+	float fTwx = fTx*m_w;
+	float fTwy = fTy*m_w;
+	float fTwz = fTz*m_w;
+	float fTxx = fTx*m_vector[0];
+	float fTxy = fTy*m_vector[0];
+	float fTxz = fTz*m_vector[0];
+	float fTyy = fTy*m_vector[1];
+	float fTyz = fTz*m_vector[1];
+	float fTzz = fTz*m_vector[2];
 
-	matrix[0][0] = 1 - 2 * (m_vector.Y() * m_vector.Y()) - 2 * (m_vector.Z() * m_vector.Z());
-	matrix[0][1] = 2 * m_vector.X() * m_vector.Z() + 2 * m_vector.Y() * m_w;
-	matrix[0][2] = 2 * m_vector.X() * m_vector.Y() - 2 * m_vector.Z() * m_w;
-
-	matrix[1][0] = 2 * m_vector.Y() * m_vector.Z() - 2 * m_vector.X() * m_w;
-	matrix[1][1] = 1 - 2 * (m_vector.X() * m_vector.X()) - 2 * (m_vector.Z() * m_vector.Z());
-	matrix[1][2] = 2 * m_vector.X() * m_vector.Y() + 2 * m_vector.Z() * m_w;
-
-	matrix[2][0] = 2 * m_vector.Y() * m_vector.Z() + 2 * m_vector.X() * m_w;
-	matrix[2][1] = 2 * m_vector.X() * m_vector.Z() - 2 * m_vector.Y() * m_w;
-	matrix[2][2] = 1 - 2 * (m_vector.X() * m_vector.X()) - 2 * (m_vector.Y() * m_vector.Y());
+	matrix[0][0] = 1.0f-(fTyy+fTzz);
+	matrix[0][1] = fTxy-fTwz;
+	matrix[0][2] = fTxz+fTwy;
+	matrix[1][0] = fTxy+fTwz;
+	matrix[1][1] = 1.0f-(fTxx+fTzz);
+	matrix[1][2] = fTyz-fTwx;
+	matrix[2][0] = fTxz-fTwy;
+	matrix[2][1] = fTyz+fTwx;
+	matrix[2][2] = 1.0f-(fTxx+fTyy);
 
 	return matrix;
 }
