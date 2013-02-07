@@ -40,7 +40,7 @@ void RunOgreApplication()
 	CSpaghettiWorld *const world = spaghetti->CreateWorld();
 
 	// create some things to bounce around
-	static const int noofBoxes = 90;
+	static const int noofBoxes = 18;
 	CSpaghettiRigidBody *box[noofBoxes];
 
 	float yHeight = 200.0f;
@@ -58,10 +58,10 @@ void RunOgreApplication()
 
 			if (boxIndex % 9 == 0)
 			{
-				//depthOffset += 90.0f;
+				depthOffset += 80.0f;
 				yHeight += 200.0f;
 			}
-
+			
 			box[boxIndex] = spaghetti->CreateRigidBody(cubeNode, world, RigidBodyType::Box);
 			box[boxIndex]->SetPosition(800.0f - (200.0f * (boxIndex % 9)), yHeight, depthOffset);
 
