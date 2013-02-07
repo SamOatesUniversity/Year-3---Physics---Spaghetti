@@ -3,6 +3,9 @@
 #include "../../../SAM/SAM/SAM.h"
 #include "CCollision.h"
 
+#include <Windows.h>
+#include <xnamath.h>
+
 #include <vector>
 #include <iostream>
 
