@@ -129,9 +129,6 @@ void CSpaghettiRigidBodyBox::HandleCollision(
 
 			thisVelocity = thisVelocity + (collisionNormal * jLinear);
 			otherVelocity = otherVelocity + (collisionNormal * -jLinear);
-
-			AddTorqueAtPoint((collisionNormal * jLinear), collisionPoint);
-			otherRigidBody->AddTorqueAtPoint((collisionNormal * -jLinear), collisionPoint);
 		}		
 
 		if (noofCollisions != 0)
