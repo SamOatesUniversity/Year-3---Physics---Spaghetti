@@ -10,18 +10,21 @@ CSpaghettiRigidBody::CSpaghettiRigidBody(
 {
 	m_renderObject = renderObject;
 
-	m_position.Set(0.0f, 0.0f, 0.0f);
-	m_lastPosition.Set(0.0f, 0.0f, 0.0f);
+	m_position = Ogre::Vector3::ZERO;
+	m_lastPosition = Ogre::Vector3::ZERO;
 
-	m_velocity.Set(0.0f, 0.0f, 0.0f);
-	m_torque.Set(0.0f, 0.0f, 0.0f);
+	m_velocity = Ogre::Vector3::ZERO;
+	m_force = Ogre::Vector3::ZERO;
+	m_torque = Ogre::Vector3::ZERO;
 	
 	m_mass = 1.0f;
 	m_flags.allflags = 0;
 	m_flags.isEnabled = true;
 
-	m_angularVelocity.Set(0, 0, 0);
-	m_angularMomentum.Set(0.0f, 0.0f, 0.0f);
+	m_angularVelocity = Ogre::Vector3::ZERO;
+	m_angularMomentum = Ogre::Vector3::ZERO;
+
+	m_rotation = Ogre::Matrix3::IDENTITY;
 }
 
 /*
@@ -41,15 +44,16 @@ void CSpaghettiRigidBody::SetPosition(
 		const float z											//!< The z coordinate
 	)
 {
-	m_position.Set(x, y, z);
-	if (m_bounds != nullptr) m_bounds->Transform(m_position, m_rotation);
+	m_position = Ogre::Vector3(x, y, z);
+	if (m_bounds != nullptr)
+		m_bounds->Transform(m_position, m_rotation);
 }
 
 /*
 *	\brief Set the velocity of the rigid body
 */
 void CSpaghettiRigidBody::SetVelocity(
-		SAM::TVector<float, 3> velocity
+		Ogre::Vector3 velocity
 	)
 {
 	if (m_flags.isStatic)
@@ -57,7 +61,8 @@ void CSpaghettiRigidBody::SetVelocity(
 
 	m_velocity = velocity;
 
-	if (m_velocity.LengthSquared() < 1.0f) m_velocity.Zero();
+	if (m_velocity.squaredLength() < 1.0f) 
+		m_velocity = Ogre::Vector3::ZERO;
 }
 
 /*
@@ -96,8 +101,8 @@ void CSpaghettiRigidBody::SetBounds(
 }
 
 void CSpaghettiRigidBody::AddForceAtPoint( 
-		SAM::TVector3 &force, 
-		SAM::TVector3 &point 
+		Ogre::Vector3 &force, 
+		Ogre::Vector3 &point 
 	)
 {
 	m_force = m_force + force;
@@ -105,13 +110,13 @@ void CSpaghettiRigidBody::AddForceAtPoint(
 }
 
 void CSpaghettiRigidBody::AddTorqueAtPoint(
-		SAM::TVector3 &force,
-		SAM::TVector3 &point
+		Ogre::Vector3 &force,
+		Ogre::Vector3 &point
 	)
 {
 	// Convert to coordinates relative to center of mass.
-	SAM::TVector3 pt = point;
+	Ogre::Vector3 pt = point;
 	pt = pt - m_position;
 
-	m_torque = m_torque + (pt.Cross(force));
+	m_torque = m_torque + (pt.crossProduct(force));
 }

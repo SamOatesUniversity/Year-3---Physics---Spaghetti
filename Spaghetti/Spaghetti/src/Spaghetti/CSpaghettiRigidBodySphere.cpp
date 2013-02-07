@@ -65,27 +65,27 @@ void CSpaghettiRigidBodySphere::UpdatePosition(
 	m_position = m_position + (m_velocity * deltaTime);
 
 	// update skew matrix
-	SAM::TMatrix<float, 3, 3> skewMatrix;
+	Ogre::Matrix3 skewMatrix;
 	skewMatrix[0][0] = 0.0f;
-	skewMatrix[0][1] = -m_angularVelocity.Z();
-	skewMatrix[0][2] = m_angularVelocity.Y();
+	skewMatrix[0][1] = -m_angularVelocity.z;
+	skewMatrix[0][2] = m_angularVelocity.y;
 
-	skewMatrix[1][0] = m_angularVelocity.Z();
+	skewMatrix[1][0] = m_angularVelocity.z;
 	skewMatrix[1][1] = 0.0f;
-	skewMatrix[1][2] = -m_angularVelocity.X();
+	skewMatrix[1][2] = -m_angularVelocity.x;
 
-	skewMatrix[2][0] = -m_angularVelocity.Y();
-	skewMatrix[2][1] = m_angularVelocity.X();
+	skewMatrix[2][0] = -m_angularVelocity.y;
+	skewMatrix[2][1] = m_angularVelocity.x;
 	skewMatrix[2][2] = 0.0f;
 
 	// update rotation matrix
 	m_rotation = m_rotation + ((skewMatrix * m_rotation) * deltaTime);
 
 	// update and normalize the quaternion
-	m_quaternion.FromMatrix3x3(m_rotation);
-	m_quaternion.Normalize();
+	m_quaternion.FromRotationMatrix(m_rotation);
+	m_quaternion.normalise();
 
-	m_bounds->Transform(m_position, m_rotation);
+	m_bounds->Transform(m_position, m_quaternion);
 }
 
 /*

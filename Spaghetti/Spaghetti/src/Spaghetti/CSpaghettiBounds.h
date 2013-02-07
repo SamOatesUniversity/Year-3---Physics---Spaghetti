@@ -3,6 +3,8 @@
 #include "../../../SAM/SAM/SAM.h"
 #include "CCollision.h"
 
+#include <OGRE/Ogre.h>
+
 #include <vector>
 #include <iostream>
 
@@ -21,11 +23,9 @@ class CSpaghettiBounds {
 protected:
 
 	BoundsType::Enum			m_type;													//!< The type of bounds
-	SAM::TVector<float, 3>		m_position;												//!< The position of the bounds in world space
-	SAM::TMatrix<float, 4, 4>	m_xform;												//!< The matrix representing the world xform of the bounds
+	Ogre::Vector3				m_position;												//!< The position of the bounds in world space
+	Ogre::Vector3				m_axis[3];												//!< The axis in local space
 	CSpaghettiRigidBody			*m_body;												//!< The rigidbody these bounds belong too
-
-	SAM::TVector3				m_axis[3];
 
 public:
 								//! Class constructor
@@ -42,20 +42,15 @@ public:
 
 								//! Set the position of the bounding box
 	virtual void				Transform(
-									SAM::TVector<float, 3> position,					//!< The position of the bounds in world space
-									SAM::TMatrix<float, 3, 3> rotation					//!< The rotation of the bounds in local space
+									Ogre::Vector3 position,								//!< The position of the bounds in world space
+									Ogre::Quaternion rotation							//!< The rotation of the bounds in local space
 								)
 								{
 									m_position = position;
 								}
 
-	SAM::TMatrix<float, 4, 4>	GetTransform()
-								{ 
-									return m_xform; 
-								}
-
 								//! Get the position of the bounding box
-	SAM::TVector<float, 3>		GetPosition() const
+	Ogre::Vector3				GetPosition() const
 								{
 									return m_position;
 								}
@@ -78,15 +73,15 @@ public:
 								//! Get a sphere bound representation of the bounds
 	virtual const float			GetRadius() const = 0;
 
-								//! 
-	SAM::TVector3				&GetAxis(
-										const int axisIndex								//!< 
+								//! Get an axis by a given id
+	Ogre::Vector3				&GetAxis(
+										const int axisIndex								//!< The axis to get x = 0; y = 1; z = 2
 									)
 								{
 									return m_axis[axisIndex];
 								}
 
-								//! 
+								//! Set the body these bounds belong too
 	void						SetBody(
 										CSpaghettiRigidBody *body
 									)
@@ -94,7 +89,7 @@ public:
 									m_body = body;
 								}
 
-								//! 
+								//! Get the body these bounds belong too
 	CSpaghettiRigidBody			*GetBody()
 								{
 									return m_body;

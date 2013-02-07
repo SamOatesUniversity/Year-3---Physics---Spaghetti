@@ -9,10 +9,10 @@ class CSpaghettiBoundsBox : public CSpaghettiBounds {
 
 private:
 
-	SAM::TVector<float, 3>		m_corner[NOOF_BOUNDINGBOX_CORNERS];						//!< The local positions of the bounding boxes corners
-	SAM::TVector<float, 3>		m_aaCorner[NOOF_BOUNDINGBOX_CORNERS];					//!< The axis aligned positions of the bounding boxes corners
-	SAM::TVector<float, 3>		m_min;													//!< The minimum corner
-	SAM::TVector<float, 3>		m_max;													//!< The maximum corner
+	Ogre::Vector3				m_corner[NOOF_BOUNDINGBOX_CORNERS];						//!< The local positions of the bounding boxes corners
+	Ogre::Vector3				m_aaCorner[NOOF_BOUNDINGBOX_CORNERS];					//!< The axis aligned positions of the bounding boxes corners
+	Ogre::Vector3				m_min;													//!< The minimum corner
+	Ogre::Vector3				m_max;													//!< The maximum corner
 
 public:
 
@@ -36,29 +36,29 @@ public:
 
 								//! Set the corners of the bounding box, the min and max will also be calculated in here
 	void						SetCorners(
-									SAM::TVector<float, 3> *corners						//!< A pointer to the positions of the corners
+									Ogre::Vector3 *corners						//!< A pointer to the positions of the corners
 								);
 
 								//! Set the position of the bounding box
 	virtual void				Transform(
-									SAM::TVector<float, 3> position,					//!< The position of the bounds in world space
-									SAM::TMatrix<float, 3, 3> rotation					//!< The rotation of the bounds in local space
+									Ogre::Vector3 position,					//!< The position of the bounds in world space
+									Ogre::Quaternion rotation					//!< The rotation of the bounds in local space
 								);								
 
 								//! Get the minimum bound
-	SAM::TVector<float, 3>		GetMin() const
+	Ogre::Vector3				GetMin() const
 								{
 									return m_min;
 								}
 
 								//! Get the maximum bound
-	SAM::TVector<float, 3>		GetMax() const
+	Ogre::Vector3				GetMax() const
 								{
 									return m_max;
 								}
 
 								//! Get a given corner
-	SAM::TVector<float, 3>		GetCorner(
+	Ogre::Vector3				GetCorner(
 									const int index										//!< The corner index id
 								) const
 								{
@@ -74,24 +74,24 @@ public:
 								//! Get the height of the bounding box
 	float						Height() const
 								{
-									return m_max.Y() - m_min.Y();
+									return m_max.y - m_min.y;
 								}
 
 								//! Get the width of the bounding box
 	float						Width() const
 								{
-									return m_max.X() - m_min.X();
+									return m_max.x - m_min.x;
 								}
 
 								//! Get the depth of the bounding box
 	float						Depth() const
 								{
-									return m_max.Z() - m_min.Z();
+									return m_max.z - m_min.z;
 								}
 
 								//! Get the spheres radius
 	const float					GetRadius() const
 								{
-									return m_min.DistanceTo(m_max) * 0.5f;
+									return (m_max - m_min).length() * 0.5f;
 								}
 };
