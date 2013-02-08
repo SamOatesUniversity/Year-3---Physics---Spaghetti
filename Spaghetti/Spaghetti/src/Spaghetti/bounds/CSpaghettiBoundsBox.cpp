@@ -6,6 +6,8 @@
 CSpaghettiBoundsBox::CSpaghettiBoundsBox()
 {
 	m_type = BoundsType::Box;
+	m_min = Ogre::Vector3::ZERO;
+	m_max = Ogre::Vector3::ZERO;
 }
 
 /*
@@ -129,6 +131,14 @@ const bool CSpaghettiBoundsBox::Intersects(
 		if (m_position.y + m_min.y > otherSphere->GetPosition().y + otherSphere->GetRadius()) return false;
 		if (m_position.z + m_max.z < otherSphere->GetPosition().z - otherSphere->GetRadius()) return false;
 		if (m_position.z + m_min.z > otherSphere->GetPosition().z + otherSphere->GetRadius()) return false;
+
+		CCollision newCollision;
+		newCollision.bodyOne = GetBody();
+		newCollision.bodyTwo = otherSphere->GetBody();
+		newCollision.collisionNormal = Ogre::Vector3(0, -1, 0);
+		newCollision.collisionPoint = m_position - Ogre::Vector3(0, Height() * 0.5f, 0);
+
+		collision.push_back(newCollision);
 
 		return true;
 	}

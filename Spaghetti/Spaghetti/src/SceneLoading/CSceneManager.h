@@ -6,12 +6,31 @@
 #include <sstream>
 
 #include "CScene.h"
+#include "..\OgreApplication.h"
+#include "..\Spaghetti\Spaghetti.h"
 
 class CSceneManager {
 
 private:
 
 	std::vector<CScene*>					m_scene;								//!< A list of loaded scenes
+	unsigned int							m_currentScene;							//!< The index of the current scene
+
+	std::vector<CSpaghettiRigidBody*>		m_body;									//!< A list of current rigid bodies
+
+private:
+											//! Create a node from a given node map
+	void									CreateNodeFromMap(
+												OgreApplication *application, 
+												CSpaghetti *spaghetti,
+												CSpaghettiWorld *world,
+												NodeMap *nodeMap 
+											);
+
+											//! 
+	Ogre::Vector3							ParseVector3(
+												std::string vectorbuffer			//!< 
+											);
 
 public:
 											//! Class constructor
@@ -25,4 +44,14 @@ public:
 	const int								LoadScenes(
 												std::string sceneFolder				//!< The folder to search for .scene files
 											);
+
+											//! Setup the current scene for use with ogre
+	void									SetupCurrentScene(
+												OgreApplication *application,
+												CSpaghetti *spaghetti,
+												CSpaghettiWorld *world
+											);
+
+											//! Update all the nodes in the scene
+	void									Update();
 };

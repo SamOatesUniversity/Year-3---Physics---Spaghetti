@@ -46,25 +46,23 @@ void CSpaghettiRigidBodySphere::UpdateVelocity(
 	if (m_flags.isStatic || !m_flags.isEnabled)
 		return;
 
-	m_velocity = m_velocity + (world->GetGravity() * deltaTime);
-	m_angularMomentum = m_angularMomentum;
+	// add gravity
+	AddForceAtPoint(world->GetGravity(), m_position);
+
+	// update velocity
+	m_velocity = m_velocity + ((m_force / m_mass) * deltaTime);
+
+	// update the position of the body
+	m_lastPosition = m_position;
+	m_position = m_position + m_velocity;
+
+	// update angular momentum
+	m_angularMomentum = m_angularMomentum + (m_torque * deltaTime);
 
 	UpdateInertiaTensor();
 	UpdateAngularVelocity();
-}
 
-/*
-*	\brief	Update the rigid bodies position
-*/
-void CSpaghettiRigidBodySphere::UpdatePosition(
-		CSpaghettiWorld	*world,										//!< The world we are moving in
-		const float deltaTime										//!< Delta time (The amount of time past since the last update)
-	)
-{
-	m_lastPosition = m_position;
-	m_position = m_position + (m_velocity * deltaTime);
-
-	// update skew matrix
+	// construct the skew matrix
 	Ogre::Matrix3 skewMatrix;
 	skewMatrix[0][0] = 0.0f;
 	skewMatrix[0][1] = -m_angularVelocity.z;
@@ -79,13 +77,18 @@ void CSpaghettiRigidBodySphere::UpdatePosition(
 	skewMatrix[2][2] = 0.0f;
 
 	// update rotation matrix
-	m_rotation = m_rotation + ((skewMatrix * m_rotation) * deltaTime);
+	m_rotation = m_rotation + (skewMatrix * m_rotation);
 
 	// update and normalize the quaternion
 	m_quaternion.FromRotationMatrix(m_rotation);
 	m_quaternion.normalise();
 
+	// transform the bounding box data
 	m_bounds->Transform(m_position, m_quaternion);
+
+	// Zero out force and torque
+	m_force = Ogre::Vector3::ZERO;
+	m_torque = Ogre::Vector3::ZERO;
 }
 
 /*

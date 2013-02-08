@@ -120,3 +120,18 @@ void CSpaghettiRigidBody::AddTorqueAtPoint(
 
 	m_torque = m_torque + (pt.crossProduct(force));
 }
+
+void CSpaghettiRigidBody::SetMass( const float mass )
+{
+	m_mass = mass;
+}
+
+void CSpaghettiRigidBody::SetRotation( Ogre::Vector3 rotation )
+{
+	Ogre::Radian x(rotation.x * 0.01745);
+	Ogre::Radian y(rotation.y * 0.01745);
+	Ogre::Radian z(rotation.z * 0.01745);
+
+	m_rotation.FromEulerAnglesXYZ(x, y, z);
+	m_quaternion.FromRotationMatrix(m_rotation);
+}

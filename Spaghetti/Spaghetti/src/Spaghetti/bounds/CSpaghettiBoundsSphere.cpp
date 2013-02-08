@@ -20,7 +20,8 @@ CSpaghettiBoundsSphere::~CSpaghettiBoundsSphere()
 *	\brief	Does this bounding box intersect with another
 */
 const bool CSpaghettiBoundsSphere::Intersects( 
-		CSpaghettiBounds *other								//! The bounding box to test against
+		CSpaghettiBounds *other,							//!< The bounding box to test against
+		std::vector<CCollision> &collision
 	)
 {
 	if (other->GetType() == BoundsType::Box)

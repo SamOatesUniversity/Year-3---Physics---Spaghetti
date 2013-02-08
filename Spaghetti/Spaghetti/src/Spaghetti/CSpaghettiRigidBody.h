@@ -201,4 +201,14 @@ public:
 												CSpaghettiWorld	*world,								//!< The world we are moving in
 												CSpaghettiRigidBody *otherRigidBody					//!< The other rigid body to compare against
 											) = 0;
+
+											//! Set the mass of the rigid body
+	void									SetMass( 
+												const float mass 
+											);
+
+											//! 
+	void									SetRotation(
+												Ogre::Vector3 rotation 
+											);
 };
