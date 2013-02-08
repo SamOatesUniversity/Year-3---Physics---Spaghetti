@@ -113,6 +113,4 @@ public:
 	void									DestroyNode( Ogre::SceneNode *nodeName );
 };
 
-static OgreApplication *const application = new OgreApplication;
-
 #endif

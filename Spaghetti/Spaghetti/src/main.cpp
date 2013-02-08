@@ -6,6 +6,8 @@
 */
 void RunOgreApplication()
 {
+	OgreApplication *const application = new OgreApplication;
+
 	// Create and initialise the application	
 	if (application == nullptr || !application->Initialize())
 	{
@@ -122,6 +124,7 @@ void RunOgreApplication()
 	}
 
 	// clean up
+	delete sceneManager;
 	delete application;
 	delete spaghetti;
 }

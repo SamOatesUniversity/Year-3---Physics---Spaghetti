@@ -33,6 +33,12 @@ CSpaghettiRigidBody::CSpaghettiRigidBody(
 CSpaghettiRigidBody::~CSpaghettiRigidBody()
 {
 	m_renderObject = nullptr;
+
+	if (m_bounds != nullptr)
+	{
+		delete m_bounds;
+		m_bounds = nullptr;
+	}
 }
 
 /*

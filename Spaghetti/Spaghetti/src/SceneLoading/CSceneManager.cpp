@@ -13,7 +13,11 @@ CSceneManager::CSceneManager()
 */
 CSceneManager::~CSceneManager()
 {
+	const unsigned int noofScenes = m_scene.size();
+	for (unsigned int sceneIndex = 0; sceneIndex < noofScenes; ++sceneIndex)
+		delete m_scene[sceneIndex];
 
+	m_scene.clear();
 }
 
 /*
