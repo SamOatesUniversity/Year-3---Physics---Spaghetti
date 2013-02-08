@@ -6,11 +6,12 @@
 #include <regex>
 #include <map>
 
+typedef std::map<std::string, std::string>	NodeMap;
+
 class CScene {
 
 private:
 
-	typedef std::map<std::string, std::string> NodeMap;
 	std::vector<NodeMap*>					m_data;
 
 private:
@@ -33,4 +34,11 @@ public:
 												std::string sceneFileLocation						//!< The location of the scene file to parse
 											);
 
+											//! Get the number of nodes in the scene
+	const unsigned int						GetNoofNodes() const;
+
+											//! Get a node by a given index
+	NodeMap									*GetNodeMap( 
+												unsigned int nodeIndex								//!< The index of the node to get
+											) const;
 };
