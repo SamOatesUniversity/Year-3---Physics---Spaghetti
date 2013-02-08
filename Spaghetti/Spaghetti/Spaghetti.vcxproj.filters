@@ -43,6 +43,12 @@
     <Filter Include="Header Files\Spaghetti\bodies">
       <UniqueIdentifier>{7b662e3e-8301-4cb8-afad-de38a0cc6179}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\SceneLoading">
+      <UniqueIdentifier>{c393a507-c36f-4190-8d61-e33f4663cc32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\SceneLoading">
+      <UniqueIdentifier>{4a128898-5a69-4a99-9092-484a0257c529}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\Spaghetti.ico">
@@ -91,6 +97,12 @@
     <ClInclude Include="src\Spaghetti\CCollision.h">
       <Filter>Header Files\Spaghetti</Filter>
     </ClInclude>
+    <ClInclude Include="src\SceneLoading\CSceneManager.h">
+      <Filter>Header Files\SceneLoading</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SceneLoading\CScene.h">
+      <Filter>Header Files\SceneLoading</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -128,6 +140,12 @@
     </ClCompile>
     <ClCompile Include="src\Spaghetti\CCollision.cpp">
       <Filter>Source Files\Spaghetti</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SceneLoading\CSceneManager.cpp">
+      <Filter>Source Files\SceneLoading</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SceneLoading\CScene.cpp">
+      <Filter>Source Files\SceneLoading</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

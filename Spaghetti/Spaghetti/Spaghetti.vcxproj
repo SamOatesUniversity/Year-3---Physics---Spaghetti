@@ -128,6 +128,8 @@
     <ClInclude Include="src\main.h" />
     <ClInclude Include="src\OgreApplication.h" />
     <ClInclude Include="src\OgreWrapper.h" />
+    <ClInclude Include="src\SceneLoading\CScene.h" />
+    <ClInclude Include="src\SceneLoading\CSceneManager.h" />
     <ClInclude Include="src\Spaghetti\bounds\CSpaghettiBoundsBox.h" />
     <ClInclude Include="src\Spaghetti\bounds\CSpaghettiBoundsSphere.h" />
     <ClInclude Include="src\Spaghetti\CCollision.h" />
@@ -142,6 +144,8 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\OgreApplication.cpp" />
     <ClCompile Include="src\OgreWrapper.cpp" />
+    <ClCompile Include="src\SceneLoading\CScene.cpp" />
+    <ClCompile Include="src\SceneLoading\CSceneManager.cpp" />
     <ClCompile Include="src\Spaghetti\bounds\CSpaghettiBoundsBox.cpp" />
     <ClCompile Include="src\Spaghetti\bounds\CSpaghettiBoundsSphere.cpp" />
     <ClCompile Include="src\Spaghetti\CCollision.cpp" />

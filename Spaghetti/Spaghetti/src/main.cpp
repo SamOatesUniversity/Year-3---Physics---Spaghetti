@@ -1,4 +1,5 @@
 #include "main.h"
+#include "SceneLoading/CSceneManager.h"
 
 /*
 *	\brief Setup and run the ogre based application.
@@ -9,6 +10,7 @@ void RunOgreApplication()
 	if (application == nullptr || !application->Initialize())
 	{
 		std::cout << __FILE__ << " (" << __LINE__ << ") - " << "Failed to initialise the application" << std::endl; 
+		system("PAUSE");
 		return;
 	}
 
@@ -35,6 +37,14 @@ void RunOgreApplication()
 	
 	// clear all events before we go into our main loop
 	application->GetOgreWrapper().GetRoot()->clearEventTimes();
+
+	CSceneManager *sceneManager = new CSceneManager();
+	if (sceneManager->LoadScenes("scenes") == 0)
+	{
+		std::cout << __FILE__ << " (" << __LINE__ << ") - " << "Failed to load any .scene files, exiting" << std::endl; 
+		system("PAUSE");
+		return;
+	}
 
 	CSpaghetti *const spaghetti = new CSpaghetti();
 	CSpaghettiWorld *const world = spaghetti->CreateWorld();
