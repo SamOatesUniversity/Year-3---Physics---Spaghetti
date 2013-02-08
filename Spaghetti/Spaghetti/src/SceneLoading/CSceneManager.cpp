@@ -90,9 +90,11 @@ void CSceneManager::SetupCurrentScene(
 	)
 {
 	// get the current scene to load
-	const CScene *const scene = m_scene[m_currentScene];
+	CScene *const scene = m_scene[m_currentScene];
 	if (scene == nullptr)
 		return;
+
+	scene->CheckForUpdate();
 
 	// load in all the nodes of the scene
 	const unsigned int noofNodes = scene->GetNoofNodes();

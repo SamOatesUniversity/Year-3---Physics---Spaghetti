@@ -24,6 +24,8 @@ const bool CScene::Parse(
 	)
 {
 
+	m_fileLocation = sceneFileLocation;
+
 	std::ifstream filestream;
 	filestream.open(sceneFileLocation);
 
@@ -43,6 +45,16 @@ const bool CScene::Parse(
 	}
 
 	filestream.close();
+
+	// store the last edit time of the file
+	struct stat attrib;			
+	stat(sceneFileLocation.c_str(), &attrib);
+
+	tm tempTime;
+	gmtime_s(&tempTime, &attrib.st_mtime);
+
+	m_editTime = mktime(&tempTime);
+
 	return true;
 }
 
@@ -98,4 +110,31 @@ NodeMap *CScene::GetNodeMap(
 	) const
 {
 	return m_data[nodeIndex];
+}
+
+/*
+*	\brief Check to see if the scene has been edited, and re-parse if it has
+*/
+void CScene::CheckForUpdate()
+{
+	// store the last edit time of the file
+	struct stat attrib;			
+	stat(m_fileLocation.c_str(), &attrib);
+
+	tm tempTime;
+	gmtime_s(&tempTime, &attrib.st_mtime);
+
+	time_t lastEditIme = mktime(&tempTime);
+
+	if (difftime(m_editTime, lastEditIme) != 0)
+	{
+		const unsigned int noodDataNodes = m_data.size();
+		for (unsigned int dataIndex = 0; dataIndex < noodDataNodes; ++dataIndex)
+		{
+			delete m_data[dataIndex];
+		}
+		m_data.clear();
+
+		Parse(m_fileLocation);
+	}
 }
