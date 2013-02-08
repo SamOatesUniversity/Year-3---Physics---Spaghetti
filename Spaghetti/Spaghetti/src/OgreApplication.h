@@ -40,20 +40,12 @@ private:
 	OIS::InputManager						*m_inputManager;							//!< Instance of the input manager
 	OIS::Mouse								*m_mouse;									//!< Instance of the mouse device
 	OIS::Keyboard							*m_keyboard;								//!< Instance of the keyboard device
-	
-	std::vector<SceneNodeAndName>			m_sceneNodes;								//!< The list of all our nodes in the scene. Identified by a name
 
 	Ogre::SceneNode							*m_camera;									//!< A pointer to the camrera node for easy access
 
 private:
 											//! Create all the lights in the scene
 	void									CreateLights();
-
-											//! Add a scene node to out list of scene nodes
-	void									AddNodeToList(
-												const Ogre::String name,				//!< Name of the scene node to add
-												Ogre::SceneNode *const node				//!< A pointer to the scene node to add
-											);
 
 public:
 											//! Class constructor
@@ -113,15 +105,12 @@ public:
 											}
 
 											//! 
-	Ogre::SceneNode							*FindNodeByName(
-												const Ogre::String name
-											) const;
-
-											//! 
 	Ogre::SceneNode*						CreateEntityFromMesh(
 												std::string mesh,
 												std::string name
 											);
+
+	void									DestroyNode( Ogre::SceneNode *nodeName );
 };
 
 static OgreApplication *const application = new OgreApplication;

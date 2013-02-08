@@ -96,6 +96,24 @@ void RunOgreApplication()
 			while (keyboard->isKeyDown(OIS::KC_RETURN)) keyboard->capture();
 		}
 
+		if (keyboard->isKeyDown(OIS::KC_1))
+		{
+			sceneManager->SetCurrentScene(1, application, spaghetti, world);
+			while (keyboard->isKeyDown(OIS::KC_1)) keyboard->capture();
+		}
+
+		if (keyboard->isKeyDown(OIS::KC_2))
+		{
+			sceneManager->SetCurrentScene(2, application, spaghetti, world);
+			while (keyboard->isKeyDown(OIS::KC_2)) keyboard->capture();
+		}
+
+		if (keyboard->isKeyDown(OIS::KC_3))
+		{
+			sceneManager->SetCurrentScene(3, application, spaghetti, world);
+			while (keyboard->isKeyDown(OIS::KC_3)) keyboard->capture();
+		}
+
 		// update all our physics
 		world->Update(deltatTime);
 

@@ -66,5 +66,7 @@ public:
 	void									Update(
 												const float deltaTime								//!< Delta time (The amount of time past since the last update)
 											);
-
+	
+											//! Release all bodies in the world and reset values
+	void									Release();
 };

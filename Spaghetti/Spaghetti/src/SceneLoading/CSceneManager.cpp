@@ -94,15 +94,6 @@ void CSceneManager::SetupCurrentScene(
 	if (scene == nullptr)
 		return;
 
-	// get rid of any bodies that already exist
-	const unsigned int noofBodies = m_body.size();
-	for (unsigned int bodyIndex = 0; bodyIndex < noofBodies; ++bodyIndex)
-	{
-		CSpaghettiRigidBody *const body = m_body[bodyIndex];
-		delete body;
-	}
-	m_body.clear();
-
 	// load in all the nodes of the scene
 	const unsigned int noofNodes = scene->GetNoofNodes();
 	for (unsigned int nodeIndex = 0; nodeIndex < noofNodes; ++nodeIndex)
@@ -250,5 +241,36 @@ void CSceneManager::Update()
 		node->setPosition(position);
 		node->setOrientation(orientation);
 	}
+}
+
+void CSceneManager::SetCurrentScene( 
+		int index,												//!< The index to set the current scene too
+		OgreApplication *application,
+		CSpaghetti *spaghetti,
+		CSpaghettiWorld *world
+	)
+{
+	m_currentScene = (index - 1) % m_scene.size();
+	ReleaseActiveScene(application, spaghetti, world);
+	SetupCurrentScene(application, spaghetti, world);
+}
+
+void CSceneManager::ReleaseActiveScene( 
+		OgreApplication *const application, 
+		CSpaghetti *const spaghetti, 
+		CSpaghettiWorld *const world 
+	)
+{
+	const unsigned int noofBodies = m_body.size();
+	for (unsigned int bodyIndex = 0; bodyIndex < noofBodies; ++bodyIndex)
+	{
+		CSpaghettiRigidBody *const body = m_body[bodyIndex];
+		Ogre::SceneNode *const node = static_cast<Ogre::SceneNode*>(body->GetRenderObject());
+		application->DestroyNode(node);
+	}
+	application->GetSceneManager()->destroyAllEntities();
+
+	world->Release();
+	m_body.clear();
 }
 
