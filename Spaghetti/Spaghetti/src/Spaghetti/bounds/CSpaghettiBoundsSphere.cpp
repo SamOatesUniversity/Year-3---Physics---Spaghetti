@@ -53,11 +53,16 @@ const bool CSpaghettiBoundsSphere::Intersects(
 
 		if (distance < radius)
 		{
+			Ogre::Vector3 collisionNormal = otherSphere->GetPosition() - GetPosition();
+			collisionNormal.normalise();
+
+			Ogre::Vector3 collisionPoint =collisionNormal * GetRadius();
+
 			CCollision newCollision;
 			newCollision.bodyOne = GetBody();
 			newCollision.bodyTwo = otherSphere->GetBody();
-			newCollision.collisionNormal = Ogre::Vector3(0, -1, 0);
-			newCollision.collisionPoint = m_position - Ogre::Vector3(0, Height() * 0.5f, 0);
+			newCollision.collisionNormal = collisionNormal;
+			newCollision.collisionPoint = GetPosition() + collisionPoint;
 
 			collision.push_back(newCollision);
 
