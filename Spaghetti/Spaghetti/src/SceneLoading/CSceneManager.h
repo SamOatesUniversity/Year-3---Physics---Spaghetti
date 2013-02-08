@@ -54,4 +54,19 @@ public:
 
 											//! Update all the nodes in the scene
 	void									Update();
+
+											//! Set the current scene
+	void									SetCurrentScene(
+												int index,												//!< The index to set the current scene too
+												OgreApplication *application, 
+												CSpaghetti *spaghetti,
+												CSpaghettiWorld *world
+											);
+
+											//! 
+	void									ReleaseActiveScene( 
+												OgreApplication *const application, 
+												CSpaghetti *const spaghetti, 
+												CSpaghettiWorld *const world 
+											);
 };

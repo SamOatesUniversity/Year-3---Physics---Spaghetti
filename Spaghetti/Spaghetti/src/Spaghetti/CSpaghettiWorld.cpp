@@ -14,6 +14,14 @@ CSpaghettiWorld::CSpaghettiWorld()
 */
 CSpaghettiWorld::~CSpaghettiWorld()
 {
+	Release();
+}
+
+/*
+*	\brief Class destructor
+*/
+void CSpaghettiWorld::Release()
+{
 	std::vector<CSpaghettiRigidBody*>::const_iterator begin = m_rigidBodies.begin();
 	std::vector<CSpaghettiRigidBody*>::const_iterator end = m_rigidBodies.end();
 	for (std::vector<CSpaghettiRigidBody*>::const_iterator bodyIt = begin; bodyIt != end; bodyIt++)
@@ -22,6 +30,9 @@ CSpaghettiWorld::~CSpaghettiWorld()
 		delete body;
 	}
 	m_rigidBodies.clear();
+
+	m_gravity = Ogre::Vector3(0.0f, -9.81f, 0.0f);
+	m_flags.allflags = 0;
 }
 
 /*

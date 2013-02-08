@@ -89,8 +89,6 @@ Ogre::SceneNode *OgreApplication::CreateCamera(
 	camera->setAspectRatio(static_cast<float>(m_vp->getActualWidth()) / static_cast<float>(m_vp->getActualHeight()));
 	camera->setNearClipDistance(0.01f);
 	camera->setFarClipDistance(30000.0f); 
-
-	AddNodeToList(m_camera->getName(), m_camera);
 	
 	// Set the window to be active
 	window->setActive(true);
@@ -106,60 +104,8 @@ Ogre::SceneNode *OgreApplication::CreateCamera(
 */
 void OgreApplication::CreateLights()
 {
-	// Create a new SceneNode - light Scene Node
-	// Create a light in the SceneManager, and set the type of the light: {LT_POINT = 0, LT_DIRECTIONAL = 1, LT_SPOTLIGHT = 2 }
-
-	// create a directional light
-	//Ogre::SceneNode* lLightSceneNodeDir = NULL;
-	//Ogre::String tempName = "DirectionLight";
-	//Ogre::Light* lDirectionalLight = m_scene->createLight(tempName);
-	//lDirectionalLight->setType(Ogre::Light::LT_DIRECTIONAL);
-
-	////Set light clolur to white
-	//lDirectionalLight->setDiffuseColour(0.8f, 0.8f, 0.8f); 
-	//lDirectionalLight->setSpecularColour(1.0f, 1.0f, 1.0f);
-
-	////Set light node as the child node of the RootSceneNode
-	////Attach the light to the chid node
-	//lLightSceneNodeDir = m_rootSceneNode->createChildSceneNode(tempName.append("Node"));
-	//lLightSceneNodeDir->attachObject(lDirectionalLight);
-	////Set light position : rember must set the light position after attached it to SceneNode
-	//lLightSceneNodeDir->setDirection(1.0f, 1.0f, -1.0f);
-
-	//// add directional light to the child node list
-	//AddNodeToList(lLightSceneNodeDir->getName(), lLightSceneNodeDir);
-
-	//// create a spot light
-	//Ogre::SceneNode* lLightSceneNodeSpot = NULL;
-	//tempName = "SpotLight";
-	//Ogre::Light* lSpotLight = m_scene->createLight(tempName);
-	//lSpotLight->setType(Ogre::Light::LT_SPOTLIGHT);
-
-	////Set light clolur to red
-	//lSpotLight->setDiffuseColour(0.0f, 0.8f, 0.8f); 
-	//lSpotLight->setSpecularColour(0.0f, 1.0f, 1.0f);
-
-	////Set light node as the child node of the RootSceneNode
-	////Attach the light to the chid node
-	//lLightSceneNodeSpot = m_rootSceneNode->createChildSceneNode(tempName.append("Node"));
-	//lLightSceneNodeSpot->attachObject(lSpotLight);
-	//lLightSceneNodeSpot->setDirection(1.0f, 1.0f, 0.0f);
-	//lLightSceneNodeSpot->setPosition(Ogre::Vector3(50.0, 80.0, 0.0));
-	////set the spot light corn beam width
-	//lSpotLight->setSpotlightRange(Ogre::Degree(20), Ogre::Degree(50));
-
-	//// add to child node list
-	//AddNodeToList(lLightSceneNodeSpot->getName(), lLightSceneNodeSpot);
-
-	// tell the SceneManager where the mesh objects are stored and prepare the sence for load and render entities       //
-	// First, add an ambient color to lit the scene. The ambient color is managed in the scenemanager.
-	// If you want to learn more about ambient/specular/diffuse color, check the 'basic material tutorial'.
 	Ogre::ColourValue lAmbientColour(0.7f, 0.7f, 0.7f, 1.0f);
 	m_scene->setAmbientLight(lAmbientColour);
-
-	// There are three shadow techniques: Ogre::SHADOWTYPE_TEXTURE_MODULATIVE - least expensive and accurate,
-	// Ogre::SHADOWTYPE_STENCIL_MODULATIVE - less expensive and accurate,  Ogre::SHADOWTYPE_STENCIL_ADDITIVE -most expensive and accurate
-	//m_scene->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
 }
 
 /*
@@ -226,44 +172,9 @@ Ogre::SceneNode* OgreApplication::CreateEntityFromMesh(
 		return NULL;
 	}
 
-	// add to child scene node list
-	AddNodeToList(node->getName(), node);
-
 	return node;
 }
 
-/*
-*	\brief Add a new node to our node list
-*/
-void OgreApplication::AddNodeToList(
-		const Ogre::String name,					//!< Name of the node to add to the list
-		Ogre::SceneNode *const node					//!< Pointer to the node to add to the list
-	)
-{
-	SceneNodeAndName newSceneNode;
-	newSceneNode.name = name;
-	newSceneNode.node = node;
-	m_sceneNodes.push_back(newSceneNode);
-}
-
-/*
-*	\brief Add a new node to our node list
-*/
-Ogre::SceneNode *OgreApplication::FindNodeByName(
-		const Ogre::String name
-	) const
-{
-	std::vector<SceneNodeAndName>::const_iterator begin = m_sceneNodes.begin();
-	std::vector<SceneNodeAndName>::const_iterator end = m_sceneNodes.end();
-	for (std::vector<SceneNodeAndName>::const_iterator sceneNodeIt = begin; sceneNodeIt != end; sceneNodeIt++)
-	{
-		SceneNodeAndName node = (*sceneNodeIt);
-		if (node.name == name.c_str()) {
-			return node.node;
-		}
-	}
-	return nullptr;
-}
 
 /*
 *	\brief The main run loop
@@ -336,4 +247,14 @@ Ogre::Timer* OgreApplication::CreateTimer()
 {
 	m_timer = m_ogreWrapper.GetRoot()->getTimer();
 	return m_timer;
+}
+
+void OgreApplication::DestroyNode( Ogre::SceneNode *node )
+{
+	if (node != nullptr)
+	{
+		node->detachAllObjects();
+		node->removeAndDestroyAllChildren();
+		m_rootSceneNode->removeAndDestroyChild(node->getName());
+	}
 }
