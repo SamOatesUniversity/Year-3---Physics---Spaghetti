@@ -90,28 +90,23 @@ void RunOgreApplication()
 		cameraNode->setPosition(cameraPosition);
 		static_cast<Ogre::Camera*>(cameraNode->getAttachedObject("MainCamera"))->lookAt(0.0f, 0.0f, 0.0f);
 
+		// toggle the worlds pause state
 		if (keyboard->isKeyDown(OIS::KC_RETURN))
 		{
 			world->SetPaused(!world->IsPaused());
 			while (keyboard->isKeyDown(OIS::KC_RETURN)) keyboard->capture();
 		}
 
-		if (keyboard->isKeyDown(OIS::KC_1))
+		// check keys 1 - 9 and change the scene if pressed
+		for (int keyIndex = OIS::KC_1; keyIndex <= OIS::KC_9; ++keyIndex)
 		{
-			sceneManager->SetCurrentScene(1, application, spaghetti, world);
-			while (keyboard->isKeyDown(OIS::KC_1)) keyboard->capture();
-		}
-
-		if (keyboard->isKeyDown(OIS::KC_2))
-		{
-			sceneManager->SetCurrentScene(2, application, spaghetti, world);
-			while (keyboard->isKeyDown(OIS::KC_2)) keyboard->capture();
-		}
-
-		if (keyboard->isKeyDown(OIS::KC_3))
-		{
-			sceneManager->SetCurrentScene(3, application, spaghetti, world);
-			while (keyboard->isKeyDown(OIS::KC_3)) keyboard->capture();
+			OIS::KeyCode kc = (OIS::KeyCode)keyIndex;
+			if (keyboard->isKeyDown(kc))
+			{
+				sceneManager->SetCurrentScene(keyIndex - 1, application, spaghetti, world);
+				world->SetPaused(true);
+				while (keyboard->isKeyDown(kc)) keyboard->capture();
+			}
 		}
 
 		// update all our physics
