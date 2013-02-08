@@ -35,6 +35,14 @@ const bool CSpaghettiBoundsSphere::Intersects(
 		if (otherBox->GetPosition().z + otherBox->GetMax().z < m_position.z - GetRadius()) return false;
 		if (otherBox->GetPosition().z + otherBox->GetMin().z > m_position.z + GetRadius()) return false;
 
+		CCollision newCollision;
+		newCollision.bodyOne = GetBody();
+		newCollision.bodyTwo = otherBox->GetBody();
+		newCollision.collisionNormal = Ogre::Vector3(0, -1, 0);
+		newCollision.collisionPoint = m_position - Ogre::Vector3(0, Height() * 0.5f, 0);
+
+		collision.push_back(newCollision);
+
 		return true;
 	}
 	else if (other->GetType() == BoundsType::Sphere)
@@ -44,7 +52,17 @@ const bool CSpaghettiBoundsSphere::Intersects(
 		const float radius = GetRadius() + otherSphere->GetRadius();
 
 		if (distance < radius)
+		{
+			CCollision newCollision;
+			newCollision.bodyOne = GetBody();
+			newCollision.bodyTwo = otherSphere->GetBody();
+			newCollision.collisionNormal = Ogre::Vector3(0, -1, 0);
+			newCollision.collisionPoint = m_position - Ogre::Vector3(0, Height() * 0.5f, 0);
+
+			collision.push_back(newCollision);
+
 			return true;
+		}
 
 		return false;
 	}

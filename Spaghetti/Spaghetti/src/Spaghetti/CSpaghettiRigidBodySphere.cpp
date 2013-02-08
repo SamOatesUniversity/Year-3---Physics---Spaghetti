@@ -99,5 +99,63 @@ void CSpaghettiRigidBodySphere::HandleCollision(
 	CSpaghettiRigidBody *otherRigidBody								//!< The other rigid body to compare against
 	)
 {
+	std::vector<CCollision> collisions;
+	if (!m_bounds->Intersects(otherRigidBody->GetBounds(), collisions))
+		return;
 
+	SetPosition(GetLastPosition());
+	otherRigidBody->SetPosition(otherRigidBody->GetLastPosition());
+
+	static const float e = -0.0f;
+	Ogre::Vector3 relativeVelocity = GetVelocity() - otherRigidBody->GetVelocity();
+
+	// linear
+	{
+		Ogre::Vector3 thisVelocity = Ogre::Vector3::ZERO;
+		Ogre::Vector3 otherVelocity = Ogre::Vector3::ZERO;
+
+		unsigned int noofCollisions = collisions.size();
+		for (unsigned int collisionIndex = 0; collisionIndex < noofCollisions; ++collisionIndex)
+		{
+			Ogre::Vector3 collisionNormal = collisions[collisionIndex].collisionNormal;
+			Ogre::Vector3 collisionPoint = collisions[collisionIndex].collisionPoint;
+			collisionNormal.normalise();
+
+			const float inverseMassBodyOne = 1.0f / GetMass();
+			const float inverseMassBodyTwo = 1.0f / otherRigidBody->GetMass();
+			const float sumOfInverseMass = inverseMassBodyOne + inverseMassBodyTwo;
+			const float jLinear = (-(1.0f + e) * relativeVelocity.dotProduct(collisionNormal)) / sumOfInverseMass;
+
+			thisVelocity = thisVelocity + (collisionNormal * jLinear);
+			otherVelocity = otherVelocity + (collisionNormal * -jLinear);
+		}		
+
+		if (noofCollisions != 0)
+		{
+			SetVelocity(thisVelocity / noofCollisions);
+			otherRigidBody->SetVelocity(otherVelocity / noofCollisions);
+		}
+	}	
+
+	// angular
+	{
+		//unsigned int noofCollisions = collisions.size();
+		//for (unsigned int collisionIndex = 0; collisionIndex < noofCollisions; ++collisionIndex)
+		//{
+		//	SAM::TVector3 collisionNormal = collisions[collisionIndex].collisionNormal;
+		//	SAM::TVector3 collisionPoint = collisions[collisionIndex].collisionPoint;
+		//	collisionNormal.Normalize();
+
+		//	SAM::TVector3 r1 = collisionPoint - GetPosition();
+		//	SAM::TVector3 r2 = collisionPoint - otherRigidBody->GetPosition();
+
+		//	SAM::TVector3 ac = (GetInverseInertia() * r1.Cross(collisionNormal)).Cross(r1);
+		//	SAM::TVector3 bc = (otherRigidBody->GetInverseInertia() * r2.Cross(collisionNormal)).Cross(r2);
+		//	const float nDc = collisionNormal.Dot(ac) + collisionNormal.Dot(bc);
+		//	const float jAngular = -(((1.0f + e) * relativeVelocity.Dot(collisionNormal)) * nDc);
+
+		//	SAM::TVector3 thisAngVel = (GetInverseInertia() * r1.Cross(collisionNormal * jAngular)) / static_cast<float>(noofCollisions);
+		//	SAM::TVector3 otherAngVel = (otherRigidBody->GetInverseInertia() * r2.Cross(collisionNormal * -jAngular)) / static_cast<float>(noofCollisions);
+		//}
+	}
 }
