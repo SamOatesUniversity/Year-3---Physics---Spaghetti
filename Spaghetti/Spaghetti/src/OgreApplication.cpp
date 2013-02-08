@@ -130,6 +130,9 @@ void OgreApplication::CreateScene()
 	lRgMgr.addResourceLocation("../../media/meshes", "FileSystem", resourceGroupName, lIsRecursive);
 	lRgMgr.addResourceLocation("../../media/textures", "FileSystem", resourceGroupName, lIsRecursive);
 
+	lRgMgr.addResourceLocation("media/meshes", "FileSystem", resourceGroupName, lIsRecursive);
+	lRgMgr.addResourceLocation("media/textures", "FileSystem", resourceGroupName, lIsRecursive);
+
 	// The function 'initialiseResourceGroup' parses scripts if any in the locations.
 	lRgMgr.initialiseResourceGroup(resourceGroupName);
 
