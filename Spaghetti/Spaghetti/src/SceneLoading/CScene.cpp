@@ -13,7 +13,12 @@ CScene::CScene()
 */
 CScene::~CScene()
 {
-
+	const unsigned int noodDataNodes = m_data.size();
+	for (unsigned int dataIndex = 0; dataIndex < noodDataNodes; ++dataIndex)
+	{
+		delete m_data[dataIndex];
+	}
+	m_data.clear();
 }
 
 /*
