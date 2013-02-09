@@ -11,7 +11,7 @@ torque:0,0,0
 <dynamic-cube-1>
 mesh:cube.mesh
 scale:1,1,1
-position:0,200,0
+position:100,200,0
 rotation:45,0,0
 collision:box
 mass:1
@@ -21,7 +21,7 @@ torque:0,0,0
 <dynamic-cube-2>
 mesh:cube.mesh
 scale:1,1,1
-position:0,400,0
+position:-100,400,0
 rotation:0,45,0
 collision:box
 mass:1
