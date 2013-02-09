@@ -146,26 +146,6 @@ void CSceneManager::CreateNodeFromMap(
 
 		// add our new body to our list
 		m_body.push_back(body);
-
-		// set the initial position of the body
-		Ogre::Vector3 position = ParseVector3((*nodeMap)["position"]);
-		body->SetPosition(position);
-
-		// set the initial rotation of the body
-		Ogre::Vector3 rotation = ParseVector3((*nodeMap)["rotation"]);
-		body->SetRotation(rotation);
-
-		// set the mass of the object
-		const float mass = static_cast<float>(::atof((*nodeMap)["mass"].c_str()));
-		if (mass == 0) body->SetIsStatic(true); else body->SetMass(mass);
-
-		// set the initial force
-		Ogre::Vector3 force = ParseVector3((*nodeMap)["force"]);
-		body->AddForceAtPoint(force, position);
-
-		// set the initial torque
-		Ogre::Vector3 torque = ParseVector3((*nodeMap)["torque"]);
-		body->AddTorqueAtPoint(torque, position);
 		
 		// create the bounds
 		if (bodyType == RigidBodyType::Box)
@@ -202,6 +182,26 @@ void CSceneManager::CreateNodeFromMap(
 			boundingSphere->SetDiameter(diameter);
 			body->SetBounds(boundingSphere);
 		}
+
+		// set the initial position of the body
+		Ogre::Vector3 position = ParseVector3((*nodeMap)["position"]);
+		body->SetPosition(position);
+
+		// set the initial rotation of the body
+		Ogre::Vector3 rotation = ParseVector3((*nodeMap)["rotation"]);
+		body->SetRotation(rotation);
+
+		// set the mass of the object
+		const float mass = static_cast<float>(::atof((*nodeMap)["mass"].c_str()));
+		if (mass == 0) body->SetIsStatic(true); else body->SetMass(mass);
+
+		// set the initial force
+		Ogre::Vector3 force = ParseVector3((*nodeMap)["force"]);
+		body->AddForceAtPoint(force, position);
+
+		// set the initial torque
+		Ogre::Vector3 torque = ParseVector3((*nodeMap)["torque"]);
+		body->AddTorqueAtPoint(torque, position);
 	}
 }
 

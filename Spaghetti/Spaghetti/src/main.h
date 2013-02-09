@@ -2,4 +2,4 @@
 #include "OgreApplication.h"
 #include "Spaghetti\Spaghetti.h"
 
-//#include <vld.h>
+#include <vld.h>

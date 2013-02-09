@@ -140,4 +140,7 @@ void CSpaghettiRigidBody::SetRotation( Ogre::Vector3 rotation )
 
 	m_rotation.FromEulerAnglesXYZ(x, y, z);
 	m_quaternion.FromRotationMatrix(m_rotation);
+
+	if (m_bounds != nullptr)
+		m_bounds->Transform(m_position, m_rotation);
 }

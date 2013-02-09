@@ -11,6 +11,8 @@ CSpaghettiBounds::CSpaghettiBounds()
 	m_axis[1] = Ogre::Vector3(0, 1, 0);	
 	m_axis[2] = Ogre::Vector3(0, 0, 1);
 	m_body = nullptr;
+
+	m_xform = Ogre::Matrix4::IDENTITY;
 }
 
 /*

@@ -12,7 +12,7 @@ torque:0,0,0
 mesh:cube.mesh
 scale:14,0.5,4
 position:0,100,0
-rotation:0,0,15
+rotation:0,0,20
 collision:box
 mass:0
 force:0,0,0
@@ -21,7 +21,7 @@ torque:0,0,0
 <dynamic-sphere-1>
 mesh:sphere.mesh
 scale:1.0,1.0,1.0
-position:400,500,0
+position:400,1000,0
 rotation:0,0,0
 collision:sphere
 mass:1
