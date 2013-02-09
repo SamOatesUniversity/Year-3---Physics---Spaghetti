@@ -96,6 +96,8 @@ public:
 											{
 												m_position = position;
 												m_lastPosition = position;
+												if (m_bounds != nullptr)
+													m_bounds->Transform(m_position, m_rotation);
 											}
 
 											//! Get the rigid body position

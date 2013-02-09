@@ -13,6 +13,7 @@ private:
 	Ogre::Vector3				m_aaCorner[NOOF_BOUNDINGBOX_CORNERS];					//!< The axis aligned positions of the bounding boxes corners
 	Ogre::Vector3				m_min;													//!< The minimum corner
 	Ogre::Vector3				m_max;													//!< The maximum corner
+	Ogre::Vector3				m_boxSize;												//!< The size of the box
 
 public:
 
@@ -93,5 +94,11 @@ public:
 	const float					GetRadius() const
 								{
 									return (m_max - m_min).length() * 0.5f;
+								}
+
+								//! Get the size of the box
+	Ogre::Vector3				GetBoxSize()
+								{
+									return m_boxSize;
 								}
 };

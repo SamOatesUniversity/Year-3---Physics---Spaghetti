@@ -24,6 +24,7 @@ protected:
 
 	BoundsType::Enum			m_type;													//!< The type of bounds
 	Ogre::Vector3				m_position;												//!< The position of the bounds in world space
+	Ogre::Matrix4				m_xform;												//!< The world xform of the bounds
 	Ogre::Vector3				m_axis[3];												//!< The axis in local space
 	CSpaghettiRigidBody			*m_body;												//!< The rigidbody these bounds belong too
 

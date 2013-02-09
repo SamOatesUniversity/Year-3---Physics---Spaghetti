@@ -26,6 +26,8 @@ const bool CSpaghettiBoundsSphere::Intersects(
 {
 	if (other->GetType() == BoundsType::Box)
 	{
+		// Box on sphere
+
 		CSpaghettiBoundsBox *const otherBox = static_cast<CSpaghettiBoundsBox*>(other);
 
 		if (otherBox->GetPosition().x + otherBox->GetMax().x < m_position.x - GetRadius()) return false;
@@ -47,6 +49,8 @@ const bool CSpaghettiBoundsSphere::Intersects(
 	}
 	else if (other->GetType() == BoundsType::Sphere)
 	{
+		// Sphere on sphere
+
 		CSpaghettiBoundsSphere *const otherSphere = static_cast<CSpaghettiBoundsSphere*>(other);
 		const float distance = (otherSphere->GetPosition() - m_position).length();
 		const float radius = GetRadius() + otherSphere->GetRadius();

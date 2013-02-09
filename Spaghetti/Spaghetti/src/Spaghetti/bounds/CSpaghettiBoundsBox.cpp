@@ -38,6 +38,8 @@ void CSpaghettiBoundsBox::SetCorners(
 		if (m_corner[cornerIndex].y > m_max.y) m_max.y = m_corner[cornerIndex].y;
 		if (m_corner[cornerIndex].z > m_max.z) m_max.z = m_corner[cornerIndex].z;
 	}
+
+	m_boxSize = m_max - m_min;
 }
 
 /*
@@ -102,6 +104,8 @@ const bool CSpaghettiBoundsBox::Intersects(
 
 	if (other->GetType() == BoundsType::Box)
 	{
+		// box on box
+
 		CSpaghettiBoundsBox *const otherBox = static_cast<CSpaghettiBoundsBox*>(other);
 		
 		if (m_position.x + m_max.x < otherBox->GetPosition().x + otherBox->GetMin().x) return false;
@@ -123,8 +127,11 @@ const bool CSpaghettiBoundsBox::Intersects(
 	}
 	else if (other->GetType() == BoundsType::Sphere)
 	{
+		// sphere on box
+
 		CSpaghettiBoundsSphere *const otherSphere = static_cast<CSpaghettiBoundsSphere*>(other);
 
+		// quick aabb test, for early out
 		if (m_position.x + m_max.x < otherSphere->GetPosition().x - otherSphere->GetRadius()) return false;
 		if (m_position.x + m_min.x > otherSphere->GetPosition().x + otherSphere->GetRadius()) return false;
 		if (m_position.y + m_max.y < otherSphere->GetPosition().y - otherSphere->GetRadius()) return false;
@@ -132,11 +139,65 @@ const bool CSpaghettiBoundsBox::Intersects(
 		if (m_position.z + m_max.z < otherSphere->GetPosition().z - otherSphere->GetRadius()) return false;
 		if (m_position.z + m_min.z > otherSphere->GetPosition().z + otherSphere->GetRadius()) return false;
 
+		// potentially a collision, check against object aligned box
+
+		// transform the spheres center of mass into the boxes space
+		Ogre::Vector3 sphereCenter = otherSphere->GetPosition();
+		Ogre::Vector3 sphereInBoxSpace = sphereCenter;
+		sphereInBoxSpace.x -= m_xform[0][3];
+		sphereInBoxSpace.y -= m_xform[1][3];
+		sphereInBoxSpace.z -= m_xform[2][3];
+
+		sphereInBoxSpace = Ogre::Vector3(
+			sphereInBoxSpace.x * m_xform[0][0] +
+			sphereInBoxSpace.y * m_xform[1][0] +
+			sphereInBoxSpace.z * m_xform[2][0],
+
+			sphereInBoxSpace.x * m_xform[0][1] +
+			sphereInBoxSpace.y * m_xform[1][1] +
+			sphereInBoxSpace.z * m_xform[2][1],
+
+			sphereInBoxSpace.x * m_xform[0][2] +
+			sphereInBoxSpace.y * m_xform[1][2] +
+			sphereInBoxSpace.z * m_xform[2][2]			
+		);
+
+		float dist = 0;
+		Ogre::Vector3 closestPoint = Ogre::Vector3::ZERO;
+		Ogre::Vector3 halfBox = GetBoxSize() * 0.5f;
+
+		// Clamp each coordinate to the box.
+		dist = sphereInBoxSpace.x;
+		if (dist > halfBox.x) dist = halfBox.x;
+		if (dist < -halfBox.x) dist = -halfBox.x;
+		closestPoint.x = dist;
+
+		dist = sphereInBoxSpace.y;
+		if (dist > halfBox.y) dist = halfBox.y;
+		if (dist < -halfBox.y) dist = -halfBox.y;
+		closestPoint.y = dist;
+
+		dist = sphereInBoxSpace.z;
+		if (dist > halfBox.z) dist = halfBox.z;
+		if (dist < -halfBox.z) dist = -halfBox.z;
+		closestPoint.z = dist;
+
+		// Check we're in contact
+		dist = (closestPoint - sphereInBoxSpace).squaredLength();
+		if (dist > otherSphere->GetRadius() * otherSphere->GetRadius())
+			return false;
+
+		// Calculate the collision points
+		Ogre::Vector3 closestPtWorld = m_xform * closestPoint;
+		Ogre::Vector3 collisionNormal = sphereCenter - closestPtWorld;
+		collisionNormal.normalise();
+
+		// add the collision to our collision list
 		CCollision newCollision;
 		newCollision.bodyOne = GetBody();
 		newCollision.bodyTwo = otherSphere->GetBody();
-		newCollision.collisionNormal = Ogre::Vector3(0, -1, 0);
-		newCollision.collisionPoint = m_position - Ogre::Vector3(0, Height() * 0.5f, 0);
+		newCollision.collisionNormal = collisionNormal;
+		newCollision.collisionPoint = closestPtWorld;
 
 		collision.push_back(newCollision);
 
@@ -159,6 +220,9 @@ void CSpaghettiBoundsBox::Transform(
 	m_axis[0] = rotation * m_axis[0];
 	m_axis[1] = rotation * m_axis[1];
 	m_axis[2] = rotation * m_axis[2];
+
+	Ogre::Vector3 scale = Ogre::Vector3(1, 1, 1);
+	m_xform.makeTransform(m_position, scale, rotation);
 
 	m_min = Ogre::Vector3::ZERO;
 	m_max = Ogre::Vector3::ZERO;
