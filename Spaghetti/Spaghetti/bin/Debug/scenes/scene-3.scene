@@ -44,6 +44,6 @@ scale:1.0,1.0,1.0
 position:-400,1200,0
 rotation:0,0,0
 collision:sphere
-mass:1
+mass:10
 force:0,0,0
 torque:0,0,0
