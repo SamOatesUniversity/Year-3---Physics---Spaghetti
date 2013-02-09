@@ -77,6 +77,9 @@ void CSpaghettiWorld::Update(
 			if (body == otherBody)
 				continue;
 
+			if (otherBody->IsStatic() && body->IsStatic())
+				continue;
+
 			body->HandleCollision(this, otherBody);
 		}
 	}

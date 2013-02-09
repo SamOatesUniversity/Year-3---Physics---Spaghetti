@@ -10,7 +10,7 @@ torque:0,0,0
 
 <dynamic-sphere-1>
 mesh:sphere.mesh
-scale:1,1,1
+scale:2,2,2
 position:0,600,0
 rotation:0,0,0
 collision:sphere
@@ -20,18 +20,8 @@ torque:0,0,0
 
 <dynamic-sphere-2>
 mesh:sphere.mesh
-scale:0.5,0.5,0.5
-position:50,200,0
-rotation:0,0,0
-collision:sphere
-mass:1
-force:0,0,0
-torque:0,0,0
-
-<dynamic-sphere-3>
-mesh:sphere.mesh
-scale:0.5,0.5,0.5
-position:-50,900,0
+scale:1,1,1
+position:100,200,0
 rotation:0,0,0
 collision:sphere
 mass:1

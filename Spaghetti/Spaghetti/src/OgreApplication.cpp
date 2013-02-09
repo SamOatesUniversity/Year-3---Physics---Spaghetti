@@ -159,7 +159,14 @@ Ogre::SceneNode* OgreApplication::CreateEntityFromMesh(
 	}
 	catch(Ogre::ItemIdentityException ex) 
 	{
-		meshEntity = m_scene->createEntity(meshName, mesh);
+		try
+		{
+			meshEntity = m_scene->createEntity(meshName, mesh);
+		}
+		catch (Ogre::Exception ex)
+		{
+			return NULL;
+		}
 	}
 
 	// create a scene node to the entity scene node for our character

@@ -58,6 +58,7 @@ void CSpaghettiRigidBodySphere::UpdateVelocity(
 
 	// update angular momentum
 	m_angularMomentum = m_angularMomentum + (m_torque * deltaTime);
+	m_angularMomentum *= 0.99f;
 
 	UpdateInertiaTensor();
 	UpdateAngularVelocity();
@@ -89,48 +90,4 @@ void CSpaghettiRigidBodySphere::UpdateVelocity(
 	// Zero out force and torque
 	m_force = Ogre::Vector3::ZERO;
 	m_torque = Ogre::Vector3::ZERO;
-}
-
-/*
-*	\brief	Handle collision against another rigid body
-*/
-void CSpaghettiRigidBodySphere::HandleCollision(
-	CSpaghettiWorld	*world,											//!< The world we are moving in
-	CSpaghettiRigidBody *otherRigidBody								//!< The other rigid body to compare against
-	)
-{
-	std::vector<CCollision> collisions;
-	if (!m_bounds->Intersects(otherRigidBody->GetBounds(), collisions))
-		return;
-
-	SetPosition(GetLastPosition());
-	otherRigidBody->SetPosition(otherRigidBody->GetLastPosition());
-
-	static const float e = 1.2f;
-	Ogre::Vector3 relativeVelocity = GetVelocity() - otherRigidBody->GetVelocity();
-
-	// linear
-	{
-		const float inverseMassBodyOne = 1.0f / GetMass();
-		const float inverseMassBodyTwo = 1.0f / otherRigidBody->GetMass();
-		const float sumOfInverseMass = inverseMassBodyOne + inverseMassBodyTwo;
-
-		const unsigned int noofCollision = collisions.size();
-		for (unsigned int collisionIndex = 0; collisionIndex < noofCollision; ++collisionIndex)
-		{
-			Ogre::Vector3 collisionNormal = collisions[collisionIndex].collisionNormal;
-			const float jLinear = (-(1.0f + e) * relativeVelocity.dotProduct(collisionNormal)) / sumOfInverseMass;
-
-			Ogre::Vector3 bodyOneImpulse = (jLinear * collisionNormal) * inverseMassBodyOne;
-			Ogre::Vector3 bodyTwoImpulse = (-jLinear * collisionNormal) * inverseMassBodyTwo;
-
-			SetVelocity(GetVelocity() + bodyOneImpulse);
-			otherRigidBody->SetVelocity(otherRigidBody->GetVelocity() + bodyTwoImpulse);
-		}
-	}		
-
-	// angular
-	{
-
-	}
 }

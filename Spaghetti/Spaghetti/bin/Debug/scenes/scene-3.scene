@@ -20,7 +20,7 @@ torque:0,0,0
 
 <dynamic-see-saw>
 mesh:cube.mesh
-scale:10,0.1,2
+scale:10,0.5,2
 position:0,160,0
 rotation:0,0,0
 collision:box
@@ -31,7 +31,7 @@ torque:0,0,0
 <dynamic-sphere-1>
 mesh:sphere.mesh
 scale:0.5,0.5,0.5
-position:400,225,0
+position:400,250,0
 rotation:0,0,0
 collision:sphere
 mass:1
@@ -40,10 +40,20 @@ torque:0,0,0
 
 <dynamic-sphere-2>
 mesh:sphere.mesh
+scale:0.5,0.5,0.5
+position:275,250,0
+rotation:0,0,0
+collision:sphere
+mass:1
+force:0,0,0
+torque:0,0,0
+
+<dynamic-sphere-BIG>
+mesh:sphere.mesh
 scale:1.0,1.0,1.0
 position:-400,1200,0
 rotation:0,0,0
 collision:sphere
-mass:10
+mass:6
 force:0,0,0
 torque:0,0,0
