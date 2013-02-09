@@ -75,7 +75,7 @@ void CScene::ParseLine(
 
 	// to start with look for the <NAME> tag
 	std::smatch nameMatch;
-	if (std::regex_search(line, nameMatch, std::regex("(<)(.*?)(>)"))) //(?<=<)(.*?)(?=>)
+	if (std::regex_search(line, nameMatch, std::regex("(<)(.*?)(>)"))) //(<)(.*?)(>)
 	{
 		if ((*nm).count("name") != 0)
 		{

@@ -27,10 +27,4 @@ public:
 												const float deltaTime								//!< Delta time (The amount of time past since the last update)
 											);
 
-											//! Handle collision against another rigid body
-	virtual void							HandleCollision(
-												CSpaghettiWorld	*world,								//!< The world we are moving in
-												CSpaghettiRigidBody *otherRigidBody					//!< The other rigid body to compare against
-											);
-
 };
