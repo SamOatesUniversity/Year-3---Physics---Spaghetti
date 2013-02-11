@@ -40,8 +40,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IntDir>.\bin\obj\$(ProjectName)$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
-    <LibraryPath>G:\Program Files %28x86%29\Visual Leak Detector\lib\Win32;$(SolutionDir)$(Configuration)\;G:\OGRE\OgreSDK_vc10_v1-8-0\lib\debug;G:\OGRE\OgreSDK_vc10_v1-8-0\boost\lib;C:\Ogre\OgreSDK_vc10_v1-8-1\lib\debug;C:\Ogre\OgreSDK_vc10_v1-8-1\boost\lib;$(LibraryPath)</LibraryPath>
-    <IncludePath>G:\Program Files %28x86%29\Visual Leak Detector\include;G:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;G:\OGRE\OgreSDK_vc10_v1-8-0\include;G:\OGRE\OgreSDK_vc10_v1-8-0\boost;C:\Ogre\OgreSDK_vc10_v1-8-1\include;C:\Ogre\OgreSDK_vc10_v1-8-1\boost;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)$(Configuration)\;G:\OGRE\OgreSDK_vc10_v1-8-0\lib\debug;G:\OGRE\OgreSDK_vc10_v1-8-0\boost\lib;C:\Ogre\OgreSDK_vc10_v1-8-1\lib\debug;C:\Ogre\OgreSDK_vc10_v1-8-1\boost\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>G:\OGRE\OgreSDK_vc10_v1-8-0\include;G:\OGRE\OgreSDK_vc10_v1-8-0\boost;C:\Ogre\OgreSDK_vc10_v1-8-1\include;C:\Ogre\OgreSDK_vc10_v1-8-1\boost;$(IncludePath)</IncludePath>
     <OutDir>.\bin\Debug\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
