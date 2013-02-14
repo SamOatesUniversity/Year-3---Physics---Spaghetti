@@ -50,6 +50,12 @@ public:
 									m_position = position;
 								}
 
+								// Get world transform
+	Ogre::Matrix4				GetTransform() const
+								{
+									return m_xform;
+								}
+
 								//! Get the position of the bounding box
 	Ogre::Vector3				GetPosition() const
 								{

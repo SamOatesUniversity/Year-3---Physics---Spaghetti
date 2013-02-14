@@ -57,3 +57,13 @@ collision:sphere
 mass:1
 force:0,0,0
 torque:0,0,0
+
+<dynamic-cube-4>
+mesh:cube.mesh
+scale:1,1,1
+position:450,800,0
+rotation:0,45,0
+collision:box
+mass:1
+force:0,0,0
+torque:0,0,0
