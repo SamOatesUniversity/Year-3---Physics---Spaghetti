@@ -162,7 +162,7 @@ void CSpaghettiRigidBody::HandleCollision(
 	if (collisions.empty())
 		return;
 
-	static const float restitution = 0.75f;
+	static const float restitution = 0.5f;
 	float sumOfMass = 0.0f;
 	Ogre::Vector3 relativeVeclocity = Ogre::Vector3::ZERO;
 
@@ -189,19 +189,19 @@ void CSpaghettiRigidBody::HandleCollision(
 		float rvDn = relativeVeclocity.dotProduct(collisionNormal);
 		Ogre::Vector3 impulseLinear = (collisionNormal * -(1 + restitution) * rvDn) / sumOfMass;
 
-		Ogre::Vector3 angularCollision = GetVelocity() * inverseMassBodyOne;
+		//Ogre::Vector3 angularCollision = GetVelocity() * inverseMassBodyOne;
 
 		SetVelocity(GetVelocity() + (impulseLinear * inverseMassBodyOne));
-		SetPosition(GetPosition() + ((GetVelocity() + impulseLinear.crossProduct(collisionNormal) / deltaTime)));
+		//SetPosition(GetPosition() + ((GetVelocity() + impulseLinear.crossProduct(collisionNormal) / deltaTime)));
 
-		AddTorqueAtPoint(angularCollision, collisionPoint);
+		//AddTorqueAtPoint(angularCollision, collisionPoint);
 
 		if (!otherRigidBody->IsStatic())
 		{
 			otherRigidBody->SetVelocity(otherRigidBody->GetVelocity() - (impulseLinear * inverseMassBodyTwo));
-			otherRigidBody->SetPosition(otherRigidBody->GetPosition() - ((otherRigidBody->GetVelocity() + impulseLinear.crossProduct(collisionNormal)) * deltaTime));
+			//otherRigidBody->SetPosition(otherRigidBody->GetPosition() - ((otherRigidBody->GetVelocity() + impulseLinear.crossProduct(collisionNormal)) * deltaTime));
 
-			otherRigidBody->AddTorqueAtPoint(-angularCollision, collisionPoint);
+			//otherRigidBody->AddTorqueAtPoint(-angularCollision, collisionPoint);
 		}
 	}
 
