@@ -122,9 +122,9 @@ void CSpaghettiRigidBody::AddTorqueAtPoint(
 {
 	// Convert to coordinates relative to center of mass.
 	Ogre::Vector3 pt = point;
-	pt = pt - m_position;
+	pt = m_position - pt;
 
-	m_torque = m_torque + (pt.crossProduct(force));
+	m_angularVelocity = m_angularVelocity + (pt.crossProduct(force) * m_inertiaTensorInverse);
 }
 
 void CSpaghettiRigidBody::SetMass( const float mass )
@@ -147,7 +147,8 @@ void CSpaghettiRigidBody::SetRotation( Ogre::Vector3 rotation )
 
 void CSpaghettiRigidBody::HandleCollision( 
 		CSpaghettiWorld *world,					/*!< The world we are moving in */ 
-		CSpaghettiRigidBody *otherRigidBody		/*!< The other rigid body to compare against */ 
+		CSpaghettiRigidBody *otherRigidBody,	/*!< The other rigid body to compare against */ 
+		const float deltaTime
 	)
 {
 	std::vector<CCollision> collisions;
@@ -161,45 +162,47 @@ void CSpaghettiRigidBody::HandleCollision(
 	if (collisions.empty())
 		return;
 
-	static const float e = 1.9f;
+	static const float restitution = 0.75f;
+	float sumOfMass = 0.0f;
+	Ogre::Vector3 relativeVeclocity = Ogre::Vector3::ZERO;
 
-	const float coe = -(1 + e);
-	Ogre::Vector3 relavtiveVelocity = (GetVelocity() - otherRigidBody->GetVelocity()) + (GetAngularVelocity() - otherRigidBody->GetAngularVelocity());
-	const float invMassOne = 1.0f / GetMass();
-	const float invMassTwo = 1.0f / otherRigidBody->GetMass();
-	const float sumInvMass = invMassOne + invMassTwo;
-		
-	const unsigned int noofCollisionPoints = collisions.size();
-	for (unsigned int collisionPointIndex = 0; collisionPointIndex < noofCollisionPoints; ++collisionPointIndex)
+	const float inverseMassBodyOne = 1.0f / GetMass();
+	const float inverseMassBodyTwo = 1.0f / otherRigidBody->GetMass();
+
+	if (otherRigidBody->IsStatic())
 	{
-		Ogre::Vector3 collisionNormal = collisions[collisionPointIndex].collisionNormal;
-		Ogre::Vector3 collisionPoint = collisions[collisionPointIndex].collisionPoint;
-		
-		Ogre::Vector3 r1 = GetPosition() - collisionPoint;
-		Ogre::Vector3 r2 = otherRigidBody->GetPosition() - collisionPoint;
+		sumOfMass = inverseMassBodyOne;
+		relativeVeclocity = GetVelocity();
+	}
+	else
+	{
+		sumOfMass = inverseMassBodyOne + inverseMassBodyTwo;
+		relativeVeclocity = GetVelocity() - otherRigidBody->GetVelocity();
+	}
 
-		const float velocityDotNormal = relavtiveVelocity.dotProduct(collisionNormal);
-		const float angVelocityDotNormal = relavtiveVelocity.dotProduct(collisionNormal);
+	unsigned int noofCollision = collisions.size();
+	for (unsigned int collisionIndex = 0; collisionIndex < noofCollision; ++collisionIndex)
+	{
+		Ogre::Vector3 collisionNormal = collisions[collisionIndex].collisionNormal;
+		Ogre::Vector3 collisionPoint = collisions[collisionIndex].collisionPoint;
 
-		Ogre::Vector3 invBodyOneCrossR1 = (r1.crossProduct(collisionNormal) * GetInverseInertia()).crossProduct(r1);
-		Ogre::Vector3 invBodytwoCrossR2 = (r2.crossProduct(collisionNormal) * otherRigidBody->GetInverseInertia()).crossProduct(r2);
+		float rvDn = relativeVeclocity.dotProduct(collisionNormal);
+		Ogre::Vector3 impulseLinear = (collisionNormal * -(1 + restitution) * rvDn) / sumOfMass;
 
-		const float linearImpulse = (coe * velocityDotNormal) / sumInvMass;
-		const float angularImpulse = coe * angVelocityDotNormal * (collisionNormal.dotProduct(invBodyOneCrossR1) + collisionNormal.dotProduct(invBodytwoCrossR2));
+		Ogre::Vector3 angularCollision = GetVelocity() * inverseMassBodyOne;
 
-		Ogre::Vector3 bodyOneLinearImpule = (linearImpulse * collisionNormal) / GetMass();
-		Ogre::Vector3 bodyOneAngularImpule = r1.crossProduct(angularImpulse * collisionNormal) * GetInverseInertia();
+		SetVelocity(GetVelocity() + (impulseLinear * inverseMassBodyOne));
+		SetPosition(GetPosition() + ((GetVelocity() + impulseLinear.crossProduct(collisionNormal) / deltaTime)));
 
-		Ogre::Vector3 bodyTwoLinearImpule = (-linearImpulse * collisionNormal) / otherRigidBody->GetMass();
-		Ogre::Vector3 bodyTwoAngularImpule = r2.crossProduct(-angularImpulse * collisionNormal) * otherRigidBody->GetInverseInertia();
+		AddTorqueAtPoint(angularCollision, collisionPoint);
 
-		SetVelocity(GetVelocity() + bodyOneLinearImpule);
-		AddTorqueAtPoint(bodyOneLinearImpule, collisionPoint);
-		SetAngularVelocity(bodyOneAngularImpule);
+		if (!otherRigidBody->IsStatic())
+		{
+			otherRigidBody->SetVelocity(otherRigidBody->GetVelocity() - (impulseLinear * inverseMassBodyTwo));
+			otherRigidBody->SetPosition(otherRigidBody->GetPosition() - ((otherRigidBody->GetVelocity() + impulseLinear.crossProduct(collisionNormal)) * deltaTime));
 
-		otherRigidBody->SetVelocity(otherRigidBody->GetVelocity() + bodyTwoLinearImpule);
-		otherRigidBody->AddTorqueAtPoint(bodyTwoLinearImpule, collisionPoint);
-		otherRigidBody->SetAngularVelocity(bodyTwoAngularImpule);
+			otherRigidBody->AddTorqueAtPoint(-angularCollision, collisionPoint);
+		}
 	}
 
 }

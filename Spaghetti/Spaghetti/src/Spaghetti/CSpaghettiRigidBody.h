@@ -201,7 +201,8 @@ public:
 											//! Handle collision against another rigid body
 	virtual void							HandleCollision(
 												CSpaghettiWorld	*world,								//!< The world we are moving in
-												CSpaghettiRigidBody *otherRigidBody					//!< The other rigid body to compare against
+												CSpaghettiRigidBody *otherRigidBody,				//!< The other rigid body to compare against
+												const float deltaTime								//!< Delta time
 											);
 
 											//! Set the mass of the rigid body

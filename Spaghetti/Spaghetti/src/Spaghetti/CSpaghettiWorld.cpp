@@ -71,16 +71,17 @@ void CSpaghettiWorld::Update(
 	for (bodyIt; bodyIt != end; bodyIt++)
 	{
 		CSpaghettiRigidBody *const body = (*bodyIt);
-		for (RigidBodyList::const_iterator otherBodyIt = bodyIt; otherBodyIt != end; otherBodyIt++)
+		if (body->IsStatic())
+			continue;
+
+
+		for (RigidBodyList::const_iterator otherBodyIt = begin; otherBodyIt != end; otherBodyIt++)
 		{
 			CSpaghettiRigidBody *const otherBody = (*otherBodyIt);
 			if (body == otherBody)
 				continue;
 
-			if (otherBody->IsStatic() && body->IsStatic())
-				continue;
-
-			body->HandleCollision(this, otherBody);
+			body->HandleCollision(this, otherBody, deltaTime);
 		}
 	}
 
