@@ -20,10 +20,4 @@ public:
 
 											//! Class destructor
 											~CSpaghettiRigidBodyBox();
-
-											//! Update the rigid body
-	virtual void							UpdateVelocity(
-												const CSpaghettiWorld *world,
-												const float deltaTime								//!< Delta time (The amount of time past since the last update)
-											);
 };
