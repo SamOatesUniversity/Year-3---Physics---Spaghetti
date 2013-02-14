@@ -196,7 +196,7 @@ public:
 	virtual void							UpdateVelocity(
 												const CSpaghettiWorld *world,						//!< The world the body belongs too
 												const float deltaTime								//!< Delta time (The amount of time past since the last update)
-											) = 0;
+											);
 
 											//! Handle collision against another rigid body
 	virtual void							HandleCollision(

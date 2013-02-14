@@ -163,6 +163,7 @@ const bool CSpaghettiBoundsBox::Intersects(
 	else if (other->GetType() == BoundsType::Sphere)
 	{
 		// sphere on box
+		return false;
 
 		CSpaghettiBoundsSphere *const otherSphere = static_cast<CSpaghettiBoundsSphere*>(other);
 
