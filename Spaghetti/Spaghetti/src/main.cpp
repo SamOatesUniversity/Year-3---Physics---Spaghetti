@@ -19,7 +19,7 @@ void RunOgreApplication()
 	// create a camera, setup viewport 
 	Ogre::String cameraName = "MainCamera";
 	Ogre::SceneNode *const cameraNode = application->CreateCamera(cameraName);
-	cameraNode->setPosition(Ogre::Vector3(0.0f, 200.0f, -2500.0f));
+	cameraNode->setPosition(Ogre::Vector3(0.0f, 4.0f, -2500.0f));
 	static_cast<Ogre::Camera*>(cameraNode->getAttachedObject("MainCamera"))->lookAt(0.0f, 4.0f, 0.0f);
 
 	//create O/I system for keyboard and mouse inputs

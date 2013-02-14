@@ -69,7 +69,9 @@ const bool CheckForAxisOverlap(
 		unsigned int id
 	)
 {
-	if (axis.squaredLength() < 0.0001f) return true;
+	if (axis.squaredLength() < 0.0001f) 
+		return true;
+
 	axis.normalise();
 
 	// Project the half-size of one onto axis
@@ -107,19 +109,52 @@ const bool CSpaghettiBoundsBox::Intersects(
 		// box on box
 
 		CSpaghettiBoundsBox *const otherBox = static_cast<CSpaghettiBoundsBox*>(other);
+
+		Ogre::Vector3 faces[6] = {
+			Ogre::Vector3(-1,	0,	 0),
+			Ogre::Vector3( 1,	0,	 0),
+			Ogre::Vector3( 0,  -1,	 0),
+			Ogre::Vector3( 0,   1,	 0),
+			Ogre::Vector3( 0,	0,	-1),
+			Ogre::Vector3( 0,	0,	 1)
+		};
 		
-		if (m_position.x + m_max.x < otherBox->GetPosition().x + otherBox->GetMin().x) return false;
-		if (m_position.x + m_min.x > otherBox->GetPosition().x + otherBox->GetMax().x) return false;
-		if (m_position.y + m_max.y < otherBox->GetPosition().y + otherBox->GetMin().y) return false;
-		if (m_position.y + m_min.y > otherBox->GetPosition().y + otherBox->GetMax().y) return false;
-		if (m_position.z + m_max.z < otherBox->GetPosition().z + otherBox->GetMin().z) return false;
-		if (m_position.z + m_min.z > otherBox->GetPosition().z + otherBox->GetMax().z) return false;
+		Ogre::Vector3 p1Max = m_position + m_max;
+		Ogre::Vector3 p1Min = m_position + m_min;
+
+		Ogre::Vector3 p2Max = otherBox->GetPosition() + otherBox->GetMax();
+		Ogre::Vector3 p2Min = otherBox->GetPosition() + otherBox->GetMin();
+
+		float distances[6] = {
+			(p2Max.x - p1Min.x), // distance of box 'b' to face on 'left' side of 'a'.
+			(p1Max.x - p2Min.x), // distance of box 'b' to face on 'right' side of 'a'.
+			(p2Max.y - p1Min.y), // distance of box 'b' to face on 'bottom' side of 'a'.
+			(p1Max.y - p2Min.y), // distance of box 'b' to face on 'top' side of 'a'.
+			(p2Max.z - p1Min.z), // distance of box 'b' to face on 'far' side of 'a'.
+			(p1Max.z - p2Min.z), // distance of box 'b' to face on 'near' side of 'a'.
+		};
+
+		Ogre::Vector3 collisionNormal = faces[0];
+		float closestDistance = distances[0];
+
+		for(int faceIndex = 0; faceIndex < 6; ++faceIndex)
+		{
+			// box does not intersect face. So boxes don't intersect at all.
+			if(distances[faceIndex] < 0.0f) 
+				return false;
+
+			if (distances[faceIndex] < closestDistance)
+			{
+				closestDistance = distances[faceIndex];
+				collisionNormal = faces[faceIndex];
+			}
+		}
 
 		CCollision newCollision;
 		newCollision.bodyOne = GetBody();
 		newCollision.bodyTwo = otherBox->GetBody();
-		newCollision.collisionNormal = Ogre::Vector3(0, -1, 0);
-		newCollision.collisionPoint = m_position - Ogre::Vector3(0, Height() * 0.5f, 0);
+		newCollision.collisionNormal = collisionNormal;
+		newCollision.collisionPoint = m_position + (collisionNormal * (GetBoxSize() * 0.5f));
 
 		collision.push_back(newCollision);
 
