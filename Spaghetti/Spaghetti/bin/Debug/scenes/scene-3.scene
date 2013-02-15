@@ -10,8 +10,8 @@ torque:0,0,0
 
 <static-see-saw-base>
 mesh:cube.mesh
-scale:1,2,1
-position:0,50,0
+scale:0.7,1.7,0.7
+position:0,55,0
 rotation:0,0,0
 collision:box
 mass:0
@@ -24,14 +24,14 @@ scale:10,0.5,2
 position:0,160,0
 rotation:0,0,0
 collision:box
-mass:1
+mass:10
 force:0,0,0
 torque:0,0,0
 
 <dynamic-sphere-1>
 mesh:sphere.mesh
 scale:0.5,0.5,0.5
-position:300,800,0
+position:400,300,0
 rotation:0,0,0
 collision:sphere
 mass:1
@@ -41,9 +41,9 @@ torque:0,0,0
 <dynamic-sphere-BIG>
 mesh:sphere.mesh
 scale:1.0,1.0,1.0
-position:-400,400,0
+position:-400,800,0
 rotation:0,0,0
 collision:sphere
-mass:6
+mass:2
 force:0,0,0
 torque:0,0,0

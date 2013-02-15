@@ -11,4 +11,5 @@ public:
 	CSpaghettiRigidBody	*bodyTwo;
 	Ogre::Vector3 collisionPoint;
 	Ogre::Vector3 collisionNormal;
+	float penetration;
 };

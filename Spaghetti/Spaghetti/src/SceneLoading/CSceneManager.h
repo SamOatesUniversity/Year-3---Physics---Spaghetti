@@ -9,8 +9,6 @@
 #include "..\OgreApplication.h"
 #include "..\Spaghetti\Spaghetti.h"
 
-#include "Debug\OgreText.h"
-
 class CSceneManager {
 
 private:

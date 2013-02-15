@@ -94,6 +94,65 @@ const bool CheckForAxisOverlap(
 	return true;
 }
 
+const bool TestAABB(
+		CSpaghettiBoundsBox *boxOne,
+		CSpaghettiBoundsBox *boxTwo,
+		std::vector<CCollision> &collision
+	)
+{
+	Ogre::Vector3 faces[6] = {
+		Ogre::Vector3(-1,	0,	 0),
+		Ogre::Vector3( 1,	0,	 0),
+		Ogre::Vector3( 0,  -1,	 0),
+		Ogre::Vector3( 0,   1,	 0),
+		Ogre::Vector3( 0,	0,	-1),
+		Ogre::Vector3( 0,	0,	 1)
+	};
+
+	Ogre::Vector3 p1Max = boxOne->GetPosition() + boxOne->GetMax();
+	Ogre::Vector3 p1Min = boxOne->GetPosition() + boxOne->GetMin();
+
+	Ogre::Vector3 p2Max = boxTwo->GetPosition() + boxTwo->GetMax();
+	Ogre::Vector3 p2Min = boxTwo->GetPosition() + boxTwo->GetMin();
+
+	static const int noofBoxFaces = 6;
+
+	float distances[noofBoxFaces] = {
+		(p2Max.x - p1Min.x),
+		(p1Max.x - p2Min.x),
+		(p2Max.y - p1Min.y),
+		(p1Max.y - p2Min.y),
+		(p2Max.z - p1Min.z), 
+		(p1Max.z - p2Min.z),
+	};
+
+	Ogre::Vector3 collisionNormal = faces[0];
+	float closestDistance = distances[0];
+
+	for(int faceIndex = 0; faceIndex < noofBoxFaces; ++faceIndex)
+	{
+		// box does not intersect face. So boxes don't intersect at all.
+		if(distances[faceIndex] < 0.0f) 
+			return false;
+
+		if (distances[faceIndex] < closestDistance)
+		{
+			closestDistance = distances[faceIndex];
+			collisionNormal = faces[faceIndex];
+		}
+	}
+
+	CCollision newCollision;
+	newCollision.bodyOne = boxOne->GetBody();
+	newCollision.bodyTwo = boxTwo->GetBody();
+	newCollision.collisionNormal = collisionNormal;
+	newCollision.collisionPoint = boxOne->GetPosition() + (collisionNormal * (boxOne->GetBoxSize() * 0.5f));
+	newCollision.penetration = closestDistance;
+	collision.push_back(newCollision);
+
+	return true;
+}
+
 /*
 *	\brief	Does this bounding box intersect with another
 */
@@ -107,75 +166,13 @@ const bool CSpaghettiBoundsBox::Intersects(
 	if (other->GetType() == BoundsType::Box)
 	{
 		// box on box
-
 		CSpaghettiBoundsBox *const otherBox = static_cast<CSpaghettiBoundsBox*>(other);
-
-		Ogre::Vector3 faces[6] = {
-			Ogre::Vector3(-1,	0,	 0),
-			Ogre::Vector3( 1,	0,	 0),
-			Ogre::Vector3( 0,  -1,	 0),
-			Ogre::Vector3( 0,   1,	 0),
-			Ogre::Vector3( 0,	0,	-1),
-			Ogre::Vector3( 0,	0,	 1)
-		};
-		
-		Ogre::Vector3 p1Max = m_position + m_max;
-		Ogre::Vector3 p1Min = m_position + m_min;
-
-		Ogre::Vector3 p2Max = otherBox->GetPosition() + otherBox->GetMax();
-		Ogre::Vector3 p2Min = otherBox->GetPosition() + otherBox->GetMin();
-
-		float distances[6] = {
-			(p2Max.x - p1Min.x), // distance of box 'b' to face on 'left' side of 'a'.
-			(p1Max.x - p2Min.x), // distance of box 'b' to face on 'right' side of 'a'.
-			(p2Max.y - p1Min.y), // distance of box 'b' to face on 'bottom' side of 'a'.
-			(p1Max.y - p2Min.y), // distance of box 'b' to face on 'top' side of 'a'.
-			(p2Max.z - p1Min.z), // distance of box 'b' to face on 'far' side of 'a'.
-			(p1Max.z - p2Min.z), // distance of box 'b' to face on 'near' side of 'a'.
-		};
-
-		Ogre::Vector3 collisionNormal = faces[0];
-		float closestDistance = distances[0];
-
-		for(int faceIndex = 0; faceIndex < 6; ++faceIndex)
-		{
-			// box does not intersect face. So boxes don't intersect at all.
-			if(distances[faceIndex] < 0.0f) 
-				return false;
-
-			if (distances[faceIndex] < closestDistance)
-			{
-				closestDistance = distances[faceIndex];
-				collisionNormal = faces[faceIndex];
-			}
-		}
-
-		CCollision newCollision;
-		newCollision.bodyOne = GetBody();
-		newCollision.bodyTwo = otherBox->GetBody();
-		newCollision.collisionNormal = collisionNormal;
-		newCollision.collisionPoint = m_position + (collisionNormal * (GetBoxSize() * 0.5f));
-
-		collision.push_back(newCollision);
-
-		return true;
+		return TestAABB(this, otherBox, collision);
 	}
 	else if (other->GetType() == BoundsType::Sphere)
 	{
-		// sphere on box
-		return false;
-
-		CSpaghettiBoundsSphere *const otherSphere = static_cast<CSpaghettiBoundsSphere*>(other);
-
-		// quick aabb test, for early out
-		if (m_position.x + m_max.x < otherSphere->GetPosition().x - otherSphere->GetRadius()) return false;
-		if (m_position.x + m_min.x > otherSphere->GetPosition().x + otherSphere->GetRadius()) return false;
-		if (m_position.y + m_max.y < otherSphere->GetPosition().y - otherSphere->GetRadius()) return false;
-		if (m_position.y + m_min.y > otherSphere->GetPosition().y + otherSphere->GetRadius()) return false;
-		if (m_position.z + m_max.z < otherSphere->GetPosition().z - otherSphere->GetRadius()) return false;
-		if (m_position.z + m_min.z > otherSphere->GetPosition().z + otherSphere->GetRadius()) return false;
-
-		// potentially a collision, check against object aligned box
+		// box on sphere
+		CSpaghettiBoundsSphere *otherSphere = static_cast<CSpaghettiBoundsSphere*>(other);
 
 		// transform the spheres center of mass into the boxes space
 		Ogre::Vector3 sphereCenter = otherSphere->GetPosition();
@@ -198,7 +195,7 @@ const bool CSpaghettiBoundsBox::Intersects(
 			sphereInBoxSpace.z * m_xform[2][2]			
 		);
 
-		float dist = 0;
+		float dist = 0.0f;
 		Ogre::Vector3 closestPoint = Ogre::Vector3::ZERO;
 		Ogre::Vector3 halfBox = GetBoxSize() * 0.5f;
 
@@ -220,21 +217,19 @@ const bool CSpaghettiBoundsBox::Intersects(
 
 		// Check we're in contact
 		dist = (closestPoint - sphereInBoxSpace).squaredLength();
-		if (dist > otherSphere->GetRadius() * otherSphere->GetRadius())
+		if (dist > otherSphere->GetRadius() * otherSphere->GetRadius()) 
 			return false;
 
-		// Calculate the collision points
+		// Compile the contact
 		Ogre::Vector3 closestPtWorld = m_xform * closestPoint;
-		Ogre::Vector3 collisionNormal = sphereCenter - closestPtWorld;
-		collisionNormal.normalise();
+		Ogre::Vector3 collisionNormal = (closestPtWorld - sphereCenter).normalisedCopy();
 
-		// add the collision to our collision list
 		CCollision newCollision;
 		newCollision.bodyOne = GetBody();
 		newCollision.bodyTwo = otherSphere->GetBody();
 		newCollision.collisionNormal = collisionNormal;
 		newCollision.collisionPoint = closestPtWorld;
-
+		newCollision.penetration = otherSphere->GetRadius() - sqrt(dist);
 		collision.push_back(newCollision);
 
 		return true;

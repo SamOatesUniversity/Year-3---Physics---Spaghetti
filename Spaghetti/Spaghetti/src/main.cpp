@@ -102,18 +102,25 @@ void RunOgreApplication()
 			g_RayScnQuery->setRay(mouseRay);
 
 			Ogre::RaySceneQueryResult& result = g_RayScnQuery->execute();
-			Ogre::RaySceneQueryResult::iterator iter = result.begin();
-			Ogre::RaySceneQueryResult::const_iterator pickEnd = result.end();
-
-			for (iter; iter != pickEnd; ++iter)
+			if (result.size() == 0 && ms.buttons == 2)
 			{
-				// don't select debug objects
-				if ((*iter).movable->getName() == "debug_object")
-					continue;
+				sceneManager->SetPickedNode(nullptr);
+			}
+			else
+			{
+				Ogre::RaySceneQueryResult::iterator iter = result.begin();
+				Ogre::RaySceneQueryResult::const_iterator pickEnd = result.end();
 
-				// if we have a valid scene node, tell the scene manager
-				if (Ogre::SceneNode *pickedNode = (*iter).movable->getParentSceneNode())
-					sceneManager->SetPickedNode(pickedNode);
+				for (iter; iter != pickEnd; ++iter)
+				{
+					// don't select debug objects
+					if ((*iter).movable->getName() == "debug_object")
+						continue;
+
+					// if we have a valid scene node, tell the scene manager
+					if (Ogre::SceneNode *pickedNode = (*iter).movable->getParentSceneNode())
+						sceneManager->SetPickedNode(pickedNode);
+				}
 			}
 		}
 
