@@ -40,6 +40,11 @@ public:
 									Ogre::Vector3 *corners						//!< A pointer to the positions of the corners
 								);
 
+	Ogre::Vector3				*GetCorners() 
+								{
+									return m_corner;
+								}
+
 								//! Set the position of the bounding box
 	virtual void				Transform(
 									Ogre::Vector3 position,					//!< The position of the bounds in world space

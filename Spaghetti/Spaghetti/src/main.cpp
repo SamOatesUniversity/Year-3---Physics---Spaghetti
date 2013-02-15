@@ -57,6 +57,8 @@ void RunOgreApplication()
 	// setup and create the current scene
 	sceneManager->SetupCurrentScene(application, spaghetti, world);
 
+	Ogre::RaySceneQuery* g_RayScnQuery = application->GetSceneManager()->createRayQuery(Ogre::Ray());
+
 	// Main game loop
 	while (!application->GetOgreWrapper().GetWindow()->isClosed())
 	{
@@ -92,6 +94,29 @@ void RunOgreApplication()
 		cameraNode->setPosition(cameraPosition);
 		static_cast<Ogre::Camera*>(cameraNode->getAttachedObject("MainCamera"))->lookAt(0.0f, 0.0f, 0.0f);
 
+		OIS::MouseState ms = mouse->getMouseState();
+
+		if (ms.buttons != 0)
+		{
+			Ogre::Ray mouseRay = static_cast<Ogre::Camera*>(cameraNode->getAttachedObject("MainCamera"))->getCameraToViewportRay((float)ms.X.abs / (float)ms.width, (float)ms.Y.abs / (float)ms.height);
+			g_RayScnQuery->setRay(mouseRay);
+
+			Ogre::RaySceneQueryResult& result = g_RayScnQuery->execute();
+			Ogre::RaySceneQueryResult::iterator iter = result.begin();
+			Ogre::RaySceneQueryResult::const_iterator pickEnd = result.end();
+
+			for (iter; iter != pickEnd; ++iter)
+			{
+				// don't select debug objects
+				if ((*iter).movable->getName() == "debug_object")
+					continue;
+
+				// if we have a valid scene node, tell the scene manager
+				if (Ogre::SceneNode *pickedNode = (*iter).movable->getParentSceneNode())
+					sceneManager->SetPickedNode(pickedNode);
+			}
+		}
+
 		// toggle the worlds pause state
 		if (keyboard->isKeyDown(OIS::KC_RETURN))
 		{
@@ -114,6 +139,15 @@ void RunOgreApplication()
 		// update all our physics
 		world->Update(deltatTime);
 
+		std::vector<CCollision> collisions = world->GetLastUpdateCollisions();
+		for (unsigned int collisionIndex = 0; collisionIndex < collisions.size(); ++collisionIndex)
+		{
+			Ogre::Vector3 collisionPoint = collisions[collisionIndex].collisionPoint;
+			Ogre::Vector3 collisionNormal = collisions[collisionIndex].collisionNormal;
+
+			DebugDrawer::getSingleton().drawLine(collisionPoint, collisionPoint + (collisionNormal * 500.0f), Ogre::ColourValue::White);
+		}		
+
 		// update the current scene
 		sceneManager->Update();
 
@@ -122,6 +156,8 @@ void RunOgreApplication()
 		if (!application->GetOgreWrapper().GetWindow()->isClosed())
 			application->Run(false, false);
 	}
+
+	application->GetSceneManager()->destroyQuery(g_RayScnQuery);
 
 	// clean up
 	delete sceneManager;

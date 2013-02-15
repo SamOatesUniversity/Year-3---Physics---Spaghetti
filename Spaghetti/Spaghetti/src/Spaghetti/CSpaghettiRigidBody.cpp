@@ -149,7 +149,8 @@ void CSpaghettiRigidBody::SetRotation( Ogre::Vector3 rotation )
 void CSpaghettiRigidBody::HandleCollision( 
 		CSpaghettiWorld *world,					/*!< The world we are moving in */ 
 		CSpaghettiRigidBody *otherRigidBody,	/*!< The other rigid body to compare against */ 
-		const float deltaTime
+		const float deltaTime,					/*!<  */
+		std::vector<CCollision> &worldCollisionList
 	)
 {
 	std::vector<CCollision> collisions;
@@ -163,7 +164,7 @@ void CSpaghettiRigidBody::HandleCollision(
 	if (collisions.empty())
 		return;
 
-	static const float restitution = 0.6f;
+	static const float restitution = 0.95f;
 	float sumOfMass = 0.0f;
 	Ogre::Vector3 relativeVeclocity = Ogre::Vector3::ZERO;
 
@@ -184,6 +185,8 @@ void CSpaghettiRigidBody::HandleCollision(
 	unsigned int noofCollision = collisions.size();
 	for (unsigned int collisionIndex = 0; collisionIndex < noofCollision; ++collisionIndex)
 	{
+		worldCollisionList.push_back(collisions[collisionIndex]);
+
 		Ogre::Vector3 collisionNormal = collisions[collisionIndex].collisionNormal;
 		Ogre::Vector3 collisionPoint = collisions[collisionIndex].collisionPoint;
 
@@ -196,7 +199,7 @@ void CSpaghettiRigidBody::HandleCollision(
 		Ogre::Vector3 collisionTangent = collisionNormal.crossProduct(relativeVeclocity.normalisedCopy());
 		collisionTangent = collisionTangent.crossProduct(collisionNormal);
 
-		static const float mu = 0.2f;
+		static const float mu = 0.1f;
 		Ogre::Vector3 frictionForce = ((collisionTangent * impulseLinear.length()) * mu) / deltaTime;
 		AddTorqueAtPoint(frictionForce + (impulseLinear / deltaTime), collisionPoint);
 
