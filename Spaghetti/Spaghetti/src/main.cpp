@@ -1,4 +1,6 @@
 #include "main.h"
+
+#include "Camera.h"
 #include "SceneLoading/CSceneManager.h"
 
 /*
@@ -21,6 +23,8 @@ void RunOgreApplication()
 	Ogre::SceneNode *const cameraNode = application->CreateCamera(cameraName);
 	cameraNode->setPosition(Ogre::Vector3(0.0f, 4.0f, -2500.0f));
 	static_cast<Ogre::Camera*>(cameraNode->getAttachedObject("MainCamera"))->lookAt(0.0f, 4.0f, 0.0f);
+
+	CCamera *const camera = new CCamera(cameraNode, static_cast<Ogre::Camera*>(cameraNode->getAttachedObject("MainCamera")));
 
 	//create O/I system for keyboard and mouse inputs
 	application->CreateIOS();
@@ -78,21 +82,7 @@ void RunOgreApplication()
 		mouse->capture();
 
 		// update the camera position
-		cameraNode->setPosition(Ogre::Vector3(300.0f, 50.0f, 200.0f));
-		static_cast<Ogre::Camera*>(cameraNode->getAttachedObject("MainCamera"))->lookAt(0.0f, 0.0f, 0.0f);
-		
-		static const float cameraSpeed = 10.0f;
-		if (keyboard->isKeyDown(OIS::KC_A))
-			cameraPosition.x-=cameraSpeed;
-		else if (keyboard->isKeyDown(OIS::KC_D))
-			cameraPosition.x+=cameraSpeed;
-		else if (keyboard->isKeyDown(OIS::KC_W))
-			cameraPosition.z-=cameraSpeed;
-		else if (keyboard->isKeyDown(OIS::KC_S))
-			cameraPosition.z+=cameraSpeed;
-
-		cameraNode->setPosition(cameraPosition);
-		static_cast<Ogre::Camera*>(cameraNode->getAttachedObject("MainCamera"))->lookAt(0.0f, 0.0f, 0.0f);
+		camera->Update(keyboard, mouse);
 
 		OIS::MouseState ms = mouse->getMouseState();
 
@@ -167,6 +157,7 @@ void RunOgreApplication()
 	application->GetSceneManager()->destroyQuery(g_RayScnQuery);
 
 	// clean up
+	delete camera;
 	delete sceneManager;
 	delete application;
 	delete spaghetti;

@@ -112,6 +112,9 @@
     <ClInclude Include="src\SceneLoading\Debug\DebugDrawer.h">
       <Filter>Header Files\SceneLoading\Debugging</Filter>
     </ClInclude>
+    <ClInclude Include="src\Camera.h">
+      <Filter>Header Files\OgreApplication</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -158,6 +161,9 @@
     </ClCompile>
     <ClCompile Include="src\SceneLoading\Debug\DebugDrawer.cpp">
       <Filter>Source Files\SceneLoading\Debugging</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Camera.cpp">
+      <Filter>Source Files\OgreApplication</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
