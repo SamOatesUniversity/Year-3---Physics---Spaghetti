@@ -13,7 +13,7 @@ mesh:cube.mesh
 scale:1,1,1
 position:100,200,0
 rotation:0,0,0
-collision:sphere
+collision:box
 mass:1
 force:0,0,0
 torque:0,0,0
@@ -23,7 +23,7 @@ mesh:cube.mesh
 scale:1,1,1
 position:-100,400,0
 rotation:0,0,0
-collision:sphere
+collision:box
 mass:1
 force:0,0,0
 torque:0,0,0
@@ -33,7 +33,7 @@ mesh:cube.mesh
 scale:1,1,1
 position:0,600,0
 rotation:0,0,0
-collision:sphere
+collision:box
 mass:1
 force:0,0,0
 torque:0,0,0
