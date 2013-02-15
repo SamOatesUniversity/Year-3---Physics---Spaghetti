@@ -6,6 +6,7 @@
 CSceneManager::CSceneManager()
 {
 	m_currentScene = 0;
+	m_selectedNode = nullptr;
 }
 
 /*
@@ -243,6 +244,26 @@ void CSceneManager::Update()
 		Ogre::SceneNode *const node = static_cast<Ogre::SceneNode*>(body->GetRenderObject());
 		Ogre::Vector3 position = body->GetPosition();
 		Ogre::Quaternion orientation = body->GetOrientation();
+
+		if (m_selectedNode == body->GetRenderObject())
+		{
+			if (body->GetBounds()->GetType() == BoundsType::Sphere)
+			{
+				CSpaghettiBoundsSphere *sphere = static_cast<CSpaghettiBoundsSphere*>(body->GetBounds());
+				DebugDrawer::getSingleton().drawSphere(sphere->GetPosition(), sphere->GetRadius(), Ogre::ColourValue::Red, false);
+			}
+			else if (body->GetBounds()->GetType() == BoundsType::Box)
+			{
+				CSpaghettiBoundsBox *box = static_cast<CSpaghettiBoundsBox*>(body->GetBounds());
+				Ogre::Vector3 boxCorners[NOOF_BOUNDINGBOX_CORNERS];
+				for (int cornerIndex = 0; cornerIndex < NOOF_BOUNDINGBOX_CORNERS; ++cornerIndex)
+				{
+					boxCorners[cornerIndex] = body->GetPosition() + box->GetCorner(cornerIndex);
+				}
+
+				DebugDrawer::getSingleton().drawCuboid(boxCorners, Ogre::ColourValue::Red, false);
+			}
+		}
 
 		node->setPosition(position);
 		node->setOrientation(orientation);

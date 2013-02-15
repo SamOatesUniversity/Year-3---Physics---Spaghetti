@@ -7,6 +7,7 @@ CSpaghettiWorld::CSpaghettiWorld()
 {
 	m_gravity = Ogre::Vector3(0.0f, -9.81f, 0.0f);
 	m_flags.allflags = 0;
+	m_collision.clear();
 }
 
 /*
@@ -60,6 +61,8 @@ void CSpaghettiWorld::Update(
 		const float deltaTime						//!< Delta time (The amount of time past since the last update)
 	)
 {
+	m_collision.clear();
+
 	if (m_flags.isPaused)
 		return;
 
@@ -81,7 +84,7 @@ void CSpaghettiWorld::Update(
 			if (body == otherBody)
 				continue;
 
-			body->HandleCollision(this, otherBody, deltaTime);
+			body->HandleCollision(this, otherBody, deltaTime, m_collision);
 		}
 	}
 

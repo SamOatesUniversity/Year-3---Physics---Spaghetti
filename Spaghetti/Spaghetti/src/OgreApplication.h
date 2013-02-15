@@ -18,6 +18,8 @@
 #include "OGRE/OgreMeshManager.h"
 #include "OIS/Ois.h"
 
+#include "SceneLoading\Debug\DebugDrawer.h"
+
 // My Ogre wrapper
 #include "OgreWrapper.h"
 

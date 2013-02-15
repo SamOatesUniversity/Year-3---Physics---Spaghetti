@@ -25,6 +25,8 @@ private:
 	RigidBodyList							m_rigidBodies;									//!< A list of rigid bodies contained within this world
 	WorldFlags								m_flags;										//!< World related flags
 
+	std::vector<CCollision>					m_collision;
+
 public:
 											//! Class constructor
 											CSpaghettiWorld();
@@ -69,4 +71,10 @@ public:
 	
 											//! Release all bodies in the world and reset values
 	void									Release();
+
+											//!
+	std::vector<CCollision>					GetLastUpdateCollisions()
+											{
+												return m_collision;
+											}
 };

@@ -17,6 +17,7 @@ private:
 	unsigned int							m_currentScene;							//!< The index of the current scene
 
 	std::vector<CSpaghettiRigidBody*>		m_body;									//!< A list of current rigid bodies
+	Ogre::SceneNode*						m_selectedNode;							//!< The current selected node of the body in the scene
 
 private:
 											//! Create a node from a given node map
@@ -69,4 +70,11 @@ public:
 												CSpaghetti *const spaghetti, 
 												CSpaghettiWorld *const world 
 											);
+
+	void									SetPickedNode(
+												Ogre::SceneNode *node
+											) 
+											{
+												m_selectedNode = node;
+											}
 };

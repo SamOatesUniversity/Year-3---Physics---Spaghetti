@@ -29,6 +29,8 @@ void OgreApplication::Release()
 	m_scene->destroyAllManualObjects();
 	m_scene->destroyAllEntities();
 	m_rootSceneNode->removeAndDestroyAllChildren();   
+
+	delete DebugDrawer::getSingletonPtr();
 }
 
 /*
@@ -37,7 +39,7 @@ void OgreApplication::Release()
 const bool OgreApplication::Initialize()
 {
 	
-	if(!m_ogreWrapper.Initialize())
+	if (!m_ogreWrapper.Initialize())
 	{
 		std::cout << __FILE__ << " (" << __LINE__ << ") - " << "Failed to initialise the application" << std::endl; 
 		return false;
@@ -47,6 +49,8 @@ const bool OgreApplication::Initialize()
 	Ogre::RenderWindow *const window = m_ogreWrapper.GetWindow();
 	m_scene = root->createSceneManager(Ogre::ST_GENERIC, "SceneManager");
 	m_rootSceneNode = m_scene->getRootSceneNode();
+
+	new DebugDrawer(m_scene, 0.5f);
 
 	return true;
 }
@@ -194,12 +198,16 @@ void OgreApplication::Run(
 		const bool synchroOption					//!< 
 	)
 {
+	DebugDrawer::getSingleton().build();
+
 	Ogre::RenderWindow *const window = m_ogreWrapper.GetWindow();
 	Ogre::Root *const root = m_ogreWrapper.GetRoot();
 
 	window->update(updateOption);
 	window->swapBuffers(synchroOption);
 	root->renderOneFrame();
+
+	DebugDrawer::getSingleton().clear();
 }
 
 /*
