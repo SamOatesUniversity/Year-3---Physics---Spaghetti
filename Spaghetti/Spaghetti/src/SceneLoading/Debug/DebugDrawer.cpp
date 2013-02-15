@@ -264,7 +264,7 @@ void DebugDrawer::setIcoSphereRecursionLevel(int recursionLevel)
  
 void DebugDrawer::shutdown()
 {
-    sceneManager->destroySceneNode("debug_object");
+    if (sceneManager->getSceneNode("debug_object")) sceneManager->destroySceneNode("debug_object");
     sceneManager->destroyManualObject(manualObject);
 }
  

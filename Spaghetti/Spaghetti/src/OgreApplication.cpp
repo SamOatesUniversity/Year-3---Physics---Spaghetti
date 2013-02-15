@@ -24,13 +24,13 @@ OgreApplication::~OgreApplication(void)
 */
 void OgreApplication::Release()
 {
+	delete DebugDrawer::getSingletonPtr();
+
 	m_scene->destroyAllCameras();
 	m_scene->destroyAllLights();
 	m_scene->destroyAllManualObjects();
 	m_scene->destroyAllEntities();
 	m_rootSceneNode->removeAndDestroyAllChildren();   
-
-	delete DebugDrawer::getSingletonPtr();
 }
 
 /*
