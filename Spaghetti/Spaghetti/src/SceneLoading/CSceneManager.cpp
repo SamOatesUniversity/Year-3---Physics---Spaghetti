@@ -267,13 +267,13 @@ void CSceneManager::Update()
 
 				Ogre::Vector3 aaBoxCorners[NOOF_BOUNDINGBOX_CORNERS];
 				aaBoxCorners[0] = body->GetPosition() + Ogre::Vector3(min.x, min.y, min.z);
-				aaBoxCorners[1] = body->GetPosition() + Ogre::Vector3(max.x, min.y, min.z);
-				aaBoxCorners[2] = body->GetPosition() + Ogre::Vector3(min.x, max.y, min.z);
-				aaBoxCorners[3] = body->GetPosition() + Ogre::Vector3(min.x, min.y, max.z);
-				aaBoxCorners[4] = body->GetPosition() + Ogre::Vector3(max.x, max.y, min.z);
-				aaBoxCorners[5] = body->GetPosition() + Ogre::Vector3(max.x, min.y, max.z);
-				aaBoxCorners[6] = body->GetPosition() + Ogre::Vector3(min.x, max.y, max.z);
-				aaBoxCorners[7] = body->GetPosition() + Ogre::Vector3(max.x, max.y, max.z);
+				aaBoxCorners[1] = body->GetPosition() + Ogre::Vector3(min.x, max.y, min.z);
+				aaBoxCorners[2] = body->GetPosition() + Ogre::Vector3(max.x, max.y, min.z);
+				aaBoxCorners[3] = body->GetPosition() + Ogre::Vector3(max.x, min.y, min.z);
+				aaBoxCorners[4] = body->GetPosition() + Ogre::Vector3(max.x, max.y, max.z);
+				aaBoxCorners[5] = body->GetPosition() + Ogre::Vector3(min.x, max.y, max.z);
+				aaBoxCorners[6] = body->GetPosition() + Ogre::Vector3(min.x, min.y, max.z);
+				aaBoxCorners[7] = body->GetPosition() + Ogre::Vector3(max.x, min.y, max.z);
 
 				DebugDrawer::getSingleton().drawCuboid(boxCorners, Ogre::ColourValue::Red, false);
 				DebugDrawer::getSingleton().drawCuboid(aaBoxCorners, Ogre::ColourValue::Green, false);

@@ -76,7 +76,9 @@ void CSpaghettiRigidBody::SetVelocity(
 */
 void CSpaghettiRigidBody::UpdateInertiaTensor()
 {
-	m_inertiaTensorInverse = m_rotation * (m_inertiaTensorBodyInverse * m_rotation.Transpose());
+	Ogre::Matrix3 transposeRotation = m_rotation.Transpose();
+	Ogre::Matrix3 invTransverse = (m_inertiaTensorBodyInverse * transposeRotation);
+	m_inertiaTensorInverse = m_rotation * invTransverse;
 }
 
 /*
@@ -147,24 +149,24 @@ void CSpaghettiRigidBody::SetRotation( Ogre::Vector3 rotation )
 }
 
 void CSpaghettiRigidBody::HandleCollision( 
-		CSpaghettiWorld *world,					/*!< The world we are moving in */ 
-		CSpaghettiRigidBody *otherRigidBody,	/*!< The other rigid body to compare against */ 
-		const float deltaTime,					/*!<  */
-		std::vector<CCollision> &worldCollisionList
+		CSpaghettiWorld *world,							/*!< The world we are moving in */ 
+		CSpaghettiRigidBody *otherRigidBody,			/*!< The other rigid body to compare against */ 
+		const float deltaTime,							/*!< Delta time */
+		std::vector<CCollision> &worldCollisionList		
 	)
 {
 	std::vector<CCollision> collisions;
 	if (!m_bounds->Intersects(otherRigidBody->GetBounds(), collisions))
 		return;
 
-	SetPosition(GetLastPosition());
-	otherRigidBody->SetPosition(otherRigidBody->GetLastPosition());
+	//SetPosition(GetLastPosition());
+	//otherRigidBody->SetPosition(otherRigidBody->GetLastPosition());
 
 	// no collisions stored, but there was a bound overlap
 	if (collisions.empty())
 		return;
 
-	static const float restitution = 0.95f;
+	static const float restitution = 0.9f; 
 	float sumOfMass = 0.0f;
 	Ogre::Vector3 relativeVeclocity = Ogre::Vector3::ZERO;
 
@@ -194,18 +196,21 @@ void CSpaghettiRigidBody::HandleCollision(
 		Ogre::Vector3 impulseLinear = (collisionNormal * -(1 + restitution) * rvDn) / sumOfMass;
 
 		SetVelocity(GetVelocity() + (impulseLinear * inverseMassBodyOne));
+		SetPosition(GetPosition() + (-collisionNormal * collisions[collisionIndex].penetration));
 
 		//angular
 		Ogre::Vector3 collisionTangent = collisionNormal.crossProduct(relativeVeclocity.normalisedCopy());
 		collisionTangent = collisionTangent.crossProduct(collisionNormal);
 
-		static const float mu = 0.1f;
+		static const float mu = 0.2f;
 		Ogre::Vector3 frictionForce = ((collisionTangent * impulseLinear.length()) * mu) / deltaTime;
 		AddTorqueAtPoint(frictionForce + (impulseLinear / deltaTime), collisionPoint);
 
 		if (!otherRigidBody->IsStatic())
 		{
 			otherRigidBody->SetVelocity(otherRigidBody->GetVelocity() - (impulseLinear * inverseMassBodyTwo));
+			otherRigidBody->SetPosition(otherRigidBody->GetPosition() + (collisionNormal * collisions[collisionIndex].penetration));
+
 			otherRigidBody->AddTorqueAtPoint(-(frictionForce + (impulseLinear / deltaTime)), collisionPoint);
 		}
 	}
@@ -236,11 +241,11 @@ void CSpaghettiRigidBody::UpdateVelocity(
 
 	// update angular momentum
 	m_angularMomentum = m_angularMomentum + (m_torque * deltaTime);
-	m_angularMomentum *= 0.99f;
+	m_angularMomentum *= 0.95f;
 
 	UpdateInertiaTensor();
 	UpdateAngularVelocity();
-	m_angularVelocity *= 0.99f;
+	m_angularVelocity *= 0.95f;
 
 	// construct the skew matrix
 	Ogre::Matrix3 skewMatrix;
@@ -263,6 +268,13 @@ void CSpaghettiRigidBody::UpdateVelocity(
 	m_quaternion.FromRotationMatrix(m_rotation);
 	m_quaternion.normalise();
 
+	// stop it crashing...
+	if (m_quaternion.isNaN())
+	{
+		m_quaternion = Ogre::Quaternion::IDENTITY;
+		m_rotation = Ogre::Matrix3::IDENTITY;
+	}
+	
 	// transform the bounding box data
 	m_bounds->Transform(m_position, m_quaternion);
 
