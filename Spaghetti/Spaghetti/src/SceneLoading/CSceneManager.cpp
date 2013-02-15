@@ -247,6 +247,7 @@ void CSceneManager::Update()
 
 		if (m_selectedNode == body->GetRenderObject())
 		{
+			// draw bounds
 			if (body->GetBounds()->GetType() == BoundsType::Sphere)
 			{
 				CSpaghettiBoundsSphere *sphere = static_cast<CSpaghettiBoundsSphere*>(body->GetBounds());
@@ -261,7 +262,21 @@ void CSceneManager::Update()
 					boxCorners[cornerIndex] = body->GetPosition() + box->GetCorner(cornerIndex);
 				}
 
+				Ogre::Vector3 min = box->GetMin();
+				Ogre::Vector3 max = box->GetMax();
+
+				Ogre::Vector3 aaBoxCorners[NOOF_BOUNDINGBOX_CORNERS];
+				aaBoxCorners[0] = body->GetPosition() + Ogre::Vector3(min.x, min.y, min.z);
+				aaBoxCorners[1] = body->GetPosition() + Ogre::Vector3(max.x, min.y, min.z);
+				aaBoxCorners[2] = body->GetPosition() + Ogre::Vector3(min.x, max.y, min.z);
+				aaBoxCorners[3] = body->GetPosition() + Ogre::Vector3(min.x, min.y, max.z);
+				aaBoxCorners[4] = body->GetPosition() + Ogre::Vector3(max.x, max.y, min.z);
+				aaBoxCorners[5] = body->GetPosition() + Ogre::Vector3(max.x, min.y, max.z);
+				aaBoxCorners[6] = body->GetPosition() + Ogre::Vector3(min.x, max.y, max.z);
+				aaBoxCorners[7] = body->GetPosition() + Ogre::Vector3(max.x, max.y, max.z);
+
 				DebugDrawer::getSingleton().drawCuboid(boxCorners, Ogre::ColourValue::Red, false);
+				DebugDrawer::getSingleton().drawCuboid(aaBoxCorners, Ogre::ColourValue::Green, false);
 			}
 		}
 
