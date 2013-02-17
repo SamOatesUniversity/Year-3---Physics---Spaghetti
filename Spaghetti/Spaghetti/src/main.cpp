@@ -75,7 +75,7 @@ void RunOgreApplication()
 		if (deltatTime == 0)
 			continue;
 		
-		deltatTime = 0.02f;
+		deltatTime = deltatTime * 0.00001f;
 
 		// capture the mouse and keyboard
 		keyboard->capture();

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../../../SAM/SAM/SAM.h"
 #include "CCollision.h"
 
 #include <OGRE/Ogre.h>

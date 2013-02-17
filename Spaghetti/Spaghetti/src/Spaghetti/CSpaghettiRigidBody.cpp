@@ -159,9 +159,6 @@ void CSpaghettiRigidBody::HandleCollision(
 	if (!m_bounds->Intersects(otherRigidBody->GetBounds(), collisions))
 		return;
 
-	//SetPosition(GetLastPosition());
-	//otherRigidBody->SetPosition(otherRigidBody->GetLastPosition());
-
 	// no collisions stored, but there was a bound overlap
 	if (collisions.empty())
 		return;
@@ -202,7 +199,7 @@ void CSpaghettiRigidBody::HandleCollision(
 		Ogre::Vector3 collisionTangent = collisionNormal.crossProduct(relativeVeclocity.normalisedCopy());
 		collisionTangent = collisionTangent.crossProduct(collisionNormal);
 
-		static const float mu = 0.2f;
+		static const float mu = -0.2f;
 		Ogre::Vector3 frictionForce = ((collisionTangent * impulseLinear.length()) * mu) / deltaTime;
 		AddTorqueAtPoint(frictionForce + (impulseLinear / deltaTime), collisionPoint);
 
@@ -245,20 +242,19 @@ void CSpaghettiRigidBody::UpdateVelocity(
 
 	UpdateInertiaTensor();
 	UpdateAngularVelocity();
-	m_angularVelocity *= 0.95f;
 
 	// construct the skew matrix
 	Ogre::Matrix3 skewMatrix;
 	skewMatrix[0][0] = 0.0f;
-	skewMatrix[0][1] = -m_angularVelocity.z;
-	skewMatrix[0][2] = m_angularVelocity.y;
+	skewMatrix[0][1] = -m_angularVelocity.z * 0.17f;
+	skewMatrix[0][2] = m_angularVelocity.y * 0.17f;
 
-	skewMatrix[1][0] = m_angularVelocity.z;
+	skewMatrix[1][0] = m_angularVelocity.z * 0.17f;
 	skewMatrix[1][1] = 0.0f;
-	skewMatrix[1][2] = -m_angularVelocity.x;
+	skewMatrix[1][2] = -m_angularVelocity.x * 0.17f;
 
-	skewMatrix[2][0] = -m_angularVelocity.y;
-	skewMatrix[2][1] = m_angularVelocity.x;
+	skewMatrix[2][0] = -m_angularVelocity.y * 0.17f;
+	skewMatrix[2][1] = m_angularVelocity.x * 0.17f;
 	skewMatrix[2][2] = 0.0f;
 
 	// update rotation matrix

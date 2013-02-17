@@ -21,7 +21,7 @@ torque:0,0,0
 <dynamic-sphere-1>
 mesh:ogrehead.mesh
 scale:3.0,3.0,3.0
-position:400,1000,0
+position:400,450,0
 rotation:0,0,0
 collision:sphere
 mass:100

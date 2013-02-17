@@ -473,5 +473,5 @@ void CSpaghettiBoundsBox::Transform(
 		if (m_corner[cornerIndex].z > m_max.z) m_max.z = m_corner[cornerIndex].z;
 	}
 
-	m_boxSize = m_max - m_min;
+	//m_boxSize = m_max - m_min;
 }
