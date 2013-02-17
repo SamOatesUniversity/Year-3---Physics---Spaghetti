@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include "../../../SAM/SAM/SAM.h"
 #include "CSpaghettiWorld.h"
 #include "CSpaghettiBounds.h"
 
