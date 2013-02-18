@@ -133,9 +133,11 @@ void OgreApplication::CreateScene()
 	// Assign directories for meshes, and textures, and add to the resource group "Physics Simulation"
 	lRgMgr.addResourceLocation("../../media/meshes", "FileSystem", resourceGroupName, lIsRecursive);
 	lRgMgr.addResourceLocation("../../media/textures", "FileSystem", resourceGroupName, lIsRecursive);
+	lRgMgr.addResourceLocation("../../media/fonts", "FileSystem", resourceGroupName, lIsRecursive);
 
 	lRgMgr.addResourceLocation("media/meshes", "FileSystem", resourceGroupName, lIsRecursive);
 	lRgMgr.addResourceLocation("media/textures", "FileSystem", resourceGroupName, lIsRecursive);
+	lRgMgr.addResourceLocation("media/fonts", "FileSystem", resourceGroupName, lIsRecursive);
 
 	// The function 'initialiseResourceGroup' parses scripts if any in the locations.
 	lRgMgr.initialiseResourceGroup(resourceGroupName);

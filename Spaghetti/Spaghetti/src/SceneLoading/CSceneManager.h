@@ -11,6 +11,19 @@
 
 class CSceneManager {
 
+struct PanelInformation {
+	Ogre::TextAreaOverlayElement			*textArea;
+	std::string								name;
+	std::stringstream						content;
+
+	enum Enum {
+		WorldInformation,
+		SelectBodyInformation,
+		Help,
+		Noof
+	};
+};
+
 private:
 
 	std::vector<CScene*>					m_scene;								//!< A list of loaded scenes
@@ -18,6 +31,8 @@ private:
 
 	std::vector<CSpaghettiRigidBody*>		m_body;									//!< A list of current rigid bodies
 	Ogre::SceneNode*						m_selectedNode;							//!< The current selected node of the body in the scene
+
+	PanelInformation						m_infoPanel[PanelInformation::Noof];	//!< 
 
 private:
 											//! Create a node from a given node map
@@ -54,7 +69,9 @@ public:
 											);
 
 											//! Update all the nodes in the scene
-	void									Update();
+	void									Update(
+												CSpaghettiWorld *world
+											);
 
 											//! Set the current scene
 	void									SetCurrentScene(
@@ -77,4 +94,12 @@ public:
 											{
 												m_selectedNode = node;
 											}
+
+	void									UpdatePanelInformation(
+												CSpaghettiWorld *world
+											);
+
+	CSpaghettiRigidBody						*BodyFromScreneNode( 
+												Ogre::SceneNode	*node 
+											);
 };
