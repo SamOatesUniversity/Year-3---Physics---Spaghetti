@@ -133,6 +133,9 @@ void RunOgreApplication()
 			}
 		}
 
+		if (keyboard->isKeyDown(OIS::KC_ESCAPE))
+			break;
+
 		// update all our physics
 		world->Update(deltatTime);
 
@@ -146,7 +149,7 @@ void RunOgreApplication()
 		}		
 
 		// update the current scene
-		sceneManager->Update();
+		sceneManager->Update(world);
 
 		// update the application
 		Ogre::WindowEventUtilities::messagePump();

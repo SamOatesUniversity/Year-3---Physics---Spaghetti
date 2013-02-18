@@ -82,6 +82,53 @@ const int CSceneManager::LoadScenes(
 	}
 	while (FindNextFile(file, &fileData) != 0);
 
+	if (m_scene.size())
+	{
+		Ogre::OverlayManager& overlayManager = Ogre::OverlayManager::getSingleton();
+
+		// Create a panel
+		Ogre::OverlayContainer* panel = static_cast<Ogre::OverlayContainer*>(overlayManager.createOverlayElement("Panel", "FullScreenPanel"));
+		panel->setMetricsMode(Ogre::GMM_PIXELS);
+		panel->setPosition(0, 0);
+		panel->setDimensions(1.0, 1.0);
+
+		// Create an overlay, and add the panel
+		Ogre::Overlay* overlay = overlayManager.create("FullOverlay");
+		overlay->add2D(panel);
+
+		int yOffset = 10;
+		m_infoPanel[PanelInformation::WorldInformation].name = "World-Information";
+		m_infoPanel[PanelInformation::SelectBodyInformation].name = "Select-Body-Information";
+		m_infoPanel[PanelInformation::Help].name = "Help-Information";
+
+		UpdatePanelInformation(nullptr);
+
+		m_infoPanel[PanelInformation::Help].content << "Help\n---------------------------------------\n" << "Return Key -> (Un)Pause World\n" << "Keys 1 - 9 -> Change Scene\n" << "WASD/Arrows -> Move Camera\n" << "Mouse Move -> Rotate Camera\n" <<
+			"Mouse Click -> Select Body Under Cursor";
+
+		for (unsigned int panelIndex = 0; panelIndex < PanelInformation::Noof; ++panelIndex)
+		{
+			// Create a text area
+			m_infoPanel[panelIndex].textArea = static_cast<Ogre::TextAreaOverlayElement*>(overlayManager.createOverlayElement("TextArea", m_infoPanel[panelIndex].name));
+			m_infoPanel[panelIndex].textArea->setMetricsMode(Ogre::GMM_PIXELS);
+			m_infoPanel[panelIndex].textArea->setPosition(10, yOffset);
+			m_infoPanel[panelIndex].textArea->setDimensions(1.0, 1.0);
+			m_infoPanel[panelIndex].textArea->setCaption(m_infoPanel[panelIndex].content.str());
+			m_infoPanel[panelIndex].textArea->setCharHeight(16);
+			m_infoPanel[panelIndex].textArea->setFontName("StarWars");
+			m_infoPanel[panelIndex].textArea->setColourBottom(Ogre::ColourValue(0.3, 0.5, 0.3));
+			m_infoPanel[panelIndex].textArea->setColourTop(Ogre::ColourValue(0.5, 0.7, 0.5));
+
+			yOffset += 200;
+
+			// Add the text area to the panel
+			panel->addChild(m_infoPanel[panelIndex].textArea);
+		}
+
+		// Show the overlay
+		overlay->show();
+	}
+
 	return m_scene.size();
 }
 
@@ -234,8 +281,13 @@ Ogre::Vector3 CSceneManager::ParseVector3(
 	return result;
 }
 
-void CSceneManager::Update()
+void CSceneManager::Update(
+		CSpaghettiWorld *world
+	)
 {
+	UpdatePanelInformation(world);
+	m_infoPanel[PanelInformation::WorldInformation].textArea->setCaption(m_infoPanel[PanelInformation::WorldInformation].content.str());
+
 	const unsigned int noofBodies = m_body.size();
 	for (unsigned int bodyIndex = 0; bodyIndex < noofBodies; ++bodyIndex)
 	{
@@ -278,6 +330,8 @@ void CSceneManager::Update()
 				DebugDrawer::getSingleton().drawCuboid(boxCorners, Ogre::ColourValue::Red, false);
 				DebugDrawer::getSingleton().drawCuboid(aaBoxCorners, Ogre::ColourValue::Green, false);
 			}
+
+			m_infoPanel[PanelInformation::SelectBodyInformation].textArea->setCaption(m_infoPanel[PanelInformation::SelectBodyInformation].content.str());
 		}
 
 		node->setPosition(position);
@@ -293,6 +347,12 @@ void CSceneManager::SetCurrentScene(
 	)
 {
 	m_currentScene = (index - 1) % m_scene.size();
+	m_selectedNode = nullptr;
+
+	UpdatePanelInformation(world);
+	m_infoPanel[PanelInformation::WorldInformation].textArea->setCaption(m_infoPanel[PanelInformation::WorldInformation].content.str());
+	m_infoPanel[PanelInformation::SelectBodyInformation].textArea->setCaption(m_infoPanel[PanelInformation::SelectBodyInformation].content.str());
+
 	ReleaseActiveScene(application, spaghetti, world);
 	SetupCurrentScene(application, spaghetti, world);
 }
@@ -314,5 +374,52 @@ void CSceneManager::ReleaseActiveScene(
 
 	world->Release();
 	m_body.clear();
+}
+
+void CSceneManager::UpdatePanelInformation(
+		CSpaghettiWorld *world
+	)
+{
+	m_infoPanel[PanelInformation::WorldInformation].content.str(std::string());
+	m_infoPanel[PanelInformation::WorldInformation].content << "World Information\n---------------------------------------\n";
+	if (world != nullptr)
+	{
+		m_infoPanel[PanelInformation::WorldInformation].content << "Gravity: " << world->GetGravity() << "\n";
+		m_infoPanel[PanelInformation::WorldInformation].content << "Paused: " << (world->IsPaused() ? "True" : "False") << "\n";
+		m_infoPanel[PanelInformation::WorldInformation].content << "Number of Bodies: " << m_body.size() << "\n";
+	}
+
+	m_infoPanel[PanelInformation::SelectBodyInformation].content.str(std::string());
+	m_infoPanel[PanelInformation::SelectBodyInformation].content << "Body Information\n---------------------------------------\n";
+	if (m_selectedNode != nullptr)
+	{
+		m_infoPanel[PanelInformation::SelectBodyInformation].content << "Name: " << m_selectedNode->getName() << "\n";
+		m_infoPanel[PanelInformation::SelectBodyInformation].content << "Position: " << m_selectedNode->getPosition() << "\n";
+		m_infoPanel[PanelInformation::SelectBodyInformation].content << "Orientation: " << m_selectedNode->getOrientation() << "\n";
+
+		CSpaghettiRigidBody *body = BodyFromScreneNode(m_selectedNode);
+		if (body != nullptr)
+		{
+			m_infoPanel[PanelInformation::SelectBodyInformation].content << "Static: " << (body->IsStatic() ? "True" : "False") << "\n";
+			m_infoPanel[PanelInformation::SelectBodyInformation].content << "Mass: " << body->GetMass() << "\n";
+			m_infoPanel[PanelInformation::SelectBodyInformation].content << "Velocity: " << body->GetVelocity() << "\n";
+			m_infoPanel[PanelInformation::SelectBodyInformation].content << "Angular Velocity: " << body->GetAngularVelocity() << "\n";
+		}
+	}
+}
+
+CSpaghettiRigidBody * CSceneManager::BodyFromScreneNode( 
+		Ogre::SceneNode* node 
+	)
+{
+	const unsigned int noofBodies = m_body.size();
+	for (unsigned int bodyIndex = 0; bodyIndex < noofBodies; ++bodyIndex)
+	{
+		CSpaghettiRigidBody *const body = m_body[bodyIndex];
+		if (m_selectedNode == body->GetRenderObject())
+			return body;
+	}
+
+	return nullptr;
 }
 
