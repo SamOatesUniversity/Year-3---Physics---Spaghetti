@@ -16,6 +16,8 @@ Breakdown
 Layout
 
  - Format your report on A4 (21cm x 29.7cm) page layout.
+ - Do not use page numbering within the final version of your report.
+ - All text must be in a two-column format.
  - 
 
 Extras
